@@ -3,6 +3,8 @@ layout: archive
 permalink: /projects/
 title: "All of my projects"
 author_profile: true
+header:
+    image: "images/the-stars-night-sky.jpg"
 ---
 
 {% include group-by-array collection=site.posts field="tags" %}

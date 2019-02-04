@@ -2,7 +2,7 @@
 title: "About"
 permalink: /about/
 header:
-    image: "images/the-stars-night-sky.jpg"
+    image: "images/Mountain_Range_Banner.jpg"
 ---
 
 I'm a Computer Science and Engineering student at the Technical University of Delft.

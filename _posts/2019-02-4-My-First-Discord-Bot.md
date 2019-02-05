@@ -12,4 +12,7 @@ excerpt: "Python, Discord"
 2. [Bot_commands](#Bot_commands)
 
 ## About
+
+
 ## Bot commands
+`;8ball` Ask the magical eightball a question, and see how it responds.

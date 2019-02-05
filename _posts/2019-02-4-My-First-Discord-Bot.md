@@ -8,10 +8,8 @@ excerpt: "Python, Discord"
 ---
 
 # Table of Contents
-1. [Example](#example)
-2. [Example2](#example2)
-3. [Third Example](#third-example)
+1. [About](#About)
+2. [Bot_commands](#Bot_commands)
 
-## Example
-## Example2
-## Third Example
+## About
+## Bot commands

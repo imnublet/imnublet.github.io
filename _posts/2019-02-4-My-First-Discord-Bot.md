@@ -15,4 +15,6 @@ excerpt: "Python, Discord"
 
 
 ## Bot commands
-`;8ball` Ask the magical eightball a question, and see how it responds.
+`,ouija` Ask the magical eightball a question, and see how it responds.
+`,kys` Please don't joke about suicide. Mental health issues are not a joke.
+`"xd" is a blacklisted word` please refrain from using such vulgar language

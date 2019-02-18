@@ -17,4 +17,4 @@ excerpt: "Python, Discord"
 ## Bot commands
 `,ouija` Ask the magical eightball a question, and see how it responds.
 `,kys` Please don't joke about suicide. Mental health issues are not a joke.
-`"xd" is a blacklisted word` please refrain from using such vulgar language
+`"xd" is a blacklisted word` please refrain from using such vulgar language. The bot wil mention the user which used the word, and call them out for retard.

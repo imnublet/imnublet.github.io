@@ -1,10 +1,10 @@
 ---
 title: My first discord bot
 date: 2019-02-04
-tags: [python, discord]
+tags: [python]
 header:
     image: "images/Mountain_Range_Banner.jpg"
-excerpt: "Python, Discord"
+excerpt: "Python"
 ---
 
 # Table of Contents
@@ -17,4 +17,4 @@ excerpt: "Python, Discord"
 ## Bot commands
 `,ouija` Ask the magical eightball a question, and see how it responds.
 `,kys` Please don't joke about suicide. Mental health issues are not a joke.
-`"xd" is a blacklisted word` please refrain from using such vulgar language. The bot wil mention the user which used the word, and call them out for retard.
+`"xd" is a blacklisted word` please refrain from using such vulgar language. The bot wil mention the user which used the word, and call them out.

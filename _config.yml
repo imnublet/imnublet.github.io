@@ -130,9 +130,9 @@ author:
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url: "https://instagram.com/"
-    - label: "LinkedIn"
+    - label: "linkedin_username"
       icon: "fab fa-fw LinkedIn"
-      # url: "https://nl.linkedin.com/in/sayfkadd"
+      url: "https://nl.linkedin.com/in/sayfkadd"
 
 
 # Site Footer
@@ -156,9 +156,9 @@ footer:
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url:
-    - label: "LinkedIn"
+    - label: "linkedin_username"
       icon: "fab fa-fw LinkedIn"
-      # url: "https://nl.linkedin.com/in/sayfkadd"
+      url: "https://nl.linkedin.com/in/sayfkadd"
 
 
 # Reading Files

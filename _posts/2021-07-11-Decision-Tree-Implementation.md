@@ -14,5 +14,5 @@ excerpt: "Python"
 ## About
 
 ## Repo
-https://github.com/imnublet/decision_tree
+[Github page](https://github.com/imnublet/decision_tree)
 

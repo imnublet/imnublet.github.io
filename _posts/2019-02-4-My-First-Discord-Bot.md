@@ -13,13 +13,4 @@ excerpt: "Python"
 
 ## About
 
-A discord bot which automate tasks for you. This project is still under construction and will soon be public.
-
-
-## Bot commands
-`,ouija` Ask the magical eightball a question, and see how it responds.
-
-
-`"xd" is a blacklisted word` please refrain from using such vulgar language. The bot wil mention the user which used the word, and call them out.
-
-WIP
+A discord bot which automates tasks for you. This project is still under construction and will soon be public.

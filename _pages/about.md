@@ -5,12 +5,14 @@ header:
     image: "images/Mountain_Range_Banner.jpg"
 ---
 
-I'm a Computer Science and Artificial Intelligence student at Leiden University. The study goes deep into the fundamentals of Computer Science but also tackles philosophical and physiological aspects of AI. The curriculum includes subjects Algorithmic, Datastructures, Congitive Psychology, Natural Computing, Machine Learning and such. 
+Hi there, thank you for visiting my personal page. I am an Artificial intelligence student at The University of Leiden. My interests are ML and statistics. I love the way how numbers and data can describe a real live event.
 
-## Skills
-I'm familiar with skills, such as:
-- Java
+## Toolset
+I'm familiar with the following technologies and languages:
 - C++
 - Python
-- Scrum
 - Version control in Git
+- Css/html/js
+- Python packages: (Pandas, Numpy, SKlearn, matplotlib)
+- R
+- Java

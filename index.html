@@ -1,6 +1,369 @@
----
-layout: home
-author_profile: true
-header:
-    image: "images/Mountain_Range_Banner.jpg"
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sayf — ML engineer</title>
+<meta name="description" content="ML engineer working on production and agentic systems, pulled toward the place where hard maths meets the body — neural spikes, heartbeats, the geometry of a sprint." />
+
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ============================= NAV ============================= -->
+<nav class="nav" aria-label="Primary">
+  <a href="#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="#work">work</a>
+    <a href="#notes">notes</a>
+    <a href="#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<!-- ============================= HERO ============================= -->
+<header class="hero" id="top" data-screen-label="hero">
+  <canvas id="hero-signal" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="hero__grid" data-hero-stagger>
+      <span class="eyebrow">Instrument &nbsp;/&nbsp; reading one signal</span>
+      <h1 class="hero__name">
+        Sayf
+        <span class="coords">52.0116°N&nbsp;&nbsp;4.3571°E<br />Delft&nbsp;↔&nbsp;Zürich</span>
+      </h1>
+      <p class="hero__line">
+        I build ML systems that <em>read the body</em> — neural spikes, heartbeats,
+        the geometry of a sprint — and act on what they find.
+      </p>
+      <p class="hero__sub">
+        ML engineer working on production and agentic systems. Trained in Delft,
+        sharpened on computational neuroscience in Zürich. Most at home where hard
+        maths meets something with a pulse.
+      </p>
+      <div class="hero__meta" role="list">
+        <span role="listitem">production ML</span>
+        <span role="listitem">agentic systems</span>
+        <span role="listitem">signal &amp; RL</span>
+        <span role="listitem">sport &amp; health</span>
+      </div>
+    </div>
+  </div>
+  <div class="scrollcue" aria-hidden="true">
+    <span class="scrollcue__bar"></span>
+    scroll to acquire
+  </div>
+</header>
+
+<main>
+
+<!-- ============================= THREADS ============================= -->
+<section class="threads section-pad" id="threads" aria-labelledby="threads-h" data-screen-label="threads" data-channel="neural">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2 id="threads-h">The threads</h2>
+      <span class="idx">channels · what runs through the work</span>
+    </div>
+    <div class="channels">
+      <div class="channel" data-reveal style="--delay:0ms">
+        <span class="channel__id">CH01</span>
+        <span class="channel__name">Computational neuroscience</span>
+        <canvas class="channel__spark" data-spark="neural" aria-hidden="true"></canvas>
+        <span class="channel__note">Spiking dynamics, cortical adaptation, models that earn their parameters.</span>
+      </div>
+      <div class="channel" data-reveal style="--delay:60ms">
+        <span class="channel__id">CH02</span>
+        <span class="channel__name">Signal processing</span>
+        <canvas class="channel__spark" data-spark="ecg" aria-hidden="true"></canvas>
+        <span class="channel__note">Filters, spectra, radar &amp; PPG — pulling structure out of the noise floor.</span>
+      </div>
+      <div class="channel" data-reveal style="--delay:120ms">
+        <span class="channel__id">CH03</span>
+        <span class="channel__name">Reinforcement learning</span>
+        <canvas class="channel__spark" data-spark="gait" aria-hidden="true"></canvas>
+        <span class="channel__note">Control under uncertainty; sample efficiency over leaderboard chasing.</span>
+      </div>
+      <div class="channel" data-reveal style="--delay:160ms">
+        <span class="channel__id">CH04</span>
+        <span class="channel__name">Optimization</span>
+        <canvas class="channel__spark" data-spark="descent" aria-hidden="true"></canvas>
+        <span class="channel__note">The landscape under everything else — descent, geometry, conditioning.</span>
+      </div>
+      <div class="channel" data-reveal style="--delay:200ms">
+        <span class="channel__id">CH05</span>
+        <span class="channel__name">Generative modelling</span>
+        <canvas class="channel__spark" data-spark="ppg" aria-hidden="true"></canvas>
+        <span class="channel__note">Learning the distribution, then sampling from it on purpose.</span>
+      </div>
+      <div class="channel" data-reveal style="--delay:240ms">
+        <span class="channel__id">CH06</span>
+        <span class="channel__name">Probabilistic reasoning</span>
+        <canvas class="channel__spark" data-spark="neural" aria-hidden="true"></canvas>
+        <span class="channel__note">Keeping the error bars honest; deciding with what you don't know.</span>
+      </div>
+      <div class="channel" data-reveal style="--delay:280ms">
+        <span class="channel__id">CH07</span>
+        <span class="channel__name">Applied ML — sport &amp; health</span>
+        <canvas class="channel__spark" data-spark="gait" aria-hidden="true"></canvas>
+        <span class="channel__note">Wearables, telemetry, the athlete and the patient as the same signal.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESOLVE — scroll moment ===================== -->
+<section class="resolve" aria-label="signal acquisition" data-screen-label="resolve" data-channel="ecg">
+  <canvas id="resolve-signal" data-channel="ecg" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="resolve__caption" data-reveal>
+      <span class="tag">signal acquisition</span>
+      <p>Almost everything worth doing starts as noise. The work is the part where it&nbsp;resolves.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= WORK ============================= -->
+<!-- NOTE: placeholder projects — swap titles, blurbs & links for real ones.
+     Kept deliberately generic; nothing employer-internal here. -->
+<section class="work section-pad" id="work" aria-labelledby="work-h" data-screen-label="work" data-channel="gait">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2 id="work-h">Selected work</h2>
+      <span class="idx">01 — 04 · placeholders</span>
+    </div>
+    <div class="work__list">
+
+      <article class="proj" data-reveal>
+        <span class="proj__num">01 <span class="dot">●</span></span>
+        <div class="proj__main">
+          <h3>Gait reconstruction from sparse IMU</h3>
+          <p class="proj__blurb">
+            Recovering full lower-body kinematics from two foot-mounted sensors.
+            A learned dynamics prior does the heavy lifting where the hardware
+            can't — turning three noisy axes into something a coach can read.
+          </p>
+        </div>
+        <div class="proj__side">
+          <div class="tags">
+            <span class="tag-chip">RL</span>
+            <span class="tag-chip">optimization</span>
+            <span class="tag-chip">signal processing</span>
+            <span class="tag-chip">sport</span>
+          </div>
+          <div class="proj__readout">
+            <b>type</b> &nbsp;personal / research<br />
+            <b>state</b> &nbsp;placeholder<br />
+            <b>year</b> &nbsp;—
+          </div>
+        </div>
+        <span class="proj__arrow" aria-hidden="true">→</span>
+      </article>
+
+      <article class="proj" data-reveal>
+        <span class="proj__num">02 <span class="dot">●</span></span>
+        <div class="proj__main">
+          <h3>Contactless vitals from radar</h3>
+          <p class="proj__blurb">
+            Heart and breathing rate from millimetre-wave reflections — no contact,
+            no electrodes. Mostly a fight against motion artefacts and a chest wall
+            that moves a fraction of a wavelength.
+          </p>
+        </div>
+        <div class="proj__side">
+          <div class="tags">
+            <span class="tag-chip">DSP</span>
+            <span class="tag-chip">probabilistic</span>
+            <span class="tag-chip">health</span>
+          </div>
+          <div class="proj__readout">
+            <b>type</b> &nbsp;personal / research<br />
+            <b>state</b> &nbsp;placeholder<br />
+            <b>year</b> &nbsp;—
+          </div>
+        </div>
+        <span class="proj__arrow" aria-hidden="true">→</span>
+      </article>
+
+      <article class="proj" data-reveal>
+        <span class="proj__num">03 <span class="dot">●</span></span>
+        <div class="proj__main">
+          <h3>Spiking models of cortical adaptation</h3>
+          <p class="proj__blurb">
+            A small recurrent network of leaky integrate-and-fire units that adapts
+            its gain the way real cortex seems to. Built to ask which features of
+            biology actually matter, and which are just decoration.
+          </p>
+        </div>
+        <div class="proj__side">
+          <div class="tags">
+            <span class="tag-chip">comp neuroscience</span>
+            <span class="tag-chip">generative</span>
+            <span class="tag-chip">optimization</span>
+          </div>
+          <div class="proj__readout">
+            <b>type</b> &nbsp;personal / research<br />
+            <b>state</b> &nbsp;placeholder<br />
+            <b>year</b> &nbsp;—
+          </div>
+        </div>
+        <span class="proj__arrow" aria-hidden="true">→</span>
+      </article>
+
+      <article class="proj" data-reveal>
+        <span class="proj__num">04 <span class="dot">●</span></span>
+        <div class="proj__main">
+          <h3>Sample-efficient control for wearables</h3>
+          <p class="proj__blurb">
+            On-device policy that adapts to a new wearer in minutes, not weeks.
+            Offline RL to bootstrap, then a tight probabilistic loop that knows
+            when it doesn't know enough to act.
+          </p>
+        </div>
+        <div class="proj__side">
+          <div class="tags">
+            <span class="tag-chip">RL</span>
+            <span class="tag-chip">probabilistic</span>
+            <span class="tag-chip">signal processing</span>
+          </div>
+          <div class="proj__readout">
+            <b>type</b> &nbsp;personal / research<br />
+            <b>state</b> &nbsp;placeholder<br />
+            <b>year</b> &nbsp;—
+          </div>
+        </div>
+        <span class="proj__arrow" aria-hidden="true">→</span>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================= NOTES ============================= -->
+<!-- NOTE: placeholder note titles — real titles coming from Sayf. Dates illustrative. -->
+<section class="notes section-pad" id="notes" aria-labelledby="notes-h" data-screen-label="notes" data-channel="ppg">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2 id="notes-h">Writing &amp; notes</h2>
+      <span class="idx">irregular · mostly working out loud</span>
+    </div>
+    <div class="notes__list">
+      <a class="note" href="#" data-reveal>
+        <span class="note__date mono">2026 · 04</span>
+        <span class="note__title">What a spectrogram taught me about loss landscapes</span>
+        <span class="note__kind">note</span>
+      </a>
+      <a class="note" href="#" data-reveal>
+        <span class="note__date mono">2026 · 02</span>
+        <span class="note__title">Sample efficiency is mostly a question about priors</span>
+        <span class="note__kind">essay</span>
+      </a>
+      <a class="note" href="#" data-reveal>
+        <span class="note__date mono">2025 · 11</span>
+        <span class="note__title">Reading a heartbeat through millimetre-wave radar</span>
+        <span class="note__kind">build log</span>
+      </a>
+      <a class="note" href="#" data-reveal>
+        <span class="note__date mono">2025 · 08</span>
+        <span class="note__title">Why I keep coaching twelve-year-olds to defend</span>
+        <span class="note__kind">aside</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= ABOUT ============================= -->
+<section class="about section-pad" id="about" aria-labelledby="about-h" data-screen-label="about" data-channel="gait">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2 id="about-h">About</h2>
+      <span class="idx">the part the model can't infer</span>
+    </div>
+    <div class="about__grid">
+      <div class="about__body" data-reveal>
+        <p class="lead">
+          I like problems where the maths is unforgiving and the stakes are
+          <em>physical</em> — a heartbeat, a stride, a spike train.
+        </p>
+        <p>
+          The throughline is signals. I trained in AI at TU Delft, then spent an
+          exchange on computational neuroscience and neuroinformatics across ETH
+          and UZH, learning to take the brain seriously as a system. Since then,
+          mostly health-tech: wearables, radar, the messy business of measuring a
+          body that won't hold still.
+        </p>
+        <p>
+          Off the clock I play first-team football and coach youth — which is the
+          same job as engineering, really: notice the signal, ignore the noise,
+          and make the next decision before you have all the data.
+        </p>
+      </div>
+      <dl class="about__facts" data-reveal style="--delay:120ms">
+        <div class="fact">
+          <dt>Now</dt>
+          <dd>Production ML &amp; <span class="accent">agentic systems</span></dd>
+        </div>
+        <div class="fact">
+          <dt>Trained</dt>
+          <dd>TU Delft — Artificial Intelligence</dd>
+        </div>
+        <div class="fact">
+          <dt>Exchange</dt>
+          <dd>ETH · UZH — comp. neuroscience</dd>
+        </div>
+        <div class="fact">
+          <dt>Domains</dt>
+          <dd>Wearables · radar DSP · sport &amp; health</dd>
+        </div>
+        <div class="fact">
+          <dt>Offline</dt>
+          <dd>First-team football · youth coach</dd>
+        </div>
+        <div class="fact">
+          <dt>Based</dt>
+          <dd>Delft <span class="accent">↔</span> Zürich</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================= FOOTER ============================= -->
+<footer class="footer" id="contact" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <p class="footer__cta" data-reveal>
+      Got a hard problem<br />with a pulse?
+      <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">Let's talk <span class="arr">↗</span></a>
+    </p>
+    <div class="footer__row" data-reveal>
+      <span>© 2026 Sayf — built as a signal, not a template.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== FIXED INSTRUMENT BAR ===================== -->
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>HERO</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>ECG</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="signal.js"></script>
+<script src="reveal.js"></script>
+</body>
+</html>

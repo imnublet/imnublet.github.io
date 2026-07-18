@@ -1,0 +1,48 @@
+---
+// Ambient oscilloscope trace — nods to the site's signal.js identity.
+// Respects prefers-reduced-motion (renders a single static frame).
+---
+<canvas class="trace-canvas" aria-hidden="true"></canvas>
+<script>
+  const canvases = document.querySelectorAll<HTMLCanvasElement>('.trace-canvas');
+  const reduce = window.matchMedia?.('(prefers-reduced-motion:reduce)').matches;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const accent = () =>
+    getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0c8b7b';
+
+  canvases.forEach((c) => {
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
+    const size = () => {
+      const r = c.parentElement!.getBoundingClientRect();
+      c.width = r.width * dpr;
+      c.height = r.height * dpr;
+    };
+    size();
+    window.addEventListener('resize', size);
+    const draw = (t: number) => {
+      const w = c.width, h = c.height, mid = h * 0.62;
+      ctx.clearRect(0, 0, w, h);
+      ctx.lineWidth = 1.4 * dpr;
+      ctx.strokeStyle = accent();
+      ctx.globalAlpha = 0.75;
+      ctx.beginPath();
+      for (let x = 0; x <= w; x += 2 * dpr) {
+        const u = x / w;
+        const y = mid
+          + Math.sin(u * 9 + t * 0.0011) * h * 0.11
+          + Math.sin(u * 23 + t * 0.0019) * h * 0.045
+          + Math.sin(u * 3 - t * 0.0007) * h * 0.06;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    };
+    if (reduce) { draw(0); }
+    else {
+      let s: number | null = null;
+      const loop = (ts: number) => { if (s === null) s = ts; draw(ts - s); requestAnimationFrame(loop); };
+      requestAnimationFrame(loop);
+    }
+  });
+</script>

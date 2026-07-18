@@ -1,0 +1,6 @@
+node_modules/
+.astro/
+.DS_Store
+*.log
+npm-debug.log*
+# NOTE: docs/ is the built site served by GitHub Pages — it IS committed.

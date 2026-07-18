@@ -1,0 +1,158 @@
+<!DOCTYPE html><!-- head is injected by Astro; content below is the page body --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="A football game gives you a 2-D radar and no data. Computer vision — no deep learning — turns those coloured dots into pitch-metre trajectories."><title>Reverse-Engineering a Video Game&#39;s Minimap Into Football Analytics · Sayf El Kaddouri</title><script>
+  // Apply saved theme before paint to avoid flash; default follows the OS.
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script><link rel="stylesheet" href="/_astro/how-i-stopped-fooling-myself-with-backtests.CGjyQ92O.css"><header class="nav"> <div class="wrap row"> <a class="brand" href="/"><span class="dot"></span>SEK / instrument</a> <nav> <a href="/">Home</a><a href="/projects/">Projects</a><a href="/blog/" aria-current="page">Writing</a> <button class="theme-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme">Theme</button> </nav> </div> </header> <main>  <div class="post"> <div class="scope"> <canvas class="trace-canvas" aria-hidden="true"></canvas> <script type="module">const m=document.querySelectorAll(".trace-canvas"),u=window.matchMedia?.("(prefers-reduced-motion:reduce)").matches,c=Math.min(window.devicePixelRatio||1,2),g=()=>getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||"#0c8b7b";m.forEach(o=>{const e=o.getContext("2d");if(!e)return;const s=()=>{const t=o.parentElement.getBoundingClientRect();o.width=t.width*c,o.height=t.height*c};s(),window.addEventListener("resize",s);const l=t=>{const i=o.width,n=o.height,h=n*.62;e.clearRect(0,0,i,n),e.lineWidth=1.4*c,e.strokeStyle=g(),e.globalAlpha=.75,e.beginPath();for(let a=0;a<=i;a+=2*c){const r=a/i,d=h+Math.sin(r*9+t*.0011)*n*.11+Math.sin(r*23+t*.0019)*n*.045+Math.sin(r*3-t*7e-4)*n*.06;a===0?e.moveTo(a,d):e.lineTo(a,d)}e.stroke(),e.globalAlpha=1};if(u)l(0);else{let t=null;const i=n=>{t===null&&(t=n),l(n-t),requestAnimationFrame(i)};requestAnimationFrame(i)}});</script> <div class="wrap narrow inner"> <p class="eyebrow">Field Notes · Quant &amp; ML</p> <h1>Reverse-Engineering a Video Game&#39;s Minimap Into Football Analytics</h1> <p class="deck">A football game gives you a 2-D radar and no data. Computer vision — no deep learning — turns those coloured dots into pitch-metre trajectories.</p> <div class="meta"> <span><b>2026-07-18</b></span> <span>7 min</span> <span>PitchVision</span> <span>computer-vision · geometry · tracking</span> </div> </div> </div> <div class="wrap narrow"> <article class="body"> 
+<p class="lead">Modern football games render a beautiful match and then hand you almost no data
+about it. But in the corner of the screen sits a 2-D radar — a top-down minimap with 22 coloured
+dots that already <em>is</em> the tracking data, if you can be bothered to read it off the pixels.
+<strong>PitchVision</strong> does exactly that: point it at a screen recording and it reconstructs
+where every player was, in metres, over the whole match. No machine learning — just geometry, done
+carefully.</p>
+
+<p>The pipeline is four honest stages: get clean frames, find the dots, decide which frames
+<em>count</em>, and turn radar pixels into pitch coordinates. The last one is where the real work is.</p>
+
+<h2><span class="sec"><span class="n">§ 01</span> Frames</span>From a screen recording to a stack of radars</h2>
+<p>Input is an OBS <code class="inl">.mkv</code> capture. I decode it with PyAV and crop straight to
+the radar&rsquo;s bounding box — everything outside it is noise. Working on just the minimap region
+keeps every downstream step cheap and makes the colour segmentation far more reliable than it would
+be against a full 3-D scene.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Detection</span>Twenty-two dots, by hue</h2>
+<p>Each player is a small blob of near-constant colour, and the two teams — plus your own controlled
+pros — occupy distinct hues. So detection lives in <strong>HSV</strong>, not RGB: I threshold on hue
+bands, mask each team&rsquo;s colour, and take connected-component centroids as candidate positions.
+Because my own players carry a unique radar hue, I can label <em>which</em> dot is <em>which</em>
+operator without any learned appearance model.</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span class="tag">radartrack · detect</span><span>python</span></div>
+    <div class="body"><pre><span class="k">import</span> cv2, numpy <span class="k">as</span> np
+
+hsv  = cv2.cvtColor(radar, cv2.COLOR_BGR2HSV)
+mask = cv2.inRange(hsv, team_lo, team_hi)          <span class="c"># one hue band per team</span>
+n, _, stats, cents = cv2.connectedComponentsWithStats(mask)
+
+dots = [c <span class="k">for</span> c, s <span class="k">in</span> <span class="k">zip</span>(cents[<span class="s">1</span>:], stats[<span class="s">1</span>:])
+        <span class="k">if</span> s[cv2.CC_STAT_AREA] &gt; min_area]     <span class="c"># drop specks</span></pre></div>
+  </div>
+  <figcaption>colour segmentation → connected components → dot centroids</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 03</span> Liveness</span>Only count the frames that are real football</h2>
+<p>Not every frame is live play — replays, menus, and stoppages would poison any distance or
+speed metric. The clock is the arbiter: a lightweight OCR pass reads the on-screen match timer, and
+a frame only contributes to the trajectory if the clock is <em>advancing</em>. That single gate
+removes the bulk of the garbage without any heuristics about the pitch itself.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Geometry</span>Radar pixels &rarr; pitch metres</h2>
+<p>This is the crux. A dot at radar pixel <span class="m">(u, v)</span> means nothing until it&rsquo;s
+in pitch coordinates <span class="m">(x, y)</span> in metres. The radar is a scaled, translated
+(and possibly slightly sheared) orthographic view of the pitch, so an <strong>affine map</strong>
+is the right model:</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Equation</span><span class="tag">Affine radar → pitch</span></div>
+    <div class="body">
+      <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+          <mrow><mo>[</mo>
+            <mtable><mtr><mtd><mi>x</mi></mtd></mtr><mtr><mtd><mi>y</mi></mtd></mtr></mtable>
+          <mo>]</mo></mrow>
+          <mo>=</mo>
+          <mrow><mo>[</mo>
+            <mtable>
+              <mtr><mtd><msub><mi>a</mi><mn>11</mn></msub></mtd><mtd><msub><mi>a</mi><mn>12</mn></msub></mtd></mtr>
+              <mtr><mtd><msub><mi>a</mi><mn>21</mn></msub></mtd><mtd><msub><mi>a</mi><mn>22</mn></msub></mtd></mtr>
+            </mtable>
+          <mo>]</mo></mrow>
+          <mrow><mo>[</mo>
+            <mtable><mtr><mtd><mi>u</mi></mtd></mtr><mtr><mtd><mi>v</mi></mtd></mtr></mtable>
+          <mo>]</mo></mrow>
+          <mo>+</mo>
+          <mrow><mo>[</mo>
+            <mtable><mtr><mtd><msub><mi>b</mi><mn>1</mn></msub></mtd></mtr><mtr><mtd><msub><mi>b</mi><mn>2</mn></msub></mtd></mtr></mtable>
+          <mo>]</mo></mrow>
+        </mrow>
+      </math>
+    </div>
+  </div>
+  <figcaption>EQ. 1 &mdash; six parameters, solved once per capture from known landmarks</figcaption>
+</figure>
+
+<p>Six unknowns, so three non-collinear correspondences fix the map exactly — and the pitch hands
+you landmarks for free: the centre spot, the corners, the penalty-box junctions all sit at known
+metre coordinates in a regulation pitch. In practice I over-determine it with more than three points
+and solve least-squares, which averages out the pixel-level slop in the landmark picks:</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span class="tag">radartrack · calibrate</span><span>python</span></div>
+    <div class="body"><pre><span class="c"># radar_pts: (u,v) landmarks ; pitch_pts: (x,y) metres</span>
+M, inliers = cv2.estimateAffine2D(radar_pts, pitch_pts)   <span class="c"># 2x3 affine</span>
+
+<span class="k">def</span> to_metres(uv):
+    <span class="k">return</span> M @ np.array([uv[<span class="s">0</span>], uv[<span class="s">1</span>], <span class="s">1.0</span>])   <span class="c"># homogeneous</span></pre></div>
+  </div>
+  <figcaption>least-squares affine from pitch landmarks; robust to a few bad picks</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> Metrics</span>What the geometry buys you</h2>
+<p>With every dot in metres and a clean per-frame timestamp, the trajectories go to parquet and the
+analytics are just geometry over a point cloud. Two that read a team&rsquo;s shape at a glance:</p>
+<ul class="clean">
+  <li><strong>Team centroid</strong> — the mean position of your outfield players, whose movement up
+    and down the pitch traces the team&rsquo;s collective push and retreat.</li>
+  <li><strong>Convex-hull compactness</strong> — the area of the convex hull of the outfield dots.
+    A small hull is a compact, disciplined block; a ballooning hull is a team getting stretched.</li>
+</ul>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span class="tag">radartrack · shape</span><span>python</span></div>
+    <div class="body"><pre><span class="k">from</span> scipy.spatial <span class="k">import</span> ConvexHull
+
+centroid   = players_m.mean(axis=<span class="s">0</span>)             <span class="c"># team centre of mass (m)</span>
+compact_m2 = ConvexHull(players_m).volume            <span class="c"># hull area in m² (2-D)</span></pre></div>
+  </div>
+  <figcaption>team-shape metrics fall straight out of the metre-space point cloud</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Takeaways</span>Why no neural net</h2>
+<ul class="clean">
+  <li>When the signal is already abstracted — coloured dots on a clean radar — classical CV in HSV
+    is more robust, more debuggable, and orders of magnitude cheaper than a detector you&rsquo;d have
+    to train and label.</li>
+  <li>The whole value is in the <em>calibration</em>: a correct affine map turns pixels into metres,
+    and every downstream metric inherits that correctness for free.</li>
+  <li>A liveness gate (is the clock running?) does more for data quality than any amount of
+    post-hoc filtering.</li>
+</ul>
+
+<p class="endnote">Offline, post-match batch analysis. Package name <code class="inl">radartrack</code>;
+the geometry generalizes to any game that draws a 2-D radar you can see.</p>
+ <hr> <a class="backlink" href="/blog/">← All field notes</a> </article> </div> </div>  </main> <footer class="site"> <div class="wrap" style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; width:100%"> <span>Sayf El Kaddouri</span> <span> <a href="https://github.com/imnublet">github</a> &nbsp;·&nbsp;
+<a href="/blog/">writing</a> &nbsp;·&nbsp;
+<a href="/projects/">projects</a> </span> <span>Built with Astro</span> </div> </footer> <script>
+  (function () {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function current() {
+      return root.getAttribute('data-theme')
+        || (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  })();
+</script>

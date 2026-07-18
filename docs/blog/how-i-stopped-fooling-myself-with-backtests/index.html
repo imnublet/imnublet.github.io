@@ -1,0 +1,233 @@
+<!DOCTYPE html><!-- head is injected by Astro; content below is the page body --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Two statistical gates — the Deflated Sharpe Ratio and the Probability of Backtest Overfitting — decide whether an alpha ever touches real money."><title>How I Stopped Fooling Myself With Backtests · Sayf El Kaddouri</title><script>
+  // Apply saved theme before paint to avoid flash; default follows the OS.
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script><link rel="stylesheet" href="/_astro/how-i-stopped-fooling-myself-with-backtests.CGjyQ92O.css"><header class="nav"> <div class="wrap row"> <a class="brand" href="/"><span class="dot"></span>SEK / instrument</a> <nav> <a href="/">Home</a><a href="/projects/">Projects</a><a href="/blog/" aria-current="page">Writing</a> <button class="theme-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme">Theme</button> </nav> </div> </header> <main>  <div class="post"> <div class="scope"> <canvas class="trace-canvas" aria-hidden="true"></canvas> <script type="module">const m=document.querySelectorAll(".trace-canvas"),u=window.matchMedia?.("(prefers-reduced-motion:reduce)").matches,c=Math.min(window.devicePixelRatio||1,2),g=()=>getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||"#0c8b7b";m.forEach(o=>{const e=o.getContext("2d");if(!e)return;const s=()=>{const t=o.parentElement.getBoundingClientRect();o.width=t.width*c,o.height=t.height*c};s(),window.addEventListener("resize",s);const l=t=>{const i=o.width,n=o.height,h=n*.62;e.clearRect(0,0,i,n),e.lineWidth=1.4*c,e.strokeStyle=g(),e.globalAlpha=.75,e.beginPath();for(let a=0;a<=i;a+=2*c){const r=a/i,d=h+Math.sin(r*9+t*.0011)*n*.11+Math.sin(r*23+t*.0019)*n*.045+Math.sin(r*3-t*7e-4)*n*.06;a===0?e.moveTo(a,d):e.lineTo(a,d)}e.stroke(),e.globalAlpha=1};if(u)l(0);else{let t=null;const i=n=>{t===null&&(t=n),l(n-t),requestAnimationFrame(i)};requestAnimationFrame(i)}});</script> <div class="wrap narrow inner"> <p class="eyebrow">Field Notes · Quant &amp; ML</p> <h1>How I Stopped Fooling Myself With Backtests</h1> <p class="deck">Two statistical gates — the Deflated Sharpe Ratio and the Probability of Backtest Overfitting — decide whether an alpha ever touches real money.</p> <div class="meta"> <span><b>2026-07-18</b></span> <span>7 min</span> <span>Alpha Engine</span> <span>quant · overfitting · statistics</span> </div> </div> </div> <div class="wrap narrow"> <article class="body"> 
+<p class="lead">A backtest is a machine for generating self-flattery. You try a few dozen
+variations of an idea, keep the one with the prettiest equity curve, and your brain quietly
+files the result under <em>skill</em>. On a cash account that mistake costs you some tuition.
+On a <strong>leveraged</strong> account — mine runs commodity CFDs on €150 of starting capital
+under ESMA retail rules, with overnight financing near 7.3% annualized eating any long carry —
+a spuriously high Sharpe isn&rsquo;t a curiosity. It&rsquo;s a countdown to a margin call.</p>
+
+<p>So before any signal in my alpha engine is allowed to size a real position, it clears two
+gates borrowed from L&oacute;pez de Prado and co-authors. Neither is exotic. Both are routinely
+skipped. Here&rsquo;s what they do, and why I trust them more than any single equity curve.</p>
+
+<h2><span class="sec"><span class="n">§ 00</span> The problem has a name</span>Selection under multiple testing</h2>
+<p>Evaluate <span class="m">N</span> configurations of a strategy and report the best one&rsquo;s
+Sharpe. Even if <em>every</em> configuration is pure noise with a true Sharpe of zero, the
+<em>maximum</em> of <span class="m">N</span> noisy estimates is positive — and grows with
+<span class="m">N</span>. Reporting that maximum without accounting for the search is the
+quant-finance version of running 20 tests and publishing the one with
+<span class="m">p</span>&nbsp;&lt;&nbsp;0.05.</p>
+<p>The fix isn&rsquo;t &ldquo;test less.&rdquo; It&rsquo;s to make the search cost <em>explicit</em>
+and subtract it back out. That&rsquo;s gate one.</p>
+
+<h2><span class="sec"><span class="n">§ 01</span> Gate one</span>The Deflated Sharpe Ratio</h2>
+<p>The Deflated Sharpe Ratio (Bailey &amp; L&oacute;pez de Prado, 2014) asks a sharper question
+than &ldquo;is the Sharpe positive?&rdquo; It asks: <strong>given how hard I searched, and given
+that my returns are skewed and fat-tailed, what is the probability the true Sharpe exceeds the
+benchmark I&rsquo;d expect from luck alone?</strong></p>
+<p>For a per-period estimate <span class="m">ŜR</span> over <span class="m">T</span> observations
+with skewness <span class="m">&gamma;<sub>3</sub></span> and non-excess kurtosis
+<span class="m">&gamma;<sub>4</sub></span>:</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Equation</span><span class="tag">Deflated Sharpe</span></div>
+    <div class="body">
+      <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+          <mi>DSR</mi><mo>=</mo><mi>&#934;</mi>
+          <mrow><mo>(</mo>
+            <mfrac>
+              <mrow>
+                <mo>(</mo><mover><mi>SR</mi><mo>^</mo></mover><mo>&#8722;</mo>
+                <msub><mi>SR</mi><mn>0</mn></msub><mo>)</mo>
+                <msqrt><mrow><mi>T</mi><mo>&#8722;</mo><mn>1</mn></mrow></msqrt>
+              </mrow>
+              <msqrt>
+                <mrow>
+                  <mn>1</mn><mo>&#8722;</mo><msub><mi>&#947;</mi><mn>3</mn></msub>
+                  <mover><mi>SR</mi><mo>^</mo></mover><mo>+</mo>
+                  <mfrac><mrow><msub><mi>&#947;</mi><mn>4</mn></msub><mo>&#8722;</mo><mn>1</mn></mrow><mn>4</mn></mfrac>
+                  <msup><mover><mi>SR</mi><mo>^</mo></mover><mn>2</mn></msup>
+                </mrow>
+              </msqrt>
+            </mfrac>
+          <mo>)</mo></mrow>
+        </mrow>
+      </math>
+    </div>
+  </div>
+  <figcaption>EQ. 1 &mdash; the deflated statistic</figcaption>
+</figure>
+
+<p>Two things make this more honest than a vanilla Sharpe <span class="m">t</span>-stat. First,
+the denominator inflates under negative skew or heavy tails — exactly the regimes where a
+na&iuml;ve Sharpe lies. Second, the benchmark <span class="m">SR<sub>0</sub></span> is
+<strong>not zero</strong>. It&rsquo;s the <em>expected maximum</em> Sharpe under the null across
+<span class="m">N</span> independent trials:</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Equation</span><span class="tag">Data-snooping benchmark</span></div>
+    <div class="body">
+      <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+          <msub><mi>SR</mi><mn>0</mn></msub><mo>=</mo>
+          <msqrt><mrow><mi>Var</mi><mo>(</mo><msub><mover><mi>SR</mi><mo>^</mo></mover><mi>n</mi></msub><mo>)</mo></mrow></msqrt>
+          <mrow><mo>[</mo>
+            <mo>(</mo><mn>1</mn><mo>&#8722;</mo><mi>&#947;</mi><mo>)</mo>
+            <msup><mi>Z</mi><mrow><mo>&#8722;</mo><mn>1</mn></mrow></msup>
+            <mrow><mo>(</mo><mn>1</mn><mo>&#8722;</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><mo>)</mo></mrow>
+            <mo>+</mo>
+            <mi>&#947;</mi>
+            <msup><mi>Z</mi><mrow><mo>&#8722;</mo><mn>1</mn></mrow></msup>
+            <mrow><mo>(</mo><mn>1</mn><mo>&#8722;</mo><mfrac><mn>1</mn><mrow><mi>N</mi><mi>e</mi></mrow></mfrac><mo>)</mo></mrow>
+          <mo>]</mo></mrow>
+        </mrow>
+      </math>
+    </div>
+  </div>
+  <figcaption>EQ. 2 &mdash; expected max Sharpe under the null; &gamma; is Euler&ndash;Mascheroni</figcaption>
+</figure>
+
+<p>That&rsquo;s the whole trick: more configurations &rArr; larger
+<span class="m">SR<sub>0</sub></span> &rArr; bigger haircut the winner must overcome. Data-snooping
+is priced in rather than wished away. In code, it&rsquo;s a few lines — straight from the
+engine&rsquo;s <code class="inl">afml/eval_pbo.py</code>:</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span class="tag">afml/eval_pbo.py</span><span>python</span></div>
+    <div class="body"><pre><span class="c">_EULER_GAMMA = 0.5772156649015329</span>
+
+<span class="k">def</span> expected_max_sharpe(var_sr, n_trials):
+    <span class="c"># SR_0 under the null across n_trials</span>
+    <span class="k">if</span> n_trials &lt;= <span class="s">1</span> <span class="k">or</span> var_sr &lt;= <span class="s">0</span>:
+        <span class="k">return</span> <span class="s">0.0</span>
+    z1 = norm.ppf(<span class="s">1</span> - <span class="s">1</span>/n_trials)
+    z2 = norm.ppf(<span class="s">1</span> - <span class="s">1</span>/(n_trials*np.e))
+    <span class="k">return</span> np.sqrt(var_sr)*((<span class="s">1</span>-_EULER_GAMMA)*z1 + _EULER_GAMMA*z2)</pre></div>
+  </div>
+  <figcaption>the benchmark, verbatim from the engine</figcaption>
+</figure>
+
+<p>And the DSR itself estimates <span class="m">&gamma;<sub>3</sub>,&nbsp;&gamma;<sub>4</sub></span>
+from the realized stream rather than assuming normality:</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span class="tag">afml/eval_pbo.py</span><span>python</span></div>
+    <div class="body"><pre>sr    = r.mean() / r.std(ddof=<span class="s">1</span>)        <span class="c"># per-period Sharpe</span>
+g3    = skew(r)                          <span class="c"># skewness</span>
+g4    = kurtosis(r, fisher=<span class="k">False</span>)        <span class="c"># non-excess (normal == 3)</span>
+
+denom = np.sqrt(<span class="s">1</span> - g3*sr + (g4-<span class="s">1</span>)/<span class="s">4</span> * sr**<span class="s">2</span>)
+z     = (sr - sr_benchmark) * np.sqrt(T-<span class="s">1</span>) / denom
+dsr   = norm.cdf(z)                      <span class="c"># P(true SR &gt; SR_0)</span></pre></div>
+  </div>
+  <figcaption>the deflated statistic in practice</figcaption>
+</figure>
+
+<div class="note">
+  <span class="lbl">Promotion threshold</span>
+  <p><strong>DSR &gt; 0.95</strong> to size real capital; <strong>&gt; 0.5</strong> to keep a signal
+  alive for research. A gorgeous 2.5 Sharpe found across 200 configs routinely deflates below 0.5
+  once <span class="m">SR<sub>0</sub></span> is charged against it. That strategy never traded — the
+  system working as designed.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 02</span> Gate two</span>The Probability of Backtest Overfitting</h2>
+<p>The DSR polices the <em>magnitude</em> of a winner. PBO (Bailey, Borwein, L&oacute;pez de Prado
+&amp; Zhu, 2017) polices the <em>selection procedure itself</em>: if I pick the in-sample best,
+does it stay good out-of-sample — or is my ranking no better than a coin?</p>
+<p>It&rsquo;s estimated by <strong>Combinatorially-Symmetric Cross-Validation</strong>. Slice the
+history (<span class="m">T&times;N</span>, one column per config) into <span class="m">S</span>
+contiguous blocks. For every way of splitting them into an in-sample and out-of-sample half —
+all <span class="m">C(S,&nbsp;S/2)</span> of them — rank configs IS, take the IS winner, and record
+where it lands OOS.</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span class="tag">afml/eval_pbo.py · pbo_cscv</span><span>python</span></div>
+    <div class="body"><pre><span class="k">for</span> is_sets <span class="k">in</span> combinations(<span class="k">range</span>(n_splits), n_splits//<span class="s">2</span>):
+    is_idx  = concat([blocks[i] <span class="k">for</span> i <span class="k">in</span> is_sets])
+    oos_idx = concat([blocks[i] <span class="k">for</span> i <span class="k">in</span> rest])
+
+    sr_is  = [sharpe(R[is_idx,  j]) <span class="k">for</span> j <span class="k">in</span> configs]
+    sr_oos = [sharpe(R[oos_idx, j]) <span class="k">for</span> j <span class="k">in</span> configs]
+
+    n_star = argmax(sr_is)                    <span class="c"># IS-best config</span>
+    omega  = (sr_oos &lt;= sr_oos[n_star]).sum()/(N+<span class="s">1</span>)  <span class="c"># its OOS rank</span>
+    logits.append(log(omega/(<span class="s">1</span>-omega)))
+
+pbo = (array(logits) &lt;= <span class="s">0</span>).mean()          <span class="c"># frac below OOS median</span></pre></div>
+  </div>
+  <figcaption>every partition also evaluated with halves swapped &mdash; no lucky-regime artifact</figcaption>
+</figure>
+
+<p>The interpretation is brutal and clean:</p>
+<ul class="clean">
+  <li><strong>PBO &asymp; 0</strong> — your in-sample ranking genuinely carries out-of-sample. Trust it.</li>
+  <li><strong>PBO &asymp; 0.5</strong> — your selection procedure is a random-number generator in a
+    lab coat. The IS-best is a coin flip OOS.</li>
+</ul>
+<p>Note what PBO ignores: the absolute level of returns. A high-Sharpe <em>family</em> can have an
+awful PBO — the family is good, but your ability to <em>pick within it</em> is worthless. The two
+gates are orthogonal, which is exactly why you want both.</p>
+
+<h2><span class="sec"><span class="n">§ 03</span> Composition</span>How the two gates stack</h2>
+<p>Every research iteration runs the same funnel:</p>
+<ol class="funnel">
+  <li>Build a return matrix — one column per candidate configuration, each column a per-period
+    strategy return.</li>
+  <li><strong>PBO gate.</strong> Is the <em>selection</em> trustworthy? Near 0.5, stop — no tuning
+    saves a procedure that doesn&rsquo;t generalize.</li>
+  <li><strong>DSR gate.</strong> For the survivor, is the <em>magnitude</em> real once the search
+    cost <span class="m">SR<sub>0</sub></span> is subtracted? Promote only above threshold.</li>
+  <li>Only then does the signal reach position sizing (fractional-Kelly, vol targeting) and,
+    eventually, live execution.</li>
+</ol>
+<p>Both gates share one philosophy: <strong>the null hypothesis is that you got lucky, and the
+burden of proof is on the strategy.</strong> That inversion is the whole difference between
+research that compounds and research that blows up an account on the third leveraged position.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Takeaways</span>What to carry out</h2>
+<ul class="clean">
+  <li>A reported Sharpe is meaningless without the number of configurations behind it. Always
+    deflate against <span class="m">SR<sub>0</sub></span>; the haircut grows with your search.</li>
+  <li>Skew and kurtosis belong <em>inside</em> the significance test — leverage lives and dies in
+    the tails.</li>
+  <li>PBO and DSR answer different questions. Run both.</li>
+  <li>The healthiest sign in a research log is strategies that die at the gate. Mine kills far more
+    than it promotes — which is why the account is still alive.</li>
+</ul>
+
+<p class="endnote">Methods from L&oacute;pez de Prado&rsquo;s <em>Advances in Financial Machine
+Learning</em> and the associated papers. Implementation snippets are from my own engine; the alpha
+signals themselves stay in the vault.</p>
+ <hr> <a class="backlink" href="/blog/">← All field notes</a> </article> </div> </div>  </main> <footer class="site"> <div class="wrap" style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; width:100%"> <span>Sayf El Kaddouri</span> <span> <a href="https://github.com/imnublet">github</a> &nbsp;·&nbsp;
+<a href="/blog/">writing</a> &nbsp;·&nbsp;
+<a href="/projects/">projects</a> </span> <span>Built with Astro</span> </div> </footer> <script>
+  (function () {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function current() {
+      return root.getAttribute('data-theme')
+        || (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  })();
+</script>

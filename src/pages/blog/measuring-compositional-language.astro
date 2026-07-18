@@ -1,0 +1,148 @@
+---
+import Post from '../../layouts/Post.astro';
+const meta = {
+  title: 'How Do You Measure Whether a Language Is Compositional?',
+  deck: 'When two neural agents invent a language to solve a game, is it compositional or a lookup table? Three metrics — topsim, posdis, bosdis — try to answer.',
+  date: '2026-07-18',
+  readtime: '8 min',
+  project: 'Growing Meaning Spaces',
+  tags: ['emergent-communication', 'compositionality', 'information-theory'],
+};
+const body = `
+<p class="lead">Put two neural networks in a referential game — one sees an object and sends a
+sequence of symbols, the other has to pick that object out of a lineup — and, given enough rounds,
+they will invent a language. The uncomfortable question my BSc thesis kept circling is: <em>what
+kind</em> of language? A compositional one, where symbols recombine to mean new things? Or a giant
+brittle lookup table that happens to work on the training set and shatters the moment the world
+grows? You cannot eyeball the answer. You have to measure it.</p>
+
+<p>&ldquo;Growing meaning spaces&rdquo; is the experiment in the title: systematically enlarge the
+space of things the agents must talk about — more attributes, more values per attribute — and watch
+whether compositionality <em>emerges and holds</em> as the pressure to generalize increases.</p>
+
+<h2><span class="sec"><span class="n">§ 01</span> The game</span>Emergent communication in one paragraph</h2>
+<p>A <strong>sender</strong> observes a structured input — an object encoded as attribute/value
+pairs, say <em>(colour = blue, shape = triangle, size = large)</em> — and emits a discrete message
+of length <span class="m">L</span> over a vocabulary of size <span class="m">V</span>. A
+<strong>receiver</strong> reads the message and must identify the referent among distractors. Both
+are trained end-to-end; because the channel is discrete, gradients come through REINFORCE or a
+Gumbel-softmax relaxation. Nothing tells them <em>how</em> to encode meaning — a protocol simply
+emerges from the pressure to be understood. The meaning space is the full grid of attribute/value
+combinations, and &ldquo;growing&rdquo; it means adding attributes or values so that space expands
+combinatorially.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Topographic similarity</span>Do nearby meanings get nearby messages?</h2>
+<p>The oldest and most intuitive metric. A language is compositional if <em>similar meanings map to
+similar messages</em> — change one attribute, change a little of the message. Topographic similarity
+(<strong>topsim</strong>) makes that precise: take every pair of objects, measure their distance in
+meaning space (Hamming over attributes) and their distance in message space (edit distance over
+symbols), and compute the rank correlation between the two lists of distances.</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Equation</span><span class="tag">Topographic similarity</span></div>
+    <div class="body">
+      <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+          <mi>topsim</mi><mo>=</mo>
+          <mi>&#961;</mi><mrow><mo>(</mo>
+            <msub><mi>d</mi><mrow><mi>meaning</mi></mrow></msub><mo>(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo>)</mo>
+            <mo>,</mo>
+            <msub><mi>d</mi><mrow><mi>message</mi></mrow></msub><mo>(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo>)</mo>
+          <mo>)</mo></mrow>
+        </mrow>
+      </math>
+    </div>
+  </div>
+  <figcaption>EQ. 1 &mdash; Spearman ρ over all object pairs (i, j)</figcaption>
+</figure>
+
+<p>High topsim means the geometry of meaning survives the trip through the channel. It is a good
+smell-test — but it is a single scalar over the whole language and can be fooled, which is why it
+needs company.</p>
+
+<h2><span class="sec"><span class="n">§ 03</span> Disentanglement</span>Which symbol carries which attribute?</h2>
+<p>Chaabouni et al. (2020) sharpened the question with two information-theoretic metrics that ask
+where each attribute&rsquo;s information actually <em>lives</em> in the message.</p>
+
+<p><strong>Positional disentanglement (posdis)</strong> asks whether each <em>position</em> in the
+message is dedicated to a single attribute. For symbol position <span class="m">j</span>, rank the
+attributes by mutual information with that symbol; the position is &ldquo;clean&rdquo; if the top
+attribute dominates the second:</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Equation</span><span class="tag">Positional disentanglement</span></div>
+    <div class="body">
+      <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+          <mi>posdis</mi><mo>=</mo>
+          <mfrac><mn>1</mn><mi>L</mi></mfrac>
+          <munderover><mo>&#8721;</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>L</mi></munderover>
+          <mfrac>
+            <mrow><mi>I</mi><mo>(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>;</mo><msubsup><mi>a</mi><mi>j</mi><mrow>(1)</mrow></msubsup><mo>)</mo>
+              <mo>&#8722;</mo>
+              <mi>I</mi><mo>(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>;</mo><msubsup><mi>a</mi><mi>j</mi><mrow>(2)</mrow></msubsup><mo>)</mo></mrow>
+            <mrow><mi>H</mi><mo>(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>)</mo></mrow>
+          </mfrac>
+        </mrow>
+      </math>
+    </div>
+  </div>
+  <figcaption>EQ. 2 &mdash; a<sup>(1)</sup>, a<sup>(2)</sup> are the top-two attributes by MI with symbol s<sub>j</sub></figcaption>
+</figure>
+
+<p><strong>Bag-of-symbols disentanglement (bosdis)</strong> asks the same question but throws away
+order: it uses symbol <em>counts</em> rather than positions, rewarding languages where each symbol
+in the vocabulary maps to a single attribute regardless of where it appears. Together the two catch
+different compositional strategies — positional grammar versus an order-invariant &ldquo;bag&rdquo;
+code — that topsim alone blurs into one number.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> The experiment</span>What growing the space reveals</h2>
+<p>With three lenses on compositionality, the thesis question becomes measurable: as the meaning
+space grows, do topsim, posdis, and bosdis rise, and — crucially — do they <em>predict
+generalization</em> to held-out attribute combinations the agents never saw in training? So I tracked
+all three against generalization accuracy and against each other as the space expanded.</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span class="tag">Experiments.ipynb</span><span>python</span></div>
+    <div class="body"><pre><span class="c"># per run: sweep meaning-space size, log metrics + held-out accuracy</span>
+<span class="k">for</span> size <span class="k">in</span> meaning_space_sizes:
+    lang = train_referential_game(size, seeds=n_seeds)
+    rows.append(dict(
+        size=size,
+        topsim=topographic_similarity(lang),
+        posdis=positional_disentanglement(lang),
+        bosdis=bag_of_symbols_disentanglement(lang),
+        gen_acc=holdout_accuracy(lang),
+    ))
+<span class="c"># then: regress gen_acc ~ topsim + posdis + bosdis</span></pre></div>
+  </div>
+  <figcaption>the analysis is a metric sweep + a regression onto generalization</figcaption>
+</figure>
+
+<p>The recurring lesson of this literature — and of the plots that came out of these runs — is that
+the three metrics do <em>not</em> move in lockstep. A language can score well on one and poorly on
+another; a high topsim doesn&rsquo;t guarantee clean positional structure. Compositionality is not a
+single axis, and the honest thing to report is a <em>profile</em> across metrics rather than one
+headline number. The final arbiter is always the same: does the protocol generalize to combinations
+it was never trained on?</p>
+
+<h2><span class="sec"><span class="n">§ 05</span> Takeaways</span>What I&rsquo;d tell my earlier self</h2>
+<ul class="clean">
+  <li>Compositionality is multi-dimensional. Report topsim <em>and</em> a disentanglement metric —
+    one scalar hides the failure modes of the other.</li>
+  <li>Mutual-information metrics say <em>where</em> meaning lives in a message; correlational metrics
+    say <em>whether</em> geometry is preserved. You want both.</li>
+  <li>Generalization to unseen combinations is the ground truth. A metric is only useful insofar as
+    it predicts it.</li>
+  <li>Growing the meaning space is the right stress test: compositional structure is exactly what
+    should pay off as the world gets bigger.</li>
+</ul>
+
+<p class="endnote">From my BSc thesis, <em>Growing Meaning Spaces</em>. Metric definitions follow
+Brighton &amp; Kirby (topsim) and Chaabouni et al., 2020 (posdis / bosdis).</p>
+`;
+---
+<Post {...meta}><Fragment set:html={body} /></Post>

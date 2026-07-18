@@ -1,0 +1,31 @@
+---
+import Base from './Base.astro';
+import Trace from '../components/Trace.astro';
+const { title, deck, description, date, readtime, project, tags = [] } = Astro.props;
+---
+<Base title={title} description={description ?? deck} current="blog">
+  <div class="post">
+    <div class="scope">
+      <Trace />
+      <div class="wrap narrow inner">
+        <p class="eyebrow">Field Notes · Quant &amp; ML</p>
+        <h1>{title}</h1>
+        <p class="deck">{deck}</p>
+        <div class="meta">
+          <span><b>{date}</b></span>
+          {readtime && <span>{readtime}</span>}
+          {project && <span>{project}</span>}
+          {tags.length > 0 && <span>{tags.join(' · ')}</span>}
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap narrow">
+      <article class="body">
+        <slot />
+        <hr />
+        <a class="backlink" href="/blog/">← All field notes</a>
+      </article>
+    </div>
+  </div>
+</Base>

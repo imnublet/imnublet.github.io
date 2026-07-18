@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- head is injected by Astro; content below is the page body --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Selected projects across ML, quant, computer vision, and games."><title>Projects · Sayf El Kaddouri</title><script>
+  // Apply saved theme before paint to avoid flash; default follows the OS.
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script><link rel="stylesheet" href="/_astro/how-i-stopped-fooling-myself-with-backtests.CGjyQ92O.css"><header class="nav"> <div class="wrap row"> <a class="brand" href="/"><span class="dot"></span>SEK / instrument</a> <nav> <a href="/">Home</a><a href="/projects/" aria-current="page">Projects</a><a href="/blog/">Writing</a> <button class="theme-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme">Theme</button> </nav> </div> </header> <main>  <div class="wrap narrow"> <section class="block"> <p class="eyebrow">Selected work</p> <h2 style="font-size:1.9rem; margin:.2rem 0 .5rem">Projects</h2> <p style="color:var(--muted); max-width:34rem; margin:0 0 2rem">
+Five projects worth showing, spanning quantitative finance, on-device ML,
+        computer vision, plugins, and language-emergence research. Each links to a
+        writeup or the repo.
+</p> <div class="cards"> <a class="card wide" href="/blog/how-i-stopped-fooling-myself-with-backtests/"> <span class="kicker"><span>Quant / applied ML</span><span class="state">polished</span></span> <h3>Oil &amp; Commodity Alpha Engine</h3> <p>A full research-to-execution stack for leveraged commodity CFDs: five alpha families, walk-forward + combinatorial purged CV with deflated Sharpe, block-bootstrap Monte-Carlo risk, and a four-mode execution engine.</p> <span class="tags"> python · vectorbt · finbert · streamlit  &nbsp;— read the writeup →  </span> </a><a class="card wide" href="/blog/shipping-a-fatigue-model-to-a-wrist-computer/"> <span class="kicker"><span>On-device ML / watchOS</span><span class="state">working MVP</span></span> <h3>RunningFatigueAI</h3> <p>An Apple-Watch running coach: a Core ML fatigue model over live HealthKit HR/HRV, plus a Sentence-Transformers retrieval layer that grounds its advice in training science.</p> <span class="tags"> swiftui · core ml · healthkit · rag  &nbsp;— read the writeup →  </span> </a><a class="card wide" href="/blog/reverse-engineering-a-minimap/"> <span class="kicker"><span>Computer vision</span><span class="state">polished</span></span> <h3>PitchVision</h3> <p>An offline analyzer that screen-scrapes a football game’s 2-D radar, tracks all 22 players by colour, maps radar pixels to pitch metres, and renders team-shape metrics.</p> <span class="tags"> python · opencv · homography · polars  &nbsp;— read the writeup →  </span> </a><a class="card wide" href="https://github.com/imnublet/Pathscape"> <span class="kicker"><span>Games / plugins</span><span class="state">near-polished</span></span> <h3>PathScape</h3> <p>A RuneLite plugin that reads live account state and scores a 485-node progression DAG to recommend your highest-impact next action, weighted by goal profile.</p> <span class="tags"> java · gradle · python · dag   &nbsp;— view on GitHub → </span> </a><a class="card wide" href="/blog/measuring-compositional-language/"> <span class="kicker"><span>Research / emergent communication</span><span class="state">research</span></span> <h3>Growing Meaning Spaces</h3> <p>BSc thesis on emergent language: do neural agents invent a compositional protocol as their meaning space grows? Measured with topographic similarity and disentanglement metrics.</p> <span class="tags"> pytorch · egg · information theory  &nbsp;— read the writeup →  </span> </a> </div> </section> </div>  </main> <footer class="site"> <div class="wrap" style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; width:100%"> <span>Sayf El Kaddouri</span> <span> <a href="https://github.com/imnublet">github</a> &nbsp;·&nbsp;
+<a href="/blog/">writing</a> &nbsp;·&nbsp;
+<a href="/projects/">projects</a> </span> <span>Built with Astro</span> </div> </footer> <script>
+  (function () {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function current() {
+      return root.getAttribute('data-theme')
+        || (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  })();
+</script>

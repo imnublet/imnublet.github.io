@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- head is injected by Astro; content below is the page body --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Field notes on quant, on-device ML, computer vision, and emergent language."><title>Writing · Sayf El Kaddouri</title><script>
+  // Apply saved theme before paint to avoid flash; default follows the OS.
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  })();
+</script><link rel="stylesheet" href="/_astro/how-i-stopped-fooling-myself-with-backtests.CGjyQ92O.css"><header class="nav"> <div class="wrap row"> <a class="brand" href="/"><span class="dot"></span>SEK / instrument</a> <nav> <a href="/">Home</a><a href="/projects/">Projects</a><a href="/blog/" aria-current="page">Writing</a> <button class="theme-btn" id="theme-toggle" type="button" aria-label="Toggle colour theme">Theme</button> </nav> </div> </header> <main>  <div class="wrap narrow"> <section class="block"> <p class="eyebrow">Field Notes</p> <h2 style="font-size:1.9rem; margin:.2rem 0 .5rem">Writing</h2> <p style="color:var(--muted); max-width:34rem; margin:0 0 1.5rem">
+Working notes from the projects — the methods I trust, and why. Rigorous
+        where it counts, readable throughout.
+</p> <ul class="postlist"> <li> <a href="/blog/how-i-stopped-fooling-myself-with-backtests/"> <span class="date">2026-07-18</span> <span> <h3>How I Stopped Fooling Myself With Backtests</h3> <p>Two statistical gates — the Deflated Sharpe Ratio and the Probability of Backtest Overfitting — decide whether an alpha ever touches real money.</p> <div class="row-tags">Alpha Engine &nbsp;·&nbsp; 7 min &nbsp;·&nbsp; quant · overfitting · statistics</div> </span> </a> </li><li> <a href="/blog/shipping-a-fatigue-model-to-a-wrist-computer/"> <span class="date">2026-07-18</span> <span> <h3>Shipping a Fatigue Model to a Wrist Computer</h3> <p>Your watch already knows you are cooked. Turning HR/HRV into an on-device Core ML fatigue score — with a retrieval layer for the coaching.</p> <div class="row-tags">RunningFatigueAI &nbsp;·&nbsp; 8 min &nbsp;·&nbsp; on-device-ml · core-ml · healthkit · rag</div> </span> </a> </li><li> <a href="/blog/reverse-engineering-a-minimap/"> <span class="date">2026-07-18</span> <span> <h3>Reverse-Engineering a Video Game&#39;s Minimap Into Football Analytics</h3> <p>A football game gives you a 2-D radar and no data. Computer vision — no deep learning — turns those coloured dots into pitch-metre trajectories.</p> <div class="row-tags">PitchVision &nbsp;·&nbsp; 7 min &nbsp;·&nbsp; computer-vision · geometry · tracking</div> </span> </a> </li><li> <a href="/blog/measuring-compositional-language/"> <span class="date">2026-07-18</span> <span> <h3>How Do You Measure Whether a Language Is Compositional?</h3> <p>When two neural agents invent a language to solve a game, is it compositional or a lookup table? Three metrics — topsim, posdis, bosdis — try to answer.</p> <div class="row-tags">Growing Meaning Spaces &nbsp;·&nbsp; 8 min &nbsp;·&nbsp; emergent-communication · compositionality · information-theory</div> </span> </a> </li> </ul> </section> </div>  </main> <footer class="site"> <div class="wrap" style="display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap; width:100%"> <span>Sayf El Kaddouri</span> <span> <a href="https://github.com/imnublet">github</a> &nbsp;·&nbsp;
+<a href="/blog/">writing</a> &nbsp;·&nbsp;
+<a href="/projects/">projects</a> </span> <span>Built with Astro</span> </div> </footer> <script>
+  (function () {
+    var btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+    var root = document.documentElement;
+    function current() {
+      return root.getAttribute('data-theme')
+        || (window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  })();
+</script>

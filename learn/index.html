@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Learn — Sayf</title>
+<meta name="description" content="Free, rigorous courses on probability, multivariate data analysis and signal processing — derivations, code and interactive demos." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../styles.css" />
+<link rel="stylesheet" href="../notes.css" />
+<link rel="stylesheet" href="learn.css" />
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../index.html#work">work</a>
+    <a href="index.html" aria-current="page">learn</a>
+    <a href="../index.html#notes">notes</a>
+    <a href="../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="learn-hero" data-screen-label="learn" data-channel="telemetry">
+  <div class="wrap" data-hero-stagger>
+    <span class="eyebrow">Learn &nbsp;/&nbsp; free courses</span>
+    <h1>Open courseware<br />for the maths under ML</h1>
+    <p class="deck">Probability, multivariate data analysis and signal processing, taught the way I wish
+      I'd learned them: <em>full derivations</em>, runnable code, and demos you can poke.</p>
+  </div>
+</header>
+
+<main>
+<section class="section-pad" style="padding-top:0" data-screen-label="courses" data-channel="neural">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2>Courses</h2>
+      <span class="idx">taken in order</span>
+    </div>
+
+    <div class="courses">
+      <a class="course" href="probability/index.html" data-reveal>
+        <span class="course__id">C01</span>
+        <div>
+          <h3 class="course__title">Probability &amp; multivariate data analysis</h3>
+          <p class="course__blurb">From the axioms to random vectors, covariance, estimation and
+            stochastic processes. The language every model on this site is written in.</p>
+        </div>
+        <div class="course__side">
+          <canvas class="course__spark" data-spark="neural" aria-hidden="true"></canvas>
+          <div class="tags">
+            <span class="tag-chip">probability</span>
+            <span class="tag-chip">random vectors</span>
+            <span class="tag-chip">estimation</span>
+          </div>
+        </div>
+        <span class="course__state is-live">in progress</span>
+      </a>
+
+      <a class="course" href="signal-processing/index.html" data-reveal style="--delay:80ms">
+        <span class="course__id">C02</span>
+        <div>
+          <h3 class="course__title">Foundations of signal processing</h3>
+          <p class="course__blurb">Signals as vectors in Hilbert space: bases, discrete- and
+            continuous-time systems, Fourier, sampling, approximation and the uncertainty principle.</p>
+        </div>
+        <div class="course__side">
+          <canvas class="course__spark" data-spark="ecg" aria-hidden="true"></canvas>
+          <div class="tags">
+            <span class="tag-chip">Hilbert spaces</span>
+            <span class="tag-chip">Fourier</span>
+            <span class="tag-chip">sampling</span>
+          </div>
+        </div>
+        <span class="course__state">planned</span>
+      </a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LEARN</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>TELEMETRY</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../signal.js"></script>
+<script src="../reveal.js"></script>
+</body>
+</html>

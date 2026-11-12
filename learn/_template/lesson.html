@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  LESSON TEMPLATE
+  Copy this file to learn/<course>/<lesson-slug>.html (same folder depth, so
+  every relative path keeps working), then replace the content of each
+  [SLOT] below. Delete any component you don't need.
+
+  Components
+    .objectives                      what the reader will be able to do
+    .block / .block--thm / --ex      definition · theorem · example boxes
+    details.proof / details.solution collapsible proof or solution
+    $…$  $$…$$  \(…\)  \[…\]         KaTeX maths; \tag{n} numbers an equation.
+                                     Macros: \R \N \E \Var \Cov \P \ind \iid \T \d
+    figure.readout > .screen         code panel; <code class="language-python">
+    figure.demo[data-demo=name]      canvas demo, registered in the script at
+                                     the bottom with Learn.demo(name, setup)
+    ol.exercises                     numbered exercises
+    .pager                           previous / next lesson
+-->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- [SLOT] title + description -->
+<title>The sample mean and the law of large numbers — Learn — Sayf</title>
+<meta name="description" content="Why averages converge: unbiasedness, the 1/n variance of the sample mean, and the weak law of large numbers via Chebyshev." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<!-- [SLOT] masthead: course / lesson number, title, deck, meta -->
+<header class="post-hero" data-screen-label="lesson 5.1" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 5.1</span>
+    <h1>The sample mean and the law of large numbers</h1>
+    <p class="deck">Averages of noisy measurements settle down. Here is <em>exactly how fast</em>, and
+      the two-line proof of why.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>15 min</span>
+      <span>Y&amp;G § 10.1–10.3</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 5.1" data-channel="neural">
+
+<!-- [SLOT] objectives -->
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>compute the mean and variance of the sample mean $M_n(X)$;</li>
+    <li>state and prove the weak law of large numbers from Chebyshev's inequality;</li>
+    <li>size an experiment so an average is within $\varepsilon$ of the truth with a given confidence.</li>
+  </ul>
+</div>
+
+<!-- [SLOT] body: h2 sections with .sec labels -->
+<h2><span class="sec"><span class="n">§ 01</span> Setup</span>The sample mean</h2>
+<p>Repeat an experiment $n$ times and record a measurement each time. We model the record as random
+variables $X_1, \dots, X_n \iid X$ with $\E[X] = \mu_X$ and $\Var[X] = \sigma_X^2 &lt; \infty$.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">sample mean</span></span>
+  <p>The sample mean of $n$ independent trials of $X$ is the random variable</p>
+  $$M_n(X) = \frac{1}{n}\sum_{i=1}^{n} X_i. \tag{1}$$
+</div>
+
+<p>$M_n(X)$ is itself a random variable: run the $n$ trials again and you get a different number.
+Its first two moments follow from linearity of expectation and from independence.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">moments of the sample mean</span></span>
+  <p>$$\E[M_n(X)] = \mu_X, \qquad \Var[M_n(X)] = \frac{\sigma_X^2}{n}. \tag{2}$$</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Linearity gives $\E[M_n(X)] = \tfrac1n \sum_i \E[X_i] = \tfrac1n \cdot n\mu_X = \mu_X$. For the
+  variance, expand the variance of a sum into covariances:</p>
+  $$\Var\Big[\sum_{i=1}^n X_i\Big] = \sum_{i=1}^n \sum_{j=1}^n \Cov[X_i, X_j]
+    = \sum_{i=1}^n \Var[X_i] + \sum_{i \ne j} \Cov[X_i, X_j].$$
+  <p>Independence implies $\Cov[X_i, X_j] = 0$ for $i \ne j$, so the sum is $n\sigma_X^2$. Scaling
+  by $1/n$ scales the variance by $1/n^2$, giving $\sigma_X^2 / n$. <span class="qed">∎</span></p>
+</details>
+
+<p>So $M_n(X)$ is an <strong>unbiased</strong> estimator of $\mu_X$, and its standard deviation
+shrinks like $\sigma_X / \sqrt{n}$. To halve the error bar you need four times the data.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Convergence</span>The weak law of large numbers</h2>
+<p>Variance going to zero should mean the distribution of $M_n(X)$ collapses onto $\mu_X$.
+Chebyshev's inequality, $\P[|Y - \mu_Y| \ge c] \le \Var[Y]/c^2$, turns that intuition into a bound.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">weak law of large numbers</span></span>
+  <p>For any $c &gt; 0$,</p>
+  $$\P\big[\,|M_n(X) - \mu_X| \ge c\,\big] \le \frac{\sigma_X^2}{n c^2}
+    \xrightarrow[n \to \infty]{} 0. \tag{3}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Apply Chebyshev to $Y = M_n(X)$, using $\mu_Y = \mu_X$ and $\Var[Y] = \sigma_X^2/n$ from
+  Theorem 1. <span class="qed">∎</span></p>
+</details>
+
+<div class="callout">
+  <span class="lbl">Note</span>
+  <p>The proof only used $\Cov[X_i, X_j] = 0$. Pairwise <em>uncorrelated</em> trials with common
+  mean and variance are enough; full independence is not needed.</p>
+</div>
+
+<!-- [SLOT] interactive demo: figure.demo + Learn.demo(...) below -->
+<figure class="demo" data-demo="lln">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">running mean · Bernoulli(p)</span></div>
+    <canvas aria-label="Running sample mean of Bernoulli trials converging to p, with a ±2σ/√n band"></canvas>
+    <div class="controls">
+      <label>p <input type="range" min="0.05" max="0.95" step="0.05" value="0.3" data-p /> <output data-p-out>0.30</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-final></span>
+    </div>
+  </div>
+  <figcaption>Five independent runs of $M_n$ for $n \le 1000$. Shaded: $p \pm 2\sqrt{p(1-p)/n}$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 03</span> In code</span>Checking the $1/n$ law</h2>
+<p>Estimate $\Var[M_n]$ empirically across many repetitions and compare with $\sigma_X^2/n$.</p>
+
+<!-- [SLOT] code readout -->
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(0)
+p, reps = 0.3, 20_000
+
+for n in (10, 100, 1000):
+    m = rng.binomial(n, p, size=reps) / n      # reps draws of M_n
+    print(f"n={n:5d}  Var[M_n]={m.var():.2e}  p(1-p)/n={p*(1-p)/n:.2e}")</code></pre></div>
+  </div>
+  <figcaption>A Binomial(n, p) count divided by n is exactly one draw of $M_n$.</figcaption>
+</figure>
+
+<!-- [SLOT] exercises -->
+<h2><span class="sec"><span class="n">§ 04</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Let $X_1, \dots, X_n$ have common variance $\sigma^2$ and pairwise correlation
+    $\rho = \Cov[X_i,X_j]/\sigma^2$ for $i \ne j$. Compute $\Var[M_n]$. What happens as
+    $n \to \infty$ when $\rho &gt; 0$?<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>There are $n$ diagonal terms and $n(n-1)$ off-diagonal terms, so
+      $$\Var[M_n] = \frac{1}{n^2}\big(n\sigma^2 + n(n-1)\rho\sigma^2\big)
+        = \frac{\sigma^2}{n} + \frac{n-1}{n}\rho\sigma^2 \;\longrightarrow\; \rho\sigma^2.$$
+      Positive correlation puts a floor under the error that more samples cannot remove.</p>
+    </details>
+  </li>
+  <li>
+    <p>A poll estimates a proportion $p$ by $M_n$ of Bernoulli$(p)$ trials. Using only
+    Chebyshev, how large must $n$ be to guarantee $\P[|M_n - p| \ge 0.05] \le 0.05$ for every
+    $p$?<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\sigma_X^2 = p(1-p) \le 1/4$, so (3) gives the bound $1/(4 n c^2)$. Requiring
+      $1/(4n \cdot 0.05^2) \le 0.05$ gives $n \ge 2000$. The CLT suggests about $385$ is enough:
+      Chebyshev is distribution-free and therefore loose.</p>
+    </details>
+  </li>
+</ol>
+
+<!-- [SLOT] references -->
+<h2><span class="sec"><span class="n">§ 05</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., § 10.1–10.3.</li>
+  <li>Grimmett &amp; Stirzaker, <em>Probability and Random Processes</em>, § 7.4 for the strong law.</li>
+</ul>
+
+<!-- [SLOT] pager: previous / next lesson (use <span> when there is none) -->
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="#"><span class="dir">← previous</span><span class="t">4.6 The central limit theorem</span></a>
+  <a class="next" href="#"><span class="dir">next →</span><span class="t">5.2 Confidence intervals</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="../probability/index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<!-- [SLOT] demos for this lesson -->
+<script>
+Learn.demo("lln", (fig, { scope, rng, colors }) => {
+  const N = 1000, RUNS = 5;
+  const pIn = fig.querySelector("[data-p]");
+  const pOut = fig.querySelector("[data-p-out]");
+  const final = fig.querySelector("[data-final]");
+  let seed = 1;
+
+  function draw() {
+    const p = +pIn.value;
+    pOut.value = p.toFixed(2);
+    scope.axes([0, N], [0, 1], { xticks: 5, yticks: 4, fmt: (v) => (v > 1 ? v.toFixed(0) : v.toFixed(2)) });
+
+    const ns = Array.from({ length: N }, (_, i) => i + 1);
+    const sd = ns.map((n) => 2 * Math.sqrt((p * (1 - p)) / n));
+    scope.band(ns, sd.map((s) => p - s), sd.map((s) => p + s));
+    scope.trace([0, N], [p, p], { color: colors.fgFaint, width: 1, glow: false, dash: [4, 4] });
+
+    let last;
+    for (let r = RUNS - 1; r >= 0; r--) {
+      const u = rng(seed * 101 + r);
+      let s = 0;
+      const m = ns.map((n) => (s += u() < p) / n);
+      scope.trace(ns, m, r ? { color: colors.fgFaint, width: 1, glow: false } : {});
+      if (!r) last = m[N - 1];
+    }
+    final.textContent = `M₁₀₀₀ = ${last.toFixed(3)}`;
+  }
+
+  pIn.addEventListener("input", draw);
+  fig.querySelector("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw; // returned function is re-run on resize
+});
+</script>
+</body>
+</html>

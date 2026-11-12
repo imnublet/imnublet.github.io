@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Foundations of signal processing — Learn — Sayf</title>
+<meta name="description" content="A free course on the foundations of signal processing, following Vetterli, Kovačević &amp; Goyal." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="C02" data-channel="ecg">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">Learn &nbsp;/&nbsp; course 02</span>
+    <h1>Foundations of signal processing</h1>
+    <p class="deck">Signals as vectors: geometry first, then Fourier, sampling and approximation — <em>one framework for all of it</em>.</p>
+    <div class="post-meta">
+      <span><b>C02</b></span>
+      <span>6 modules</span>
+      <span>21 lessons</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="syllabus" data-channel="ecg">
+
+<dl class="source">
+  <dt>Follows</dt><dd>M. Vetterli, J. Kovačević &amp; V. K. Goyal, <em>Foundations of Signal Processing</em>, Cambridge University Press, 2014.</dd>
+  <dt>Assumes</dt><dd>Linear algebra and course C01 (probability).</dd>
+  <dt>Format</dt><dd>Definitions, proofs, NumPy code and interactive demos per lesson.</dd>
+</dl>
+<section class="module" data-reveal>
+  <div class="module__head"><span class="n">M01</span> FSP ch. 1–2</div>
+  <h2 class="module__title">Signals as vectors</h2>
+  <p class="module__note">Vector spaces, inner products, norms, Hilbert spaces, bases and frames.</p>
+  <ol class="lessons">    <li><div class="lesson-row"><span class="lesson-row__n">1.1</span><span class="lesson-row__t">Why geometry: a tour of the book</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">1.2</span><span class="lesson-row__t">Vector spaces and inner products</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">1.3</span><span class="lesson-row__t">Hilbert spaces and projections</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">1.4</span><span class="lesson-row__t">Bases, frames and expansions</span><span class="lesson-row__s">soon</span></div></li>  </ol>
+</section>
+<section class="module" data-reveal>
+  <div class="module__head"><span class="n">M02</span> FSP ch. 3</div>
+  <h2 class="module__title">Discrete-time signals and systems</h2>
+  <p class="module__note">Sequences, LSI systems, convolution and the DTFT.</p>
+  <ol class="lessons">    <li><div class="lesson-row"><span class="lesson-row__n">2.1</span><span class="lesson-row__t">Sequences and discrete-time systems</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">2.2</span><span class="lesson-row__t">Convolution and LSI systems</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">2.3</span><span class="lesson-row__t">The DTFT and frequency response</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">2.4</span><span class="lesson-row__t">The z-transform</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">2.5</span><span class="lesson-row__t">The DFT and circular convolution</span><span class="lesson-row__s">soon</span></div></li>  </ol>
+</section>
+<section class="module" data-reveal>
+  <div class="module__head"><span class="n">M03</span> FSP ch. 4</div>
+  <h2 class="module__title">Continuous-time signals and systems</h2>
+  <p class="module__note">Functions, the Fourier transform and Fourier series.</p>
+  <ol class="lessons">    <li><div class="lesson-row"><span class="lesson-row__n">3.1</span><span class="lesson-row__t">Functions and continuous-time systems</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">3.2</span><span class="lesson-row__t">The Fourier transform</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">3.3</span><span class="lesson-row__t">Fourier series</span><span class="lesson-row__s">soon</span></div></li>  </ol>
+</section>
+<section class="module" data-reveal>
+  <div class="module__head"><span class="n">M04</span> FSP ch. 5</div>
+  <h2 class="module__title">Sampling and interpolation</h2>
+  <p class="module__note">Bridging continuous and discrete: the sampling theorem and beyond.</p>
+  <ol class="lessons">    <li><div class="lesson-row"><span class="lesson-row__n">4.1</span><span class="lesson-row__t">Sampling as projection</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">4.2</span><span class="lesson-row__t">The sampling theorem</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">4.3</span><span class="lesson-row__t">Interpolation and reconstruction</span><span class="lesson-row__s">soon</span></div></li>  </ol>
+</section>
+<section class="module" data-reveal>
+  <div class="module__head"><span class="n">M05</span> FSP ch. 6</div>
+  <h2 class="module__title">Approximation and compression</h2>
+  <p class="module__note">Approximation with polynomials and splines; quantization and coding.</p>
+  <ol class="lessons">    <li><div class="lesson-row"><span class="lesson-row__n">5.1</span><span class="lesson-row__t">Approximation by polynomials and splines</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">5.2</span><span class="lesson-row__t">Linear vs. nonlinear approximation</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">5.3</span><span class="lesson-row__t">Quantization and compression</span><span class="lesson-row__s">soon</span></div></li>  </ol>
+</section>
+<section class="module" data-reveal>
+  <div class="module__head"><span class="n">M06</span> FSP ch. 7</div>
+  <h2 class="module__title">Localization and uncertainty</h2>
+  <p class="module__note">Time–frequency localization and the uncertainty principle.</p>
+  <ol class="lessons">    <li><div class="lesson-row"><span class="lesson-row__n">6.1</span><span class="lesson-row__t">Time and frequency spread</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">6.2</span><span class="lesson-row__t">The uncertainty principle</span><span class="lesson-row__s">soon</span></div></li>    <li><div class="lesson-row"><span class="lesson-row__n">6.3</span><span class="lesson-row__t">Local Fourier bases and wavelets, a preview</span><span class="lesson-row__s">soon</span></div></li>  </ol>
+</section>
+<hr class="end" />
+<a class="backlink" href="../index.html">← all courses</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>C02</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>ECG</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Joint CDFs, PMFs and PDFs — Learn — Sayf</title>
+<meta name="description" content="Joint distributions of two random variables: the joint CDF and the rectangle formula, joint PMFs and densities, and probabilities of regions in the plane." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 3.1" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 3.1</span>
+    <h1>Joint CDFs, PMFs and PDFs</h1>
+    <p class="deck">Two random variables measured on the same run need <em>one distribution for the pair</em>, not two separate ones.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 5</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 3.1" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>define the joint CDF of a pair and prove the rectangle formula;</li>
+    <li>explain why monotonicity in each argument is not enough to be a joint CDF;</li>
+    <li>compute probabilities of regions in the plane from a joint PMF or joint density;</li>
+    <li>evaluate $\E[g(X,Y)]$ from the joint law.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Why</span>One experiment, two numbers</h2>
+<p>A transmitted bit and a received voltage, the height and weight of a person, a feature vector and its label:
+most interesting questions involve several random variables defined on the <em>same</em> sample space. Their
+separate distributions cannot answer questions such as "how often is $Y$ larger than $X$?", because that depends
+on how the two vary together. We need the distribution of the pair $(X, Y) : \Omega \to \R^2$.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Definition</span>The joint CDF</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">joint CDF</span></span>
+  <p>For random variables $X, Y$ on the same probability space, the <strong>joint CDF</strong> is</p>
+  $$F_{X,Y}(x, y) = \P[X \le x, Y \le y], \qquad (x, y) \in \R^2, \tag{1}$$
+  <p>where the comma means intersection: $\{X \le x\} \cap \{Y \le y\}$.</p>
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">properties of a joint CDF</span></span>
+  <ol type="a">
+    <li>$F_{X,Y}$ is non-decreasing in each argument and right-continuous in each argument;</li>
+    <li>$F_{X,Y}(x, y) \to 0$ if $x \to -\infty$ or $y \to -\infty$, and $F_{X,Y}(x, y) \to 1$ as $x, y \to \infty$ together;</li>
+    <li><em>marginals</em>: $\lim_{y \to \infty} F_{X,Y}(x, y) = F_X(x)$ and $\lim_{x \to \infty} F_{X,Y}(x, y) = F_Y(y)$;</li>
+    <li><em>rectangle formula</em>: for $x_1 &lt; x_2$ and $y_1 &lt; y_2$,
+    $$\P[x_1 &lt; X \le x_2,\; y_1 &lt; Y \le y_2] = F(x_2, y_2) - F(x_1, y_2) - F(x_2, y_1) + F(x_1, y_1) \ge 0. \tag{2}$$</li>
+  </ol>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>(a) If $x \le x'$ then $\{X \le x, Y \le y\} \subseteq \{X \le x', Y \le y\}$; use monotonicity of $\P$. Right-continuity
+  follows as in lesson 2.3: $\{X \le x + 1/n, Y \le y\} \downarrow \{X \le x, Y \le y\}$, and continuity of probability applies.</p>
+  <p>(b) $\{X \le -n, Y \le y\} \subseteq \{X \le -n\}$, whose probability tends to $0$. And
+  $\{X \le n, Y \le n\} \uparrow \Omega$, so its probability tends to $1$.</p>
+  <p>(c) $\{X \le x, Y \le n\} \uparrow \{X \le x\} \cap \Omega = \{X \le x\}$; continuity of probability gives $F_X(x)$.</p>
+  <p>(d) Let $A = \{X \le x_2, Y \le y_2\}$, $B_1 = \{X \le x_1, Y \le y_2\}$ and $B_2 = \{X \le x_2, Y \le y_1\}$. Then
+  $B_1, B_2 \subseteq A$ and the rectangle event is $A \setminus (B_1 \cup B_2)$, so its probability is
+  $\P[A] - \P[B_1 \cup B_2] = \P[A] - \P[B_1] - \P[B_2] + \P[B_1 \cap B_2]$ by inclusion–exclusion. Finally
+  $B_1 \cap B_2 = \{X \le x_1, Y \le y_1\}$. <span class="qed">∎</span></p>
+</details>
+
+<p>Property (d) is not a consequence of (a)–(c). A function can be non-decreasing in each variable, right-continuous
+and have the right limits, yet assign negative "probability" to a rectangle (exercise 1). So the rectangle
+inequality, sometimes called being <em>2-increasing</em>, is part of what it means to be a joint CDF. Conversely,
+every function with (a), (b) and (2) is the joint CDF of some pair, and the joint CDF determines
+$\P[(X, Y) \in B]$ for every Borel set $B \subseteq \R^2$, because rectangles generate the Borel sets.</p>
+
+<h2><span class="sec"><span class="n">§ 03</span> Discrete</span>Joint PMFs</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">joint PMF</span></span>
+  <p>If $X$ and $Y$ are discrete, their <strong>joint PMF</strong> is $P_{X,Y}(x, y) = \P[X = x, Y = y]$.</p>
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">probabilities from the joint PMF</span></span>
+  <p>$P_{X,Y} \ge 0$, $\sum_{x \in S_X}\sum_{y \in S_Y} P_{X,Y}(x, y) = 1$, and for any $B \subseteq \R^2$,</p>
+  $$\P[(X, Y) \in B] = \sum_{(x, y) \in B} P_{X,Y}(x, y). \tag{3}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>The events $\{X = x, Y = y\}$ for $(x, y) \in S_X \times S_Y$ are pairwise disjoint and their union is $\Omega$; $S_X \times S_Y$ is
+  countable. So they partition $\Omega$, and the argument of lesson 2.1, Theorem 1 applies verbatim to the
+  random vector $(X, Y)$ in place of $X$. <span class="qed">∎</span></p>
+</details>
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">smaller and larger of two dice</span></span>
+  <p>Roll two fair dice; let $Y$ be the smaller and $X$ the larger value. For $1 \le y &lt; x \le 6$, the outcomes
+  $(y, x)$ and $(x, y)$ both give the pair, so $P_{X,Y}(x, y) = \frac{2}{36}$; for $x = y$ only $(x, x)$ does, so
+  $P_{X,Y}(x, x) = \frac{1}{36}$; and $P_{X,Y}(x, y) = 0$ when $y &gt; x$. The total is $6\cdot\frac1{36} + 15 \cdot\frac{2}{36} = 1$.
+  By (3), $\P[X - Y \ge 3] = \frac{2}{36}\,\#\{(x, y) : x - y \ge 3\} = \frac{2}{36}(3 + 2 + 1) = \frac13$.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 04</span> Continuous</span>Joint densities</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">joint PDF</span></span>
+  <p>$X$ and $Y$ are <strong>jointly continuous</strong> with <strong>joint PDF</strong> $f_{X,Y} \ge 0$ if</p>
+  $$F_{X,Y}(x, y) = \int_{-\infty}^{x}\int_{-\infty}^{y} f_{X,Y}(u, v) \d v \d u \quad \text{for all } (x, y). \tag{4}$$
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">working with a joint density</span></span>
+  <ol type="a">
+    <li>$\iint_{\R^2} f_{X,Y} = 1$, and at points where $f_{X,Y}$ is continuous, $f_{X,Y}(x, y) = \dfrac{\partial^2 F_{X,Y}}{\partial x\, \partial y}(x,y)$;</li>
+    <li>for every (Borel) region $B \subseteq \R^2$, $\displaystyle \P[(X, Y) \in B] = \iint_B f_{X,Y}(x, y) \d x \d y$;</li>
+    <li>for $g$ with $\iint |g| f_{X,Y} &lt; \infty$, $\displaystyle \E[g(X, Y)] = \iint g(x, y)\, f_{X,Y}(x, y) \d x \d y$.</li>
+  </ol>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>(a) Let $x, y \to \infty$ in (4) and use Theorem 1(b). Differentiating (4) in $y$ gives
+  $\partial_y F = \int_{-\infty}^x f(u, y) \d u$ at continuity points (fundamental theorem of calculus), and differentiating
+  that in $x$ gives $f(x, y)$.</p>
+  <p>(b) For rectangles $B = (x_1, x_2] \times (y_1, y_2]$, combine (2) and (4): the four integrals over quadrants
+  combine, by additivity of the integral, into $\int_{x_1}^{x_2}\int_{y_1}^{y_2} f$. Both sides of (b) are then measures on
+  $\R^2$ (countably additive in $B$, by monotone convergence on the right) that agree on rectangles, and such
+  measures agree on all Borel sets (the uniqueness theorem of measure theory). We take this last step from
+  measure theory without proof.</p>
+  <p>(c) is the two-dimensional law of the unconscious statistician, which we also take as given; it reduces to
+  (b) when $g$ is an indicator. <span class="qed">∎</span></p>
+</details>
+
+<p>In practice (b) is all you use: draw the region, then set up an iterated integral over it. The density is a
+probability per unit <em>area</em>: $\P[(X, Y) \in [x, x + \Delta] \times [y, y + \Delta]] \approx f_{X,Y}(x, y)\Delta^2$.
+Two consequences from the one-dimensional case carry over: lines and curves have probability zero (they have
+area zero), and densities may exceed one.</p>
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">uniform on a triangle</span></span>
+  <p>Let $f_{X,Y}(x, y) = 2$ on $T = \{0 \le y \le x \le 1\}$ and $0$ elsewhere ($T$ has area $\tfrac12$). For $0 \le t \le 1$,
+  the event $\{X + Y \le t\}$ is the part of $T$ below the line $x + y = t$: for each $y \in [0, t/2]$, $x$ runs from $y$ to
+  $t - y$. So</p>
+  $$\P[X + Y \le t] = \int_0^{t/2}\!\!\int_y^{t - y} 2 \d x \d y = \int_0^{t/2} 2(t - 2y) \d y = \frac{t^2}{2}.$$
+  <p>For $1 \le t \le 2$ it is easier to integrate over the complement $\{X + Y &gt; t\} \cap T$, where for each
+  $x \in [t/2, 1]$, $y$ runs from $t - x$ to $x$: $\P[X + Y &gt; t] = \int_{t/2}^1 2(2x - t)\d x = 2(1 - t/2)^2$. Both formulas give
+  $\tfrac12$ at $t = 1$. This pair has a concrete origin: if $U_1, U_2$ are independent Uniform$(0, 1)$, then
+  $X = \max(U_1, U_2)$ and $Y = \min(U_1, U_2)$ have exactly this density (exercise 4).</p>
+</div>
+
+<figure class="demo" data-demo="triangle">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">P[X + Y ≤ t] · uniform on a triangle</span></div>
+    <canvas aria-label="Samples uniform on a triangle, with the region below the line x plus y equals t highlighted"></canvas>
+    <div class="controls">
+      <label>t <input type="range" min="0" max="2" step="0.01" value="0.8" data-t /> <output data-t-out>0.80</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-p></span>
+    </div>
+  </div>
+  <figcaption>1500 samples of $(X, Y) = (\max(U_1, U_2), \min(U_1, U_2))$. Bright points fall in $\{X + Y \le t\}$. Readout:
+  the Monte Carlo fraction and the exact value from the example.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>Rectangle probabilities from a CDF</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(0)
+u = rng.random((1_000_000, 2))
+X, Y = u.max(axis=1), u.min(axis=1)               # uniform on the triangle 0 &lt;= y &lt;= x &lt;= 1
+
+def F(x, y):                                       # joint CDF, derived in exercise 4
+    x, y = np.clip(x, 0, 1), np.clip(y, 0, 1)
+    return np.where(y &lt;= x, 2 * x * y - y**2, x**2)
+
+x1, x2, y1, y2 = 0.3, 0.9, 0.1, 0.5
+rect = F(x2, y2) - F(x1, y2) - F(x2, y1) + F(x1, y1)   # (2)
+emp = ((X &gt; x1) &amp; (X &lt;= x2) &amp; (Y &gt; y1) &amp; (Y &lt;= y2)).mean()
+print(rect, emp)                                   # 0.44 and ~0.44
+
+for t in (0.5, 1.0, 1.5):
+    exact = t**2 / 2 if t &lt;= 1 else 1 - 2 * (1 - t / 2) ** 2
+    print(t, exact, (X + Y &lt;= t).mean())</code></pre></div>
+  </div>
+  <figcaption>The rectangle formula turns any joint CDF into probabilities of boxes, which is how bivariate tables and copulas are used.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Let $G(x, y) = 1$ if $x + y \ge 0$ and $0$ otherwise. Show that $G$ satisfies Theorem 1(a)–(c) (with
+    $G(x,\infty) = 1$) but is not a joint CDF.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$G$ is non-decreasing in each argument (increasing $x$ or $y$ can only turn $x + y \ge 0$ on), right-continuous
+      (the set $\{x + y \ge 0\}$ is closed), and tends to $0$ or $1$ as required. But the rectangle $(-1, 1] \times (-1, 1]$
+      gets $G(1,1) - G(-1, 1) - G(1, -1) + G(-1, -1) = 1 - 1 - 1 + 0 = -1 &lt; 0$.</p>
+    </details>
+  </li>
+  <li>
+    <p>For $f_{X,Y}(x, y) = c(x + y)$ on $[0, 1]^2$, find $c$ and $\P[X &lt; Y]$, and $\P[X + Y \le 1]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\iint (x + y) = \tfrac12 + \tfrac12 = 1$, so $c = 1$. The density is symmetric in $x, y$ and the diagonal has probability
+      zero, so $\P[X &lt; Y] = \tfrac12$. And $\P[X + Y \le 1] = \int_0^1\int_0^{1-x}(x + y)\d y\d x = \int_0^1 \tfrac{1 - x^2}{2}\d x = \tfrac13$.</p>
+    </details>
+  </li>
+  <li>
+    <p>In the dice example, compute $\E[X - Y]$ from the joint PMF.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>The diagonal contributes $0$. For a gap $d = x - y \in \{1, \dots, 5\}$ there are $6 - d$ pairs, each of probability $\tfrac2{36}$:
+      $\E[X - Y] = \frac{2}{36}\sum_{d=1}^5 d(6 - d) = \frac{2}{36}(5 + 8 + 9 + 8 + 5) = \frac{70}{36} \approx 1.94$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $U_1, U_2$ be independent Uniform$(0,1)$, $X = \max(U_1, U_2)$, $Y = \min(U_1, U_2)$. Show $F_{X,Y}(x, y) = 2xy - y^2$ for
+    $0 \le y \le x \le 1$ and $x^2$ for $0 \le x \le y \le 1$, and deduce the joint density.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>For $y \le x$: $\{X \le x\} = \{U_1 \le x, U_2 \le x\}$, probability $x^2$. Within it, $\{Y &gt; y\}$ means both $U_i \in (y, x]$,
+      probability $(x - y)^2$ (independence lets the probabilities multiply). So $F = x^2 - (x - y)^2 = 2xy - y^2$. For
+      $x \le y$: $X \le x$ forces $Y \le X \le x \le y$, so $F = \P[X \le x] = x^2$. Then
+      $\partial^2 F/\partial x \partial y = \partial_x(2x - 2y) = 2$ on $y &lt; x$ and $0$ on $y &gt; x$.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 5 (joint CDFs, joint PMFs, joint PDFs).</li>
+  <li>Nelsen, <em>An Introduction to Copulas</em>, 2nd ed., ch. 2, on 2-increasing functions and the rectangle inequality.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="mixed-random-variables.html"><span class="dir">← previous</span><span class="t">2.5 Mixed random variables and the delta function</span></a>
+  <a class="next" href="marginals-independence.html"><span class="dir">next →</span><span class="t">3.2 Marginals and independence</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("triangle", (fig, { scope, rng, colors }) => {
+  const N = 1500;
+  const tIn = fig.querySelector("[data-t]"), out = fig.querySelector("[data-p]");
+  let seed = 4;
+
+  function draw() {
+    const t = +tIn.value;
+    fig.querySelector("[data-t-out]").value = t.toFixed(2);
+    // keep the unit square square
+    const { w, h } = scope.axes([0, 1], [0, 1], { xticks: 0, yticks: 0, fmt: () => "" });
+    const a = (w - 54) / (h - 40);
+    const { sx, sy, ctx } = scope.axes([0.5 - a / 2, 0.5 + a / 2], [0, 1], { xticks: 0, yticks: 2, fmt: (v) => v.toFixed(1) });
+    scope.trace([0, 1, 1, 0], [0, 0, 1, 0], { color: colors.line, width: 1, glow: false });
+    const u = rng(seed);
+    let hit = 0;
+    for (let i = 0; i < N; i++) {
+      const u1 = u(), u2 = u(), x = Math.max(u1, u2), y = Math.min(u1, u2), inB = x + y <= t;
+      hit += inB;
+      ctx.fillStyle = inB ? colors.accent : colors.fgFaint;
+      ctx.fillRect(sx(x) - 1, sy(y) - 1, 2, 2);
+    }
+    scope.trace([Math.max(0, t - 1), Math.min(1, t)], [t - Math.max(0, t - 1), t - Math.min(1, t)], { color: colors.alt, width: 1.4 });
+    scope.label("x", 1.02, 0.03, { color: colors.fgFaint });
+    scope.label("y", -0.05, 0.97, { color: colors.fgFaint });
+    const exact = t <= 1 ? (t * t) / 2 : 1 - 2 * (1 - t / 2) ** 2;
+    out.textContent = `Monte Carlo ${(hit / N).toFixed(3)}  exact ${exact.toFixed(3)}`;
+  }
+  tIn.addEventListener("input", draw);
+  fig.querySelector("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

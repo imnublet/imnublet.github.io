@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bivariate Gaussian random variables — Learn — Sayf</title>
+<meta name="description" content="The bivariate normal density, its construction from independent normals, Gaussian marginals and linear conditionals, elliptical contours and why uncorrelated means independent here." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 3.6" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 3.6</span>
+    <h1>Bivariate Gaussian random variables</h1>
+    <p class="deck">Five parameters, elliptical contours, and conditionals that are <em>Gaussian with a linear mean</em>.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>30 min</span>
+      <span>Y&amp;G ch. 5, 7</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 3.6" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>write the bivariate Gaussian density and interpret its five parameters;</li>
+    <li>build a bivariate Gaussian from two independent standard normals, and factor its density into a marginal and a conditional;</li>
+    <li>state and prove that its marginals are Gaussian and its conditionals Gaussian with a linear mean;</li>
+    <li>prove that jointly Gaussian and uncorrelated implies independent, and that linear combinations are Gaussian;</li>
+    <li>compute the probability inside a contour ellipse.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Definition</span>The bivariate normal density</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">bivariate Gaussian</span></span>
+  <p>$X$ and $Y$ are <strong>bivariate Gaussian</strong> with parameters $\mu_1, \mu_2 \in \R$, $\sigma_1, \sigma_2 &gt; 0$ and $\rho \in (-1, 1)$ if</p>
+  $$f_{X,Y}(x, y) = \frac{1}{2\pi\sigma_1\sigma_2\sqrt{1 - \rho^2}}\exp\!\Big(-\frac{q(x, y)}{2}\Big), \qquad
+    q(x, y) = \frac{z_1^2 - 2\rho z_1 z_2 + z_2^2}{1 - \rho^2}, \tag{1}$$
+  <p>where $z_1 = (x - \mu_1)/\sigma_1$ and $z_2 = (y - \mu_2)/\sigma_2$ are the standardised coordinates.</p>
+</div>
+
+<p>The quadratic form $q$ is positive definite when $|\rho| &lt; 1$ (its discriminant $4\rho^2 - 4 &lt; 0$), so the density decays in every
+direction and its level sets $\{q = c\}$ are ellipses. In lesson 4.4 the same formula is written as
+$\frac{1}{2\pi\sqrt{\det \Sigma}}\exp\big(-\tfrac12(\mathbf x - \boldsymbol\mu)^{\mathsf T}\Sigma^{-1}(\mathbf x - \boldsymbol\mu)\big)$ with a $2 \times 2$
+covariance matrix $\Sigma$; here we work with coordinates, which keeps every step elementary.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Structure</span>One square completed</h2>
+<p>Everything about the bivariate Gaussian follows from one algebraic identity. Completing the square in $z_2$,</p>
+$$z_1^2 - 2\rho z_1z_2 + z_2^2 = (1 - \rho^2)\,z_1^2 + (z_2 - \rho z_1)^2,$$
+<p>as expanding the right side confirms. Dividing by $1 - \rho^2$,</p>
+$$q(x, y) = z_1^2 + \frac{(z_2 - \rho z_1)^2}{1 - \rho^2}. \tag{2}$$
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">factorisation into marginal times conditional</span></span>
+  <p>The density (1) factors as $f_{X,Y}(x, y) = f_X(x)\,f_{Y|X}(y \mid x)$ with</p>
+  $$X \sim \mathcal N(\mu_1, \sigma_1^2), \qquad
+    Y \mid X = x \;\sim\; \mathcal N\Big(\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1),\;\; \sigma_2^2(1 - \rho^2)\Big). \tag{3}$$
+  <p>By symmetry $Y \sim \mathcal N(\mu_2, \sigma_2^2)$, and $X \mid Y = y$ is Gaussian with mean $\mu_1 + \rho\frac{\sigma_1}{\sigma_2}(y - \mu_2)$ and variance $\sigma_1^2(1 - \rho^2)$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Insert (2) into (1) and split the exponential and the constant:</p>
+  $$f_{X,Y}(x, y) = \underbrace{\frac{1}{\sqrt{2\pi}\,\sigma_1}e^{-z_1^2/2}}_{g(x)}\;\cdot\;\underbrace{\frac{1}{\sqrt{2\pi}\,\sigma_2\sqrt{1 - \rho^2}}\exp\Big(-\frac{(z_2 - \rho z_1)^2}{2(1 - \rho^2)}\Big)}_{k(y; x)}.$$
+  <p>Since $\sigma_2(z_2 - \rho z_1) = y - \mu_2 - \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1) = y - m(x)$, the second factor is
+  $\frac{1}{\sqrt{2\pi s^2}}e^{-(y - m(x))^2/2s^2}$ with $s^2 = \sigma_2^2(1-\rho^2)$: for each fixed $x$, the $\mathcal N(m(x), s^2)$ density in $y$, which
+  integrates to $1$. So by lesson 3.2, Theorem 1, $f_X(x) = \int f_{X,Y}(x, y)\d y = g(x)$, the $\mathcal N(\mu_1, \sigma_1^2)$ density, and then
+  $f_{Y|X}(y \mid x) = f_{X,Y}/f_X = k(y; x)$ by definition (lesson 3.5). In particular (1) integrates to $1$. The statements for $Y$ follow by
+  exchanging the roles of $x$ and $y$, as $q$ is symmetric under $(z_1, z_2) \leftrightarrow (z_2, z_1)$. <span class="qed">∎</span></p>
+</details>
+
+<p>Three facts are packed into (3).</p>
+<ul>
+  <li><strong>The conditional mean is linear</strong> in $x$, so by lesson 3.5, exercise 5, $\E[Y \mid X]$ <em>is</em> the best linear predictor of
+  lesson 3.3. For Gaussians, linear regression loses nothing.</li>
+  <li><strong>The conditional variance does not depend on $x$</strong> and is smaller than $\sigma_2^2$ by the factor $1 - \rho^2$: observing $X$
+  explains the fraction $\rho^2$ of the variance of $Y$, whatever value is observed (homoscedasticity).</li>
+  <li><strong>Regression to the mean</strong>: in standard units the conditional mean is $\rho z_1$, and $|\rho| &lt; 1$ pulls predictions towards the
+  mean. Children of very tall parents are tall, but on average less extreme.</li>
+</ul>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">ρ is the correlation coefficient</span></span>
+  <p>$\Cov[X, Y] = \rho\,\sigma_1\sigma_2$, so $\rho_{X,Y} = \rho$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>By the tower property and taking out what is known (lesson 3.5),
+  $\E[(X - \mu_1)(Y - \mu_2)] = \E\big[(X - \mu_1)\,\E[Y - \mu_2 \mid X]\big] = \E\big[(X - \mu_1)\cdot\rho\tfrac{\sigma_2}{\sigma_1}(X - \mu_1)\big] = \rho\tfrac{\sigma_2}{\sigma_1}\sigma_1^2$. <span class="qed">∎</span></p>
+</details>
+
+<h2><span class="sec"><span class="n">§ 03</span> Construction</span>From two independent normals</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">construction</span></span>
+  <p>Let $Z_1, Z_2 \iid \mathcal N(0, 1)$. Then</p>
+  $$X = \mu_1 + \sigma_1 Z_1, \qquad Y = \mu_2 + \sigma_2\big(\rho Z_1 + \sqrt{1 - \rho^2}\,Z_2\big) \tag{4}$$
+  <p>are bivariate Gaussian with density (1).</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>The map $(z_1, z_2) \mapsto (x, y)$ in (4) is an affine bijection of $\R^2$; its inverse is $z_1 = (x - \mu_1)/\sigma_1$,
+  $z_2' = \big((y - \mu_2)/\sigma_2 - \rho z_1\big)/\sqrt{1 - \rho^2}$, a triangular linear map with Jacobian determinant
+  $\frac{1}{\sigma_1}\cdot\frac{1}{\sigma_2\sqrt{1 - \rho^2}}$. By the change-of-variables formula (lesson 3.4, Theorem 4) and independence,</p>
+  $$f_{X,Y}(x, y) = \frac{1}{2\pi}e^{-(z_1^2 + z_2'^2)/2}\cdot\frac{1}{\sigma_1\sigma_2\sqrt{1 - \rho^2}},$$
+  <p>and by (2), $z_1^2 + z_2'^2 = q(x, y)$. <span class="qed">∎</span></p>
+</details>
+
+<p>Equation (4) is how bivariate Gaussians are sampled (the demo does exactly this), and it is the $2 \times 2$ case of
+$\mathbf X = \boldsymbol\mu + L\mathbf Z$ with $L$ the Cholesky factor of $\Sigma$ (lesson 4.4). It also explains why $\rho$ must lie strictly
+inside $(-1, 1)$ for a density to exist: at $|\rho| = 1$, $Y$ is an affine function of $X$ and the pair lives on a line.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Consequences</span>Independence, linear combinations, ellipses</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">uncorrelated jointly Gaussian variables are independent</span></span>
+  <p>If $X, Y$ are bivariate Gaussian with $\rho = 0$, they are independent.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>With $\rho = 0$, $q = z_1^2 + z_2^2$ and (1) is $\frac{1}{\sqrt{2\pi}\sigma_1}e^{-z_1^2/2}\cdot\frac{1}{\sqrt{2\pi}\sigma_2}e^{-z_2^2/2} = f_X(x)f_Y(y)$ on all of $\R^2$;
+  apply lesson 3.2, Theorem 2(c). <span class="qed">∎</span></p>
+</details>
+
+<p>The hypothesis is <em>joint</em> Gaussianity. Two Gaussian marginals with zero correlation are not enough: the random-sign pair
+$Y = SX$ of lessons 3.2–3.3 has $\mathcal N(0,1)$ marginals and $\rho = 0$, yet $|Y| = |X|$. It is not bivariate Gaussian (its joint law sits on the
+two diagonals).</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 5<span class="name">linear combinations are Gaussian</span></span>
+  <p>If $X, Y$ are bivariate Gaussian, then for constants $a, b$ not both zero,</p>
+  $$aX + bY \sim \mathcal N\big(a\mu_1 + b\mu_2,\;\; a^2\sigma_1^2 + 2ab\rho\sigma_1\sigma_2 + b^2\sigma_2^2\big). \tag{5}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>By Theorem 3 we may take $(X, Y)$ as in (4), so $aX + bY = c + \alpha Z_1 + \beta Z_2$ for constants $c, \alpha, \beta$. It suffices to show
+  $\alpha Z_1 + \beta Z_2 \sim \mathcal N(0, \alpha^2 + \beta^2)$ when $(\alpha, \beta) \ne 0$. Let $r = \sqrt{\alpha^2 + \beta^2}$ and rotate: $W_1 = (\alpha Z_1 + \beta Z_2)/r$,
+  $W_2 = (-\beta Z_1 + \alpha Z_2)/r$. This is an orthogonal linear map, with $|\det| = 1$ and $w_1^2 + w_2^2 = z_1^2 + z_2^2$. Since the density
+  of $(Z_1, Z_2)$, $\frac1{2\pi}e^{-(z_1^2 + z_2^2)/2}$, depends only on $z_1^2 + z_2^2$, the change-of-variables formula gives $(W_1, W_2)$ the same density.
+  So $W_1 \sim \mathcal N(0,1)$ and $\alpha Z_1 + \beta Z_2 = rW_1 \sim \mathcal N(0, r^2)$. The mean and variance in (5) then follow from linearity
+  and Theorem 2 of lesson 3.3 with $\Cov[X, Y] = \rho\sigma_1\sigma_2$. <span class="qed">∎</span></p>
+</details>
+
+<p>Rotation invariance of the standard bivariate normal is the deep fact here: it is the only distribution with independent
+coordinates that looks the same in every orthonormal frame (Maxwell's characterisation). It is why projections of Gaussian
+data onto any direction are Gaussian, the basis of PCA's probabilistic interpretation and of random projections.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 6<span class="name">probability inside a contour</span></span>
+  <p>$q(X, Y)$ has the Exp$(\tfrac12)$ law (chi-squared with two degrees of freedom), so the ellipse $\{q \le c\}$ has probability</p>
+  $$\P\big[q(X, Y) \le c\big] = 1 - e^{-c/2}. \tag{6}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>In the construction (4), $z_1 = Z_1$ and $z_2' = Z_2$, so by (2), $q(X, Y) = Z_1^2 + Z_2^2 = R^2$ in the polar notation of lesson 3.4, Theorem 5,
+  which showed $R^2 \sim \text{Exp}(\tfrac12)$. <span class="qed">∎</span></p>
+</details>
+
+<p>The "one-sigma ellipse" $q \le 1$ therefore holds only $1 - e^{-1/2} \approx 39.3\%$ of the mass, not the $68.3\%$ of the one-dimensional
+$\pm1\sigma$ interval; the $95\%$ ellipse is $q \le -2\ln 0.05 \approx 5.99$. Confidence ellipses drawn with the one-dimensional numbers are
+too small.</p>
+
+<figure class="demo" data-demo="bivariate">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">bivariate Gaussian · contours and regression</span></div>
+    <canvas aria-label="Samples from a bivariate Gaussian with contour ellipses, the regression line of Y on X, and the principal axis"></canvas>
+    <div class="controls">
+      <label>ρ <input type="range" min="-0.95" max="0.95" step="0.01" value="0.7" data-r /> <output data-r-out>0.70</output></label>
+      <label>σ₂/σ₁ <input type="range" min="0.4" max="2" step="0.05" value="1" data-s /> <output data-s-out>1.00</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-vals></span>
+    </div>
+  </div>
+  <figcaption>1500 samples from (4) with $\mu = 0$, $\sigma_1 = 1$. Ellipses: $q = 1$ and $q = 4$. Bright line: $\E[Y \mid X = x] = \rho\frac{\sigma_2}{\sigma_1}x$. Grey dashed:
+  the major axis of the ellipses. They differ unless $\rho = 0$ or $|\rho| \to 1$: regressing $Y$ on $X$ is not the same as fitting the cloud's
+  long axis. Readout: fraction of samples inside each ellipse against (6), $0.393$ and $0.865$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>Sampling, conditioning, and the ellipse law</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(0)
+n, (m1, m2), (s1, s2), rho = 2_000_000, (1.0, -2.0), (2.0, 0.5), 0.8
+
+z1, z2 = rng.standard_normal((2, n))
+x = m1 + s1 * z1                                            # construction (4)
+y = m2 + s2 * (rho * z1 + np.sqrt(1 - rho**2) * z2)
+print(np.corrcoef(x, y)[0, 1])                              # ~0.8
+
+# conditional law (3) from a thin slab around x0
+x0 = 3.0
+sl = np.abs(x - x0) &lt; 0.02
+print(y[sl].mean(), m2 + rho * s2 / s1 * (x0 - m1))         # conditional mean
+print(y[sl].var(), s2**2 * (1 - rho**2))                    # conditional variance
+
+# (5): a linear combination
+w = 2 * x - 3 * y
+print(w.mean(), w.var(), 4 * s1**2 - 12 * rho * s1 * s2 + 9 * s2**2)
+
+# (6): mass inside the ellipse q &lt;= c
+a, b = (x - m1) / s1, (y - m2) / s2
+q = (a**2 - 2 * rho * a * b + b**2) / (1 - rho**2)
+print([((q &lt;= c).mean().round(4), round(1 - np.exp(-c / 2), 4)) for c in (1, 4, 5.99)])</code></pre></div>
+  </div>
+  <figcaption>The slab estimates carry Monte Carlo noise and a small bias from the slab's width; shrink the slab and add samples to see them converge.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>For a standard bivariate Gaussian ($\mu = 0$, $\sigma_1 = \sigma_2 = 1$), find the law of $X + Y$ and of $X - Y$, and show they are independent.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By (5), $X + Y \sim \mathcal N(0, 2 + 2\rho)$ and $X - Y \sim \mathcal N(0, 2 - 2\rho)$. For independence, find the joint density of
+      $(U, V) = (X + Y, X - Y)$. The inverse map is $x = (u + v)/2$, $y = (u - v)/2$ with $|\det J| = \tfrac12$. Since $x^2 + y^2 = (u^2 + v^2)/2$ and
+      $xy = (u^2 - v^2)/4$,
+      $$q = \frac{(u^2 + v^2)/2 - \rho(u^2 - v^2)/2}{1 - \rho^2} = \frac{u^2}{2(1 + \rho)} + \frac{v^2}{2(1 - \rho)}.$$
+      So $f_{U,V}$ is a constant times $e^{-u^2/4(1+\rho)}e^{-v^2/4(1-\rho)}$ on all of $\R^2$, a product, and $U, V$ are independent by lesson 3.2, Theorem 3.</p>
+    </details>
+  </li>
+  <li>
+    <p>Heights of fathers and sons (in cm) are bivariate Gaussian with means $175$ and $177$, standard deviations $7$ and $7$, $\rho = 0.5$. Predict
+    a son's height when his father is $189$ cm, and give a $95\%$ prediction interval.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By (3), the conditional mean is $177 + 0.5 \cdot \frac77(189 - 175) = 184$ and the conditional standard deviation $7\sqrt{0.75} \approx 6.06$. The
+      interval is $184 \pm 1.96 \cdot 6.06 \approx [172.1, 195.9]$. The father is $2\sigma$ above average; the predicted son only $1\sigma$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that $\Var[Y \mid X] \le \Var[Y]$ for a bivariate Gaussian, with equality iff $X, Y$ are independent.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\Var[Y \mid X] = \sigma_2^2(1 - \rho^2) \le \sigma_2^2$, with equality iff $\rho = 0$, which by Theorem 4 (and the converse, lesson 3.3) is independence.
+      For general laws the conditional variance can exceed $\Var[Y]$ for some values of $X$; only its average cannot, by the law of total variance.</p>
+    </details>
+  </li>
+  <li>
+    <p>(Sheppard's formula.) For a standard bivariate Gaussian, show $\P[X &gt; 0, Y &gt; 0] = \frac14 + \frac{\arcsin\rho}{2\pi}$.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Write $\rho = \cos\alpha$ with $\alpha \in (0, \pi)$, so $\sqrt{1 - \rho^2} = \sin\alpha$, and in polar form $Z_1 = R\cos\Theta$, $Z_2 = R\sin\Theta$ with $\Theta$
+      uniform and independent of $R$ (lesson 3.4). By (4), $X = R\cos\Theta$ and $Y = R(\cos\alpha\cos\Theta + \sin\alpha\sin\Theta) = R\cos(\Theta - \alpha)$. Since $R &gt; 0$,
+      the event is $\{\cos\Theta &gt; 0, \cos(\Theta - \alpha) &gt; 0\}$: $\Theta$ within $\pi/2$ of both $0$ and $\alpha$, an arc of length $\pi - \alpha$. So the probability is
+      $\frac{\pi - \alpha}{2\pi} = \frac12 - \frac{\arccos\rho}{2\pi} = \frac14 + \frac{\arcsin\rho}{2\pi}$, using $\arccos\rho = \frac\pi2 - \arcsin\rho$.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 5 (bivariate Gaussian random variables) and ch. 7 (conditioning two random variables).</li>
+  <li>Bishop, <em>Pattern Recognition and Machine Learning</em>, § 2.3, for conditionals and marginals of Gaussians in matrix form.</li>
+  <li>Galton, "Regression towards mediocrity in hereditary stature", <em>J. Anthropol. Inst.</em> 15 (1886), where the regression line first appeared.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="conditional-expectation.html"><span class="dir">← previous</span><span class="t">3.5 Conditional distributions and conditional expectation</span></a>
+  <span class="next"><span class="dir">next →</span><span class="t">4.1 Random vectors and their distributions</span></span>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("bivariate", (fig, { scope, rng, randn, colors }) => {
+  const N = 1500, R = 3.6;
+  const q = (s) => fig.querySelector(s);
+  const rIn = q("[data-r]"), sIn = q("[data-s]"), vals = q("[data-vals]");
+  let seed = 41;
+
+  function draw() {
+    const r = +rIn.value, s2 = +sIn.value, c = Math.sqrt(1 - r * r);
+    q("[data-r-out]").value = r.toFixed(2);
+    q("[data-s-out]").value = s2.toFixed(2);
+    const { w, h } = scope.axes([-R, R], [-R, R], { xticks: 0, yticks: 0, fmt: () => "" });
+    const a = (w - 54) / (h - 40);
+    const { sx, sy, ctx } = scope.axes([-R * a, R * a], [-R, R], { xticks: 0, yticks: 2, fmt: (v) => v.toFixed(1) });
+    const u = rng(seed);
+    let in1 = 0, in4 = 0;
+    ctx.fillStyle = colors.fgDim;
+    for (let i = 0; i < N; i++) {
+      const z1 = randn(u), z2 = randn(u), x = z1, y = s2 * (r * z1 + c * z2);
+      const qq = z1 * z1 + z2 * z2;
+      in1 += qq <= 1; in4 += qq <= 4;
+      ctx.fillRect(sx(x) - 1, sy(y) - 1, 2, 2);
+    }
+    // ellipses q = k: image of the circle of radius sqrt(k) under (4)
+    const ts = Array.from({ length: 181 }, (_, i) => (2 * Math.PI * i) / 180);
+    for (const k of [1, 4]) {
+      const rr = Math.sqrt(k);
+      scope.trace(ts.map((t) => rr * Math.cos(t)), ts.map((t) => s2 * (r * rr * Math.cos(t) + c * rr * Math.sin(t))), { color: colors.alt, width: 1.1, glow: false });
+    }
+    // principal (major) axis of the covariance [[1, r s2], [r s2, s2^2]]
+    const sxy = r * s2, ang = 0.5 * Math.atan2(2 * sxy, 1 - s2 * s2), L = 2 * R * a;
+    scope.trace([-L * Math.cos(ang), L * Math.cos(ang)], [-L * Math.sin(ang), L * Math.sin(ang)], { color: colors.fgFaint, width: 1, glow: false, dash: [4, 4] });
+    scope.trace([-R * a, R * a], [-R * a * r * s2, R * a * r * s2]);
+    vals.textContent = `inside q≤1 ${(in1 / N).toFixed(3)}  q≤4 ${(in4 / N).toFixed(3)}`;
+  }
+  [rIn, sIn].forEach((el) => el.addEventListener("input", draw));
+  q("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

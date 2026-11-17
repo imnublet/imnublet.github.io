@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Conditional distributions and conditional expectation — Learn — Sayf</title>
+<meta name="description" content="Conditional PMFs and densities, conditional expectation as a random variable, the tower property, the law of total variance and the MMSE property." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 3.5" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 3.5</span>
+    <h1>Conditional distributions and conditional expectation</h1>
+    <p class="deck">Observe $Y$, and $X$ gets a new distribution. Its mean is <em>the best possible prediction</em> of $X$ from $Y$.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>30 min</span>
+      <span>Y&amp;G ch. 7</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 3.5" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>condition a random variable on an event, and on the value of another random variable;</li>
+    <li>justify the conditional density $f_{X|Y} = f_{X,Y}/f_Y$ as a limit, and know where that limit is fragile;</li>
+    <li>treat $\E[X \mid Y]$ as a random variable and prove the tower property and the law of total variance;</li>
+    <li>prove that $\E[X \mid Y]$ is the best predictor of $X$ from $Y$ in mean squared error.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Events</span>Conditioning on an event</h2>
+<p>Lesson 1.3 conditioned events on events. Conditioning a random variable on an event $B$ with $\P[B] &gt; 0$ means using the
+probability measure $\P[\,\cdot \mid B]$ in place of $\P$ throughout. So $X$ given $B$ has a conditional PMF
+$P_{X|B}(x) = \P[X = x \mid B]$, a conditional CDF $F_{X|B}(x) = \P[X \le x \mid B]$, and when $B = \{X \in A\}$ for continuous $X$, a
+conditional density</p>
+$$f_{X|B}(x) = \frac{f_X(x)}{\P[X \in A]} \quad (x \in A), \qquad 0 \text{ otherwise}. \tag{1}$$
+<p>(Differentiate $F_{X|B}(x) = \P[X \le x, X \in A]/\P[B] = \int_{(-\infty, x] \cap A} f_X / \P[B]$.) The shape inside $A$ is kept and
+renormalised; outside $A$ it is erased. Conditional expectations follow: $\E[X \mid B] = \int x\,f_{X|B}(x)\d x$. Example:
+memorylessness says that for $X \sim \text{Exp}(\lambda)$, $X - s$ given $\{X &gt; s\}$ is again Exp$(\lambda)$, so
+$\E[X \mid X &gt; s] = s + 1/\lambda$.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Variables</span>Conditioning on $Y = y$</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">conditional PMF and density</span></span>
+  <p>For discrete $X, Y$ and $P_Y(y) &gt; 0$: $\displaystyle P_{X|Y}(x \mid y) = \frac{P_{X,Y}(x, y)}{P_Y(y)}$.</p>
+  <p>For jointly continuous $X, Y$ and $f_Y(y) &gt; 0$:</p>
+  $$f_{X|Y}(x \mid y) = \frac{f_{X,Y}(x, y)}{f_Y(y)}. \tag{2}$$
+</div>
+
+<p>The discrete definition is just $\P[X = x \mid Y = y]$. The continuous one cannot be, since $\P[Y = y] = 0$. It is justified as a limit
+of conditioning on thin slabs.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">the conditional density as a limit</span></span>
+  <p>Suppose $f_{X,Y}$ is continuous and bounded near the line $\{(u, y) : u \in \R\}$, dominated there by an integrable function of $u$, and
+  $f_Y(y) &gt; 0$. Then for every $x$,</p>
+  $$\lim_{\Delta \to 0}\P[X \le x \mid y &lt; Y \le y + \Delta] = \int_{-\infty}^{x} f_{X|Y}(u \mid y)\d u.$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>By definition of conditional probability and lesson 3.1, Theorem 3(b),</p>
+  $$\P[X \le x \mid y &lt; Y \le y + \Delta] = \frac{\int_{-\infty}^x \frac1\Delta\int_y^{y+\Delta} f_{X,Y}(u, v)\d v \d u}{\frac1\Delta\int_y^{y + \Delta} f_Y(v)\d v}.$$
+  <p>The inner average $\frac1\Delta\int_y^{y+\Delta} f_{X,Y}(u, v)\d v \to f_{X,Y}(u, y)$ for each $u$ by continuity (as in the sifting proof of
+  lesson 2.5), and dominated convergence passes the limit through $\int_{-\infty}^x \d u$. The denominator tends to $f_Y(y) &gt; 0$
+  by the same argument applied to $f_Y = \int f_{X,Y}\d u$. The ratio of limits is the right side. <span class="qed">∎</span></p>
+</details>
+
+<div class="callout">
+  <span class="lbl">The Borel paradox</span>
+  <p>Conditioning on a probability-zero event depends on how the event is approached. A point uniform on a sphere, conditioned to lie
+  on a great circle, is uniform along it if the circle is the equator approached by latitude bands, but not if it is a meridian
+  approached by longitude wedges (the wedges are fatter near the equator). Formula (2) is the limit along slabs $\{y &lt; Y \le y + \Delta\}$
+  in the variable $Y$; reparameterise $Y$ and the conditional density given "the same" event can change. In practice, condition on
+  the random variable you actually observe.</p>
+</div>
+
+<p>For each fixed $y$, (2) is a density in $x$: non-negative, and integrating to $\int f_{X,Y}(x, y)\d x / f_Y(y) = 1$ by lesson 3.2. Rearranged,
+$f_{X,Y}(x, y) = f_{X|Y}(x \mid y)\,f_Y(y)$: the joint law can be <em>built</em> by drawing $Y$ first and then $X$ from its conditional law,
+which is how generative models are specified. And Bayes' rule holds for densities,</p>
+$$f_{Y|X}(y \mid x) = \frac{f_{X|Y}(x \mid y)\,f_Y(y)}{\int f_{X|Y}(x \mid y')\,f_Y(y')\d y'}, \tag{3}$$
+<p>by writing $f_{X,Y}$ both ways and using (2) of lesson 3.2 for the denominator. $X$ and $Y$ are independent exactly when
+$f_{X|Y}(x \mid y) = f_X(x)$ wherever $f_Y(y) &gt; 0$.</p>
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">the triangle again</span></span>
+  <p>For $f_{X,Y} = 2$ on $\{0 \le y \le x \le 1\}$, $f_Y(y) = 2(1 - y)$, so for $0 \le y &lt; 1$,
+  $f_{X|Y}(x \mid y) = \frac{2}{2(1-y)} = \frac{1}{1 - y}$ on $y \le x \le 1$: given the smaller of two uniforms, the larger is uniform on the
+  rest of the interval. Similarly $f_{Y|X}(y \mid x) = 1/x$ on $[0, x]$.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 03</span> Means</span>Conditional expectation as a random variable</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">conditional expectation</span></span>
+  <p>$\E[X \mid Y = y] = \sum_x x\,P_{X|Y}(x \mid y)$ or $\int x\,f_{X|Y}(x \mid y)\d x$, a number for each $y$. Writing it as a function
+  $h(y)$, the <strong>conditional expectation</strong> of $X$ given $Y$ is the random variable</p>
+  $$\E[X \mid Y] = h(Y). \tag{4}$$
+</div>
+
+<p>In the triangle example, $\E[X \mid Y = y] = \frac{1 + y}{2}$ (the midpoint of $[y, 1]$), so $\E[X \mid Y] = \frac{1 + Y}{2}$, and
+$\E[Y \mid X] = X/2$. $\E[X \mid Y]$ is "$X$ averaged over everything except the information in $Y$". Conditional versions of every
+property of expectation hold, since $f_{X|Y}(\cdot \mid y)$ is a density: linearity, $\E[g(Y)X \mid Y] = g(Y)\E[X \mid Y]$ ("taking out
+what is known", because given $Y = y$ the factor $g(y)$ is a constant), and $\E[X \mid Y] = \E[X]$ when $X, Y$ are independent.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">tower property (law of iterated expectations)</span></span>
+  <p>If $\E|X| &lt; \infty$, then $\E\big[\E[X \mid Y]\big] = \E[X]$. More generally $\E\big[g(Y)\,\E[X \mid Y]\big] = \E[g(Y)\,X]$ whenever
+  $\E|g(Y)X| &lt; \infty$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Jointly continuous case. By LOTUS for the function $h(Y)g(Y)$, then (2), then Fubini (justified by the integrability
+  assumption, after running the same computation with absolute values):</p>
+  $$\E[g(Y)h(Y)] = \int g(y)\Big(\int x\,\frac{f_{X,Y}(x,y)}{f_Y(y)}\d x\Big) f_Y(y)\d y = \iint g(y)\,x\,f_{X,Y}(x, y)\d x\d y = \E[g(Y)X].$$
+  <p>Take $g = 1$ for the first statement. The discrete case is identical with sums. <span class="qed">∎</span></p>
+</details>
+
+<p>The tower property is the law of total probability for means: average the conditional means with the weights of $Y$. In the
+triangle, $\E[X] = \E[(1 + Y)/2] = (1 + \tfrac13)/2 = \tfrac23$, as computed directly in lesson 3.3.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">law of total variance</span></span>
+  <p>If $\E[X^2] &lt; \infty$, then with $\Var[X \mid Y] = \E\big[(X - \E[X \mid Y])^2 \mid Y\big]$,</p>
+  $$\Var[X] = \E\big[\Var[X \mid Y]\big] + \Var\big[\E[X \mid Y]\big]. \tag{5}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Write $h = \E[X \mid Y]$ and $X - \mu_X = (X - h) + (h - \mu_X)$. Squaring and taking expectations,</p>
+  $$\Var[X] = \E[(X - h)^2] + 2\,\E[(X - h)(h - \mu_X)] + \E[(h - \mu_X)^2].$$
+  <p>The first term is $\E\big[\E[(X - h)^2 \mid Y]\big] = \E[\Var[X \mid Y]]$ by the tower property. The last is $\Var[h]$, since $\E[h] = \mu_X$ by the tower
+  property. The middle term vanishes: $h - \mu_X = g(Y)$ is a function of $Y$, and Theorem 2 gives $\E[g(Y)X] = \E[g(Y)h]$, i.e.
+  $\E[(X - h)g(Y)] = 0$. <span class="qed">∎</span></p>
+</details>
+
+<p>Total variance = unexplained (within-group) + explained (between-group) variance: the decomposition behind ANOVA, behind the
+$R^2$ of a regression, and behind the split of predictive uncertainty into aleatoric and epistemic parts in Bayesian deep learning.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Prediction</span>The conditional mean is the best predictor</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">MMSE property</span></span>
+  <p>If $\E[X^2] &lt; \infty$, then for every function $g$ with $\E[g(Y)^2] &lt; \infty$,</p>
+  $$\E\big[(X - g(Y))^2\big] = \E\big[(X - \E[X \mid Y])^2\big] + \E\big[(\E[X \mid Y] - g(Y))^2\big] \ge \E\big[(X - \E[X \mid Y])^2\big]. \tag{6}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>With $h(Y) = \E[X \mid Y]$, expand $X - g = (X - h) + (h - g)$. The cross term is $2\,\E[(X - h(Y))\,(h(Y) - g(Y))]$, which is $0$ by the
+  orthogonality shown at the end of the previous proof, applied to the function $h - g$ of $Y$. <span class="qed">∎</span></p>
+</details>
+
+<p>So among <em>all</em> functions of $Y$, linear or not, $\E[X \mid Y]$ minimises the mean squared error, and the error of any other
+predictor exceeds the minimum by exactly its mean squared distance from $\E[X \mid Y]$. Geometrically, $\E[X \mid Y]$ is the
+orthogonal projection of $X$ onto the space of square-integrable functions of $Y$; the best linear predictor of lesson 3.3 is the
+projection onto the smaller space of affine functions. A regression network trained with squared loss is estimating
+$\E[X \mid Y]$, which is why its outputs are conditional means, not typical values.</p>
+
+<figure class="demo" data-demo="cond-mean">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">conditional mean vs best line</span></div>
+    <canvas aria-label="Scatter of a nonlinear pair, the conditional mean curve, the best linear predictor, and a slab of points near a chosen value"></canvas>
+    <div class="controls">
+      <label>y₀ <input type="range" min="-2" max="2" step="0.05" value="1.2" data-y /> <output data-y-out>1.20</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-vals></span>
+    </div>
+  </div>
+  <figcaption>$Y \sim \mathcal N(0,1)$ on the horizontal axis and $X = Y^2 + \tfrac12\varepsilon$ with independent $\varepsilon \sim \mathcal N(0,1)$ vertically, so
+  $\E[X \mid Y] = Y^2$ (bright curve). Here $\Cov[X, Y] = \E[Y^3] = 0$, so the best <em>linear</em> predictor is the flat line $\E[X] = 1$ (dashed): its
+  MSE is $\Var[X] = 2.25$, against $0.25$ for the conditional mean. The highlighted slab $|Y - y_0| &lt; 0.1$ approximates conditioning on
+  $Y = y_0$; its average approaches $y_0^2$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>Tower property and total variance by simulation</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(0)
+n = 2_000_000
+
+# hierarchical model: Y ~ N(0,1), X | Y ~ N(Y^2, 1/4)
+y = rng.standard_normal(n)
+x = y**2 + 0.5 * rng.standard_normal(n)
+h = y**2                                           # E[X | Y]
+print(x.mean(), h.mean())                          # tower: both ~1
+print(x.var(), 0.25 + h.var())                     # (5): ~2.25 = 0.25 + 2
+
+# MMSE: the conditional mean beats the best line
+a, b = np.polyfit(y, x, 1)
+print(np.mean((x - h) ** 2), np.mean((x - a * y - b) ** 2))   # ~0.25 vs ~2.25
+
+# random sum S = X_1 + ... + X_N, N ~ Poisson(4), X_i ~ Exp(1): E[S] = 4, Var[S] = 8
+N = rng.poisson(4, 200_000)
+S = np.array([rng.exponential(1, k).sum() for k in N])
+print(S.mean(), S.var())</code></pre></div>
+  </div>
+  <figcaption>The random sum is exercise 3: condition on $N$ and apply (5).</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>In the triangle example, verify (5) for $X$ given $Y$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Given $Y = y$, $X$ is uniform on $[y, 1]$, so $\Var[X \mid Y] = (1 - Y)^2/12$. With $f_Y(y) = 2(1-y)$,
+      $\E[(1 - Y)^2] = \int_0^1 2(1-y)^3\d y = \tfrac12$, so $\E[\Var[X \mid Y]] = \tfrac1{24}$. And $\Var[(1 + Y)/2] = \tfrac14\Var[Y] = \tfrac14 \cdot \tfrac1{18} = \tfrac1{72}$.
+      The sum is $\tfrac{3}{72} + \tfrac{1}{72} = \tfrac1{18} = \Var[X]$, as in lesson 3.3.</p>
+    </details>
+  </li>
+  <li>
+    <p>(Poisson thinning.) $N \sim \text{Poisson}(\alpha)$ and, given $N = n$, $K \sim \text{Binomial}(n, p)$. Show $K \sim \text{Poisson}(\alpha p)$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By total probability over $n \ge k$,
+      $$P_K(k) = \sum_{n \ge k}\frac{\alpha^n e^{-\alpha}}{n!}\binom nk p^k(1-p)^{n-k} = \frac{(\alpha p)^k e^{-\alpha}}{k!}\sum_{m \ge 0}\frac{(\alpha(1-p))^m}{m!} = \frac{(\alpha p)^k e^{-\alpha p}}{k!},$$
+      with $m = n - k$. Randomly keeping each event of a Poisson stream with probability $p$ leaves a Poisson stream.</p>
+    </details>
+  </li>
+  <li>
+    <p>(Random sums.) $N$ is a non-negative integer variable, $X_1, X_2, \dots$ are iid with mean $\mu$ and variance $\sigma^2$, independent of $N$, and
+    $S = \sum_{i=1}^N X_i$. Show $\E[S] = \E[N]\mu$ and $\Var[S] = \E[N]\sigma^2 + \Var[N]\mu^2$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Given $N = n$, $S$ is a sum of $n$ independent terms, so $\E[S \mid N] = N\mu$ and $\Var[S \mid N] = N\sigma^2$. The tower property gives
+      $\E[S] = \mu\E[N]$, and (5) gives $\Var[S] = \E[N\sigma^2] + \Var[N\mu]$. With $N \sim$ Poisson$(4)$ and Exp$(1)$ terms: $4$ and $4 + 4 = 8$.</p>
+    </details>
+  </li>
+  <li>
+    <p>$\Lambda \sim \text{Exp}(1)$ and, given $\Lambda = \lambda$, $X \sim \text{Poisson}(\lambda)$. Find $P_X$, $\E[X]$ and $\Var[X]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$P_X(k) = \int_0^\infty e^{-\lambda}\frac{\lambda^k e^{-\lambda}}{k!}\d\lambda = \frac{1}{k!}\int_0^\infty \lambda^k e^{-2\lambda}\d\lambda = \frac{1}{k!}\cdot\frac{k!}{2^{k+1}} = 2^{-(k+1)}$: geometric
+      (failures before the first success, $p = \tfrac12$). $\E[X] = \E[\Lambda] = 1$, and by (5) $\Var[X] = \E[\Lambda] + \Var[\Lambda] = 2$:
+      mixing over the rate inflates the variance above the Poisson value. This overdispersion is why count data are often modelled as
+      negative binomial.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that if $\E[X \mid Y] = a + bY$ is affine, then it coincides with the best linear predictor of lesson 3.3.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By (6), $\E[X \mid Y]$ minimises the MSE over all functions of $Y$, hence over affine ones; the best linear predictor is the unique
+      minimiser over affine functions (the quadratic in lesson 3.3 is strictly convex when $\Var[Y] &gt; 0$). So they are equal, and
+      $b = \Cov[X,Y]/\Var[Y]$. Lesson 3.6 shows this happens for every bivariate Gaussian.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 7 (conditioning a random variable by an event, conditional PMFs and PDFs, conditional expected value).</li>
+  <li>Williams, <em>Probability with Martingales</em>, ch. 9, for conditional expectation given a $\sigma$-algebra, which removes the need for densities.</li>
+  <li>Jaynes, <em>Probability Theory: The Logic of Science</em>, § 15.7, on the Borel–Kolmogorov paradox.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="functions-of-random-variables.html"><span class="dir">← previous</span><span class="t">3.4 Functions of random variables</span></a>
+  <a class="next" href="bivariate-gaussian.html"><span class="dir">next →</span><span class="t">3.6 Bivariate Gaussian random variables</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("cond-mean", (fig, { scope, rng, randn, colors }) => {
+  const N = 1500, HW = 0.1;
+  const yIn = fig.querySelector("[data-y]"), vals = fig.querySelector("[data-vals]");
+  let seed = 31;
+
+  function draw() {
+    const y0 = +yIn.value;
+    fig.querySelector("[data-y-out]").value = y0.toFixed(2);
+    const { sx, sy, ctx } = scope.axes([-2.6, 2.6], [-1, 7], { xticks: 4, yticks: 4, fmt: (v) => +v.toFixed(1) });
+    // slab
+    ctx.save();
+    ctx.fillStyle = colors.lineSoft;
+    ctx.fillRect(sx(y0 - HW), sy(7), sx(y0 + HW) - sx(y0 - HW), sy(-1) - sy(7));
+    ctx.restore();
+    const u = rng(seed);
+    let s = 0, k = 0;
+    for (let i = 0; i < N; i++) {
+      const y = randn(u), x = y * y + 0.5 * randn(u), inSlab = Math.abs(y - y0) < HW;
+      if (inSlab) { s += x; k++; }
+      ctx.fillStyle = inSlab ? colors.accent : colors.fgFaint;
+      ctx.fillRect(sx(y) - 1, sy(x) - 1, 2, 2);
+    }
+    const ys = Array.from({ length: 201 }, (_, i) => -2.6 + (5.2 * i) / 200);
+    scope.trace([-2.6, 2.6], [1, 1], { color: colors.alt, width: 1.2, glow: false, dash: [5, 3] });
+    scope.trace(ys, ys.map((y) => y * y));
+    vals.textContent = k ? `slab mean ${(s / k).toFixed(2)} (n=${k})  E[X|Y=y₀] ${(y0 * y0).toFixed(2)}` : "slab empty";
+  }
+  yIn.addEventListener("input", draw);
+  fig.querySelector("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

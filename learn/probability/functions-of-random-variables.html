@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Functions of random variables — Learn — Sayf</title>
+<meta name="description" content="Derived distributions by the CDF method, monotone transformations, convolution for sums, maxima and minima, and the two-dimensional change of variables behind Box-Muller." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 3.4" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 3.4</span>
+    <h1>Functions of random variables</h1>
+    <p class="deck">Push a distribution through a function. Sums become <em>convolutions</em>, and smooth maps pick up a Jacobian.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>30 min</span>
+      <span>Y&amp;G ch. 6</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 3.4" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>derive the law of $Y = g(X)$ by the CDF method, and with the change-of-variables formula when $g$ is monotone;</li>
+    <li>handle non-monotone $g$ by summing over preimages;</li>
+    <li>prove the convolution formula for sums of independent variables and apply it;</li>
+    <li>find the laws of maxima and minima;</li>
+    <li>use the two-dimensional Jacobian formula, and derive the Box–Muller sampler from it.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Method</span>The CDF method</h2>
+<p>Given the law of $X$ (or of $(X, Y)$) and a function $g$, what is the law of $W = g(X)$ or $W = g(X, Y)$? For discrete
+variables lesson 2.1 already answered it: add up the masses that land on each value. For continuous variables the
+reliable method is always the same: compute</p>
+$$F_W(w) = \P[g(X, Y) \le w] = \iint_{\{(x,y)\, :\, g(x,y) \le w\}} f_{X,Y}(x, y) \d x\d y \tag{1}$$
+<p>by drawing the region, then differentiate in $w$. Every formula in this lesson is (1) worked out once and for all for a
+common case.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> One variable</span>Monotone and non-monotone maps</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">monotone change of variables</span></span>
+  <p>Let $X$ have density $f_X$, and let $g$ be strictly monotone and differentiable on an open interval containing the support
+  of $X$, with inverse $h = g^{-1}$. Then $Y = g(X)$ has density</p>
+  $$f_Y(y) = f_X\big(h(y)\big)\,\big|h'(y)\big| \tag{2}$$
+  <p>for $y$ in the range of $g$, and $0$ elsewhere.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Increasing $g$.</em> $\{g(X) \le y\} = \{X \le h(y)\}$, so $F_Y(y) = F_X(h(y))$. Differentiate with the chain rule:
+  $f_Y(y) = f_X(h(y))\,h'(y)$, and $h' &gt; 0$.</p>
+  <p><em>Decreasing $g$.</em> Now $\{g(X) \le y\} = \{X \ge h(y)\}$, so $F_Y(y) = 1 - F_X(h(y))$ (no atom, since $X$ is continuous), and
+  $f_Y(y) = -f_X(h(y))\,h'(y) = f_X(h(y))\,|h'(y)|$ because $h' &lt; 0$. <span class="qed">∎</span></p>
+</details>
+
+<p>Read (2) as conservation of probability: the mass $f_X(x)\,|\d x|$ in a small interval is carried to an interval of length
+$|\d y| = |g'(x)|\,|\d x|$, so the density is divided by the stretch factor $|g'(x)| = 1/|h'(y)|$. This is the formula that
+normalising flows evaluate (in $n$ dimensions, with a determinant) to compute exact likelihoods. For an affine map
+$Y = aX + b$ it gives $f_Y(y) = \frac1{|a|}f_X\big(\frac{y - b}{a}\big)$; with $X$ Gaussian it re-proves lesson 2.4, exercise 1.</p>
+
+<p>If $g$ is not one-to-one, split the line into pieces where it is. When $g$ is differentiable and every $y$ has finitely many
+preimages $x_1(y), \dots, x_k(y)$, each with $g'(x_i) \ne 0$, the CDF method gives one term per branch:</p>
+$$f_Y(y) = \sum_{i} \frac{f_X\big(x_i(y)\big)}{\big|g'\big(x_i(y)\big)\big|}. \tag{3}$$
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">square of a standard normal</span></span>
+  <p>$Y = Z^2$, $Z \sim \mathcal N(0,1)$. For $y &gt; 0$ the preimages are $\pm\sqrt y$ and $|g'(\pm\sqrt y)| = 2\sqrt y$. By (3) and evenness of $\phi$,</p>
+  $$f_Y(y) = \frac{2\phi(\sqrt y)}{2\sqrt y} = \frac{1}{\sqrt{2\pi y}}\,e^{-y/2}, \qquad y &gt; 0.$$
+  <p>This is the chi-squared law with one degree of freedom. Note the density is unbounded at $0$ but still integrable.
+  The CDF method confirms it without (3): $F_Y(y) = \P[-\sqrt y \le Z \le \sqrt y] = 2\Phi(\sqrt y) - 1$, whose derivative is the same.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 03</span> Sums</span>Convolution</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">density of a sum</span></span>
+  <p>If $X, Y$ are jointly continuous, $W = X + Y$ has density $f_W(w) = \int_{-\infty}^\infty f_{X,Y}(x, w - x) \d x$. If $X$ and $Y$ are
+  independent, this is the <strong>convolution</strong></p>
+  $$f_W(w) = (f_X * f_Y)(w) = \int_{-\infty}^{\infty} f_X(x)\, f_Y(w - x) \d x. \tag{4}$$
+  <p>For independent integer-valued $X, Y$, likewise $P_W(w) = \sum_k P_X(k)\,P_Y(w - k)$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>By (1), integrating over the half-plane $\{x + y \le w\}$ with $x$ outermost, then substituting $v = x + y$ in the inner integral:</p>
+  $$F_W(w) = \int_{-\infty}^\infty \int_{-\infty}^{w - x} f_{X,Y}(x, y)\d y \d x = \int_{-\infty}^\infty \int_{-\infty}^{w} f_{X,Y}(x, v - x)\d v \d x
+    = \int_{-\infty}^{w}\Big(\int_{-\infty}^\infty f_{X,Y}(x, v - x)\d x\Big)\d v,$$
+  <p>exchanging the order by Tonelli. So $F_W$ is the integral of the bracket, which is therefore a density of $W$. With
+  independence, $f_{X,Y}(x, v - x) = f_X(x)f_Y(v - x)$. The discrete case: $\{W = w\}$ is the disjoint union over $k$ of
+  $\{X = k, Y = w - k\}$. <span class="qed">∎</span></p>
+</details>
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">two exponential waiting times</span></span>
+  <p>$X, Y \iid \text{Exp}(\lambda)$. For $w \ge 0$ the integrand of (4) is non-zero only for $0 \le x \le w$, so</p>
+  $$f_W(w) = \int_0^w \lambda e^{-\lambda x}\,\lambda e^{-\lambda(w - x)}\d x = \lambda^2 e^{-\lambda w}\int_0^w \d x = \lambda^2\,w\,e^{-\lambda w}.$$
+  <p>This is the Erlang law of order 2: the time until the second event of a Poisson process (lesson 6.2). The $e^{-\lambda x}$
+  factors combine into one exponential because the exponent is linear, and that is what makes exponential and Gaussian
+  convolutions computable in closed form.</p>
+</div>
+
+<p>Convolution smooths: two uniforms on $(0,1)$ convolve to a triangle on $(0,2)$, three to a piecewise quadratic, and the
+shapes approach a Gaussian quickly. The demo shows this; the reason is the central limit theorem (lesson 4.6), and the
+efficient way to compute repeated convolutions is through transforms, which turn $*$ into multiplication (lesson 4.5,
+and the Fourier transform in the signal-processing course).</p>
+
+<figure class="demo" data-demo="irwin-hall">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">sum of n uniforms · repeated convolution</span></div>
+    <canvas aria-label="Histogram of sums of n uniform variables with the exact convolution density and a Gaussian with matched moments"></canvas>
+    <div class="controls">
+      <label>n <input type="range" min="1" max="8" step="1" value="2" data-n /> <output data-n-out>2</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-vals></span>
+    </div>
+  </div>
+  <figcaption>Bars: 5000 sums $U_1 + \dots + U_n$ of independent Uniform$(0,1)$ variables. Bright: the exact density, the $n$-fold
+  convolution $f_U * \dots * f_U$ (the Irwin–Hall density). Blue dashed: $\mathcal N(n/2, n/12)$, which has the same mean and variance.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 04</span> Extremes</span>Maxima and minima</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">max and min of independent variables</span></span>
+  <p>If $X_1, \dots, X_n$ are independent with CDFs $F_i$, then</p>
+  $$F_{\max_i X_i}(w) = \prod_{i=1}^n F_i(w), \qquad \P\big[\min_i X_i &gt; w\big] = \prod_{i=1}^n \big(1 - F_i(w)\big). \tag{5}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>$\{\max_i X_i \le w\} = \bigcap_i \{X_i \le w\}$ and $\{\min_i X_i &gt; w\} = \bigcap_i \{X_i &gt; w\}$; independence makes the probabilities
+  multiply. <span class="qed">∎</span></p>
+</details>
+
+<p>For $n$ iid Uniform$(0,1)$ variables, $F_{\max}(w) = w^n$ and $f_{\max}(w) = nw^{n-1}$ on $(0,1)$. A series system fails at the minimum
+of its components' lifetimes and a parallel system at the maximum, so (5) is the continuous-time version of the
+reliability formulas in lesson 1.4.</p>
+
+<h2><span class="sec"><span class="n">§ 05</span> Two variables</span>The Jacobian formula and Box–Muller</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">change of variables in the plane</span></span>
+  <p>Let $(X, Y)$ have density $f_{X,Y}$ supported in an open set $D$, and let $T : D \to E$ be a bijection onto an open set $E$, continuously
+  differentiable with continuously differentiable inverse $H = T^{-1}$. Then $(V, W) = T(X, Y)$ has density</p>
+  $$f_{V,W}(v, w) = f_{X,Y}\big(H(v, w)\big)\,\big|\det J_H(v, w)\big|, \qquad (v, w) \in E, \tag{6}$$
+  <p>where $J_H$ is the $2 \times 2$ matrix of partial derivatives of $H$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>For any region $B \subseteq E$, $\P[(V, W) \in B] = \P[(X, Y) \in H(B)] = \iint_{H(B)} f_{X,Y}(x, y)\d x\d y$. The multivariable
+  change-of-variables theorem of calculus, with the substitution $(x, y) = H(v, w)$, rewrites this as
+  $\iint_B f_{X,Y}(H(v,w))\,|\det J_H(v,w)|\d v\d w$. Since this holds for every region $B$, the integrand is a density of
+  $(V, W)$. <span class="qed">∎</span></p>
+</details>
+
+<p>Formula (6) is (2) with $|h'|$ replaced by the factor by which $H$ scales areas. The most famous application turns two
+independent normals into polar coordinates.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 5<span class="name">polar form of two independent normals</span></span>
+  <p>Let $X, Y \iid \mathcal N(0,1)$ and write $(X, Y) = (R\cos\Theta, R\sin\Theta)$ with $R &gt; 0$, $\Theta \in [0, 2\pi)$. Then $R$ and $\Theta$ are
+  independent, $\Theta \sim \text{Uniform}[0, 2\pi)$, and $R^2 \sim \text{Exp}(\tfrac12)$. Conversely, if $U_1, U_2 \iid \text{Uniform}(0,1)$,</p>
+  $$X = \sqrt{-2\ln U_1}\,\cos(2\pi U_2), \qquad Y = \sqrt{-2\ln U_1}\,\sin(2\pi U_2) \tag{7}$$
+  <p>are independent standard normals (the <strong>Box–Muller transform</strong>).</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>The joint density is $f_{X,Y}(x, y) = \frac1{2\pi}e^{-(x^2 + y^2)/2}$ (lesson 3.2, Theorem 2). The inverse map
+  $H(r, \theta) = (r\cos\theta, r\sin\theta)$ from $(0, \infty) \times (0, 2\pi)$ onto the plane minus a ray (a set of probability zero) has</p>
+  $$\det J_H = \det\begin{pmatrix} \cos\theta &amp; -r\sin\theta \\ \sin\theta &amp; r\cos\theta \end{pmatrix} = r(\cos^2\theta + \sin^2\theta) = r.$$
+  <p>By (6), $f_{R,\Theta}(r, \theta) = \frac{1}{2\pi}e^{-r^2/2}\,r = \big(\tfrac{1}{2\pi}\big)\big(re^{-r^2/2}\big)$ on $(0,\infty) \times (0, 2\pi)$. This is a product over a
+  product set, so by lesson 3.2, Theorem 3, $R$ and $\Theta$ are independent, $\Theta$ is uniform, and $f_R(r) = re^{-r^2/2}$. Then
+  $\P[R^2 &gt; s] = \P[R &gt; \sqrt s] = \int_{\sqrt s}^\infty re^{-r^2/2}\d r = e^{-s/2}$: $R^2 \sim \text{Exp}(\tfrac12)$.</p>
+  <p>For the converse, by inverse-transform sampling (lesson 2.3) $-2\ln U_1 \sim \text{Exp}(\tfrac12)$ (because $1 - U_1$ is uniform too) and
+  $2\pi U_2$ is uniform on $(0, 2\pi)$, independently. So $(\sqrt{-2\ln U_1}, 2\pi U_2)$ has the law of $(R, \Theta)$, and mapping it through $H$
+  gives a pair with the law of $(X, Y)$. <span class="qed">∎</span></p>
+</details>
+
+<p>This is the sampler inside every demo on these pages: <code>Learn.randn</code> in <code>learn.js</code> computes
+$\sqrt{-2\ln(1 - u)}\cos(2\pi u')$, the first coordinate of (7). It also gives the cleanest proof of the Gaussian integral
+of lesson 2.4: the polar computation there is Theorem 5 in disguise.</p>
+
+<h2><span class="sec"><span class="n">§ 06</span> In code</span>Checking derived distributions</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy · scipy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+from scipy import stats
+
+rng = np.random.default_rng(0)
+n = 500_000
+
+# Box–Muller (7) against the normal law
+u1, u2 = rng.random(n), rng.random(n)
+x = np.sqrt(-2 * np.log1p(-u1)) * np.cos(2 * np.pi * u2)
+print(stats.kstest(x, "norm").pvalue)                     # large
+
+# chi-squared(1) from Z**2, via (3)
+z2 = rng.standard_normal(n) ** 2
+print(stats.kstest(z2, stats.chi2(1).cdf).pvalue)
+
+# Erlang(2) = Exp + Exp, via (4)
+lam = 1.5
+w = rng.exponential(1 / lam, n) + rng.exponential(1 / lam, n)
+print(stats.kstest(w, stats.gamma(2, scale=1 / lam).cdf).pvalue)
+
+# numerical convolution on a grid reproduces the triangle density of U1 + U2
+dx = 1e-3
+f = np.ones(int(1 / dx))                                  # Uniform(0,1) density on a grid
+tri = np.convolve(f, f) * dx                              # samples of (f * f) on [0, 2)
+print(tri[[250, 1000, 1500]].round(3))                    # 0.25, 1.0, 0.5</code></pre></div>
+  </div>
+  <figcaption>A Kolmogorov–Smirnov p-value is uniform under the null (lesson 2.3, exercise 3), so any value that is not tiny is consistent with the derived law.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 07</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Show that if $U \sim \text{Uniform}(0,1)$ then $-\ln U / \lambda \sim \text{Exp}(\lambda)$, using (2).<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$g(u) = -\ln u/\lambda$ is decreasing on $(0,1)$ with inverse $h(y) = e^{-\lambda y}$, $|h'(y)| = \lambda e^{-\lambda y}$, and $f_U(h(y)) = 1$ for $y &gt; 0$.
+      So $f_Y(y) = \lambda e^{-\lambda y}$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that the sum of independent Poisson$(\alpha)$ and Poisson$(\beta)$ variables is Poisson$(\alpha + \beta)$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By the discrete convolution, for $w \ge 0$,
+      $$P_W(w) = \sum_{k=0}^w \frac{\alpha^k e^{-\alpha}}{k!}\frac{\beta^{w-k}e^{-\beta}}{(w-k)!} = \frac{e^{-(\alpha+\beta)}}{w!}\sum_{k=0}^w\binom wk \alpha^k\beta^{w-k} = \frac{(\alpha+\beta)^w e^{-(\alpha+\beta)}}{w!}$$
+      by the binomial theorem.</p>
+    </details>
+  </li>
+  <li>
+    <p>For $n$ iid Uniform$(0,1)$ variables, find $\E[\max_i U_i]$ and $\E[\min_i U_i]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\E[\max] = \int_0^1 w\,nw^{n-1}\d w = \frac{n}{n+1}$. By symmetry ($1 - U_i$ are also iid uniform and $\min_i U_i = 1 - \max_i(1 - U_i)$),
+      $\E[\min] = \frac{1}{n+1}$. The $n$ points split $[0,1]$ into $n + 1$ gaps of equal expected length.</p>
+    </details>
+  </li>
+  <li>
+    <p>Use (4) to show that if $X, Y \iid \mathcal N(0, 1)$ then $X + Y \sim \mathcal N(0, 2)$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$f_W(w) = \frac1{2\pi}\int e^{-x^2/2 - (w - x)^2/2}\d x$. Complete the square: $x^2/2 + (w - x)^2/2 = (x - w/2)^2 + w^2/4$. So
+      $f_W(w) = \frac{1}{2\pi}e^{-w^2/4}\int e^{-(x - w/2)^2}\d x = \frac{1}{2\pi}e^{-w^2/4}\sqrt\pi = \frac{1}{\sqrt{2\pi \cdot 2}}e^{-w^2/(2\cdot2)}$, the
+      $\mathcal N(0,2)$ density. Lesson 3.6 does all linear combinations at once.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $X, Y \iid \text{Exp}(1)$. Show that $V = X + Y$ and $W = X/(X + Y)$ are independent, with $W \sim \text{Uniform}(0,1)$.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>The inverse map is $H(v, w) = (vw, v(1 - w))$ on $(0, \infty) \times (0,1)$, with
+      $\det J_H = \det\begin{pmatrix} w &amp; v \\ 1 - w &amp; -v\end{pmatrix} = -vw - v(1-w) = -v$. By (6),
+      $f_{V,W}(v, w) = e^{-vw}e^{-v(1-w)}\,v = v e^{-v}$ on $(0,\infty) \times (0,1)$: a product of $ve^{-v}$ (Erlang 2, as in the example) and $1$
+      on a product set. Given the total waiting time, the split point is uniform.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 08</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 6 (derived random variables, the CDF method, sums, maxima and minima).</li>
+  <li>Box &amp; Muller, "A note on the generation of random normal deviates", <em>Ann. Math. Statist.</em> 29 (1958).</li>
+  <li>Papamakarios et al., "Normalizing flows for probabilistic modeling and inference", <em>JMLR</em> 22 (2021), for (6) in $n$ dimensions as a modelling tool.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="covariance.html"><span class="dir">← previous</span><span class="t">3.3 Covariance and correlation</span></a>
+  <a class="next" href="conditional-expectation.html"><span class="dir">next →</span><span class="t">3.5 Conditional distributions and conditional expectation</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("irwin-hall", (fig, { scope, rng, colors }) => {
+  const N = 5000, BINS = 40;
+  const nIn = fig.querySelector("[data-n]"), vals = fig.querySelector("[data-vals]");
+  let seed = 13;
+  const fact = (k) => (k <= 1 ? 1 : k * fact(k - 1));
+  const binom = (n, k) => fact(n) / (fact(k) * fact(n - k));
+  // Irwin–Hall density: the n-fold convolution of the Uniform(0,1) density
+  const ih = (x, n) => {
+    if (x <= 0 || x >= n) return 0;
+    let s = 0;
+    for (let k = 0; k <= Math.floor(x); k++) s += (k % 2 ? -1 : 1) * binom(n, k) * Math.pow(x - k, n - 1);
+    return s / fact(n - 1);
+  };
+
+  function draw() {
+    const n = +nIn.value;
+    fig.querySelector("[data-n-out]").value = n;
+    const u = rng(seed), counts = new Array(BINS).fill(0), bw = n / BINS;
+    let s1 = 0, s2 = 0;
+    for (let i = 0; i < N; i++) {
+      let s = 0;
+      for (let j = 0; j < n; j++) s += u();
+      s1 += s; s2 += s * s;
+      counts[Math.min(BINS - 1, Math.floor(s / bw))]++;
+    }
+    const dens = counts.map((c) => c / (N * bw));
+    const xs = Array.from({ length: 401 }, (_, i) => (n * i) / 400);
+    const sd = Math.sqrt(n / 12), gauss = (x) => Math.exp(-((x - n / 2) ** 2) / (2 * sd * sd)) / (sd * Math.sqrt(2 * Math.PI));
+    const ymax = Math.max(1.05, ...dens, ...xs.map((x) => gauss(x))) * 1.1;
+    const { sx, sy, ctx } = scope.axes([0, n], [0, ymax], { xticks: n, yticks: 4, fmt: (v) => +v.toFixed(2) });
+    ctx.save();
+    ctx.fillStyle = colors.lineSoft;
+    dens.forEach((d, b) => { const x0 = sx(b * bw), x1 = sx((b + 1) * bw); ctx.fillRect(x0, sy(d), x1 - x0 - 1, sy(0) - sy(d)); });
+    ctx.restore();
+    scope.trace(xs, xs.map(gauss), { color: colors.alt, width: 1.2, glow: false, dash: [5, 3] });
+    scope.trace(xs, xs.map((x) => ih(x, n)));
+    const m = s1 / N, v = s2 / N - m * m;
+    vals.textContent = `mean ${m.toFixed(3)} (${(n / 2).toFixed(1)})  var ${v.toFixed(3)} (${(n / 12).toFixed(3)})`;
+  }
+  nIn.addEventListener("input", draw);
+  fig.querySelector("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

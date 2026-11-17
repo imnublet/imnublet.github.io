@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Counting methods — Learn — Sayf</title>
+<meta name="description" content="The multiplication rule, permutations, combinations, multinomial coefficients and stars and bars, with the birthday problem and the hypergeometric law." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 1.5" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 1.5</span>
+    <h1>Counting methods</h1>
+    <p class="deck">On a finite space of equally likely outcomes, probability is <em>counting</em>. Four sampling schemes cover almost every case.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 2</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 1.5" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>prove the multiplication rule and derive from it the four sampling formulas;</li>
+    <li>count arrangements with multinomial coefficients and solutions of $x_1 + \dots + x_r = k$ with stars and bars;</li>
+    <li>prove binomial identities by double counting;</li>
+    <li>solve the birthday problem exactly and bound it in closed form;</li>
+    <li>derive the hypergeometric law for sampling without replacement.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Principle</span>The multiplication rule</h2>
+<p>When outcomes are equally likely, $\P[A] = |A|/|\Omega|$ (lesson 1.2, eq. 4), and probability
+reduces to counting two sets. Almost every count rests on one principle.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">multiplication rule</span></span>
+  <p>Suppose each element of a set $S$ is built by a sequence of $k$ choices, where the first choice has
+  $n_1$ options and, whatever the earlier choices were, choice $j$ has $n_j$ options, and distinct
+  sequences of choices build distinct elements. Then $|S| = n_1 n_2 \cdots n_k$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Induction on $k$. For $k = 1$ there are $n_1$ elements. For $k &gt; 1$, group the elements of $S$ by
+  their first choice. Each group is built by $k-1$ further choices with $n_2, \dots, n_k$ options, so by
+  hypothesis has $n_2 \cdots n_k$ elements. The $n_1$ groups are disjoint (distinct sequences give distinct
+  elements), so $|S| = n_1 \cdot n_2 \cdots n_k$. <span class="qed">∎</span></p>
+</details>
+
+<p>Note the theorem needs the <em>number</em> of options at step $j$ to be fixed, not the options
+themselves. That is exactly what happens when drawing without replacement.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Sampling</span>Four ways to draw $k$ from $n$</h2>
+<p>Draw $k$ items from $n$ distinguishable items. Two binary questions fix the count: is the order of the
+draws recorded, and is an item put back before the next draw?</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">ordered samples</span></span>
+  <p>(a) <em>With replacement</em>, the number of ordered $k$-samples is $n^k$.<br />
+  (b) <em>Without replacement</em> ($k \le n$), it is the falling factorial</p>
+  $$(n)_k = n(n-1)\cdots(n-k+1) = \frac{n!}{(n-k)!}, \tag{1}$$
+  <p>and in particular there are $n!$ orderings (permutations) of $n$ items.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Apply Theorem 1 with $n_j = n$ in (a), and with $n_j = n - (j-1)$ in (b), since $j-1$ distinct items
+  have already been removed when draw $j$ is made. <span class="qed">∎</span></p>
+</details>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">unordered samples without replacement</span></span>
+  <p>The number of $k$-element subsets of an $n$-set is</p>
+  $$\binom{n}{k} = \frac{(n)_k}{k!} = \frac{n!}{k!\,(n-k)!}. \tag{2}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Count ordered samples without replacement in two ways. Directly, there are $(n)_k$. Alternatively,
+  build one by first choosing the subset of items that appears ($\binom nk$ options, the unknown) and then
+  an order of those $k$ items ($k!$ options, Theorem 2(b) with $n = k$). Each ordered sample arises from
+  exactly one (subset, order) pair, so Theorem 1 gives $(n)_k = \binom nk\, k!$. <span class="qed">∎</span></p>
+</details>
+
+<p>This "count the same set two ways" argument, <strong>double counting</strong>, is the main proof
+technique of combinatorics. Two quick consequences: $\binom nk = \binom n{n-k}$ (choosing what to take is
+choosing what to leave), and Pascal's rule $\binom nk = \binom{n-1}{k-1} + \binom{n-1}{k}$ (split the
+$k$-subsets by whether they contain a fixed item).</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">binomial theorem</span></span>
+  $$(x + y)^n = \sum_{k=0}^{n} \binom nk x^k y^{n-k}. \tag{3}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Expanding $(x+y)(x+y)\cdots(x+y)$ without collecting terms gives $2^n$ products, one per way of
+  picking $x$ or $y$ from each of the $n$ factors. The product equals $x^k y^{n-k}$ exactly when $x$ was
+  picked from a $k$-subset of the factors, and there are $\binom nk$ such subsets. <span class="qed">∎</span></p>
+</details>
+
+<p>The fourth scheme, <em>unordered with replacement</em>, counts multisets: how many times each item was
+drawn, regardless of order.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 5<span class="name">stars and bars</span></span>
+  <p>The number of multisets of size $k$ from $n$ types, equivalently of solutions of
+  $x_1 + \cdots + x_n = k$ in non-negative integers, is</p>
+  $$\binom{n + k - 1}{k}. \tag{4}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Encode a solution $(x_1, \dots, x_n)$ as a string of $k$ stars and $n-1$ bars: $x_1$ stars, a bar,
+  $x_2$ stars, a bar, …, $x_n$ stars. For example $(2,0,1)$ with $k = 3$ becomes
+  <code>★★||★</code>. The map is a bijection between solutions and strings of length $n + k - 1$ with
+  exactly $k$ stars: given such a string, the bars cut it into $n$ runs whose lengths are the $x_i$. Such
+  a string is determined by the positions of its stars, a $k$-subset of $n+k-1$ positions, so Theorem 3
+  gives (4). <span class="qed">∎</span></p>
+</details>
+
+<div class="callout">
+  <span class="lbl">Careful</span>
+  <p>Ordered samples with replacement are equally likely when the draws are independent and uniform;
+  the multisets they collapse to are <em>not</em>. With $n = 2$, $k = 2$ the multiset $\{1,2\}$ arises from
+  two ordered samples and $\{1,1\}$ from one. Use (4) to count, never to compute probabilities by
+  $|A|/|\Omega|$ unless you have a reason to think multisets are equally likely (in physics, Bose–Einstein
+  statistics is exactly that reason).</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 03</span> Groups</span>Multinomial coefficients</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 6<span class="name">multinomial coefficient</span></span>
+  <p>The number of ways to split $n$ distinguishable items into $r$ labelled groups of sizes
+  $n_1, \dots, n_r$, with $n_1 + \cdots + n_r = n$, is</p>
+  $$\binom{n}{n_1, \dots, n_r} = \frac{n!}{n_1!\, n_2! \cdots n_r!}. \tag{5}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Fill the groups in turn: choose group 1 from all $n$ items, group 2 from the remaining $n - n_1$, and so
+  on. By Theorems 1 and 3 the count is</p>
+  $$\binom{n}{n_1}\binom{n - n_1}{n_2} \cdots \binom{n - n_1 - \cdots - n_{r-1}}{n_r}
+    = \frac{n!}{n_1!\,(n-n_1)!} \cdot \frac{(n-n_1)!}{n_2!\,(n-n_1-n_2)!} \cdots \frac{n_r!}{n_r!\,0!},$$
+  <p>and the product telescopes to (5). <span class="qed">∎</span></p>
+</details>
+
+<p>Equivalently, (5) counts the distinct words formed by rearranging $n$ letters among which letter $i$
+repeats $n_i$ times. With $r = 2$ it is $\binom n{n_1}$, and the same expansion argument as in Theorem 4
+proves the multinomial theorem
+$(x_1 + \cdots + x_r)^n = \sum \binom{n}{n_1, \dots, n_r} x_1^{n_1} \cdots x_r^{n_r}$.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Application</span>The birthday problem</h2>
+<p>Each of $k$ people has a birthday uniform on $n$ days, independently (ignore leap years and seasonal
+variation). Ordered birthday lists are then equally likely: $|\Omega| = n^k$. The lists with no repeat are
+ordered samples without replacement, so by Theorem 2</p>
+$$\P[\text{all distinct}] = \frac{(n)_k}{n^k} = \prod_{i=0}^{k-1}\Big(1 - \frac{i}{n}\Big). \tag{6}$$
+<p>For $n = 365$ this drops below $\tfrac12$ at $k = 23$ (it is $0.4927$), so with $23$ people a shared
+birthday is more likely than not. The intuition: what matters is the number of <em>pairs</em>,
+$\binom{23}{2} = 253$, not the number of people.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 7<span class="name">exponential bound</span></span>
+  $$\P[\text{all distinct}] \le \exp\Big(-\frac{k(k-1)}{2n}\Big). \tag{7}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>The function $g(x) = e^{-x} - (1 - x)$ has $g(0) = 0$ and $g'(x) = 1 - e^{-x} \ge 0$ for $x \ge 0$, so
+  $1 - x \le e^{-x}$ on $[0, \infty)$. Every factor in (6) is non-negative, so we may bound them one by one:</p>
+  $$\prod_{i=0}^{k-1}\Big(1 - \frac in\Big) \le \prod_{i=0}^{k-1} e^{-i/n} = \exp\Big(-\frac1n \sum_{i=0}^{k-1} i\Big)
+    = \exp\Big(-\frac{k(k-1)}{2n}\Big).$$
+  <p><span class="qed">∎</span></p>
+</details>
+
+<p>The bound is also an excellent approximation when $k \ll n$, because $\log(1 - x) = -x + O(x^2)$. It
+tells us a collision becomes likely once $k \approx \sqrt{2n \ln 2} \approx 1.18\sqrt n$. The same
+$\sqrt n$ scaling governs hash collisions (birthday attacks need about $2^{b/2}$ tries against a $b$-bit
+hash) and duplicate draws in bootstrap resampling.</p>
+
+<figure class="demo" data-demo="birthday">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">birthday problem · exact, bound, simulation</span></div>
+    <canvas aria-label="Probability of a shared birthday as a function of group size: exact curve, exponential approximation and Monte Carlo points"></canvas>
+    <div class="controls">
+      <label>days n <input type="range" min="20" max="1000" step="1" value="365" data-n /> <output data-n-out>365</output></label>
+      <label>group k <input type="range" min="2" max="100" step="1" value="23" data-k /> <output data-k-out>23</output></label>
+      <span class="readout-val" data-p></span>
+    </div>
+  </div>
+  <figcaption>Bright: exact $\P[\text{shared}] = 1 - (n)_k/n^k$. Blue: the lower bound
+  $1 - e^{-k(k-1)/2n}$ from (7). Dots: frequencies in 400 simulated groups at every fifth $k$. The dashed
+  vertical line is $\sqrt{2n\ln 2}$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> Application</span>Sampling without replacement: the hypergeometric law</h2>
+<p>An urn holds $N$ items, $K$ of them marked. Draw $m$ without replacement, all $\binom Nm$ subsets
+equally likely. The number of subsets with exactly $j$ marked items is, by Theorem 1, (ways to choose the
+$j$ marked) $\times$ (ways to choose the $m - j$ unmarked):</p>
+$$\P[J = j] = \frac{\binom Kj \binom{N-K}{m-j}}{\binom Nm}, \qquad \max(0, m - N + K) \le j \le \min(m, K). \tag{8}$$
+<p>This is the law behind quality-control sampling, Fisher's exact test and card-hand probabilities.
+When $N$ is large compared with $m$, removing a few items barely changes the urn, and (8) is close to the
+binomial law with $p = K/N$ (exercise 5).</p>
+
+<h2><span class="sec"><span class="n">§ 06</span> In code</span>Exact counts and a simulation</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy · stdlib</span></div>
+    <div class="body"><pre><code class="language-python">from math import comb, perm, exp, log
+import numpy as np
+
+def p_shared(k, n=365):
+    """Exact P[at least two of k share a day], via logs to avoid huge integers."""
+    if k &gt; n:
+        return 1.0
+    return 1 - exp(sum(log(1 - i / n) for i in range(k)))
+
+k_star = next(k for k in range(1, 366) if p_shared(k) &gt;= 0.5)
+print(k_star, round(p_shared(k_star), 4))                  # 23 0.5073
+assert abs(perm(365, 23) / 365**23 - (1 - p_shared(23))) &lt; 1e-12  # (n)_k / n^k
+
+rng = np.random.default_rng(0)
+days = rng.integers(0, 365, size=(100_000, 23))
+shared = np.array([len(np.unique(r)) &lt; 23 for r in days])
+print(shared.mean())                                       # ≈ 0.507
+
+# hypergeometric: probability of a full house in a 5-card hand
+full_house = 13 * comb(4, 3) * 12 * comb(4, 2)
+print(full_house, full_house / comb(52, 5))                # 3744 0.00144</code></pre></div>
+  </div>
+  <figcaption><code>math.comb</code> and <code>math.perm</code> are exact integer $\binom nk$ and $(n)_k$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 07</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Show that a 5-card poker hand is a full house (three of one rank, two of another) with probability
+    $3744/\binom{52}{5} \approx 0.00144$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>All $\binom{52}5 = 2\,598\,960$ hands are equally likely. Build a full house by Theorem 1: the rank of
+      the triple (13), its 3 suits ($\binom43 = 4$), the rank of the pair (12 remaining), its 2 suits
+      ($\binom42 = 6$). Distinct choices give distinct hands, so there are $13 \cdot 4 \cdot 12 \cdot 6 = 3744$.
+      The order of the two ranks matters here (triple vs pair), which is why it is $13 \cdot 12$ and not
+      $\binom{13}{2}$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Prove Vandermonde's identity $\sum_j \binom mj \binom n{k-j} = \binom{m+n}k$ by double counting, and
+    conclude that the hypergeometric probabilities (8) sum to one.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Count $k$-subsets of a set of $m$ red and $n$ blue items. Directly: $\binom{m+n}k$. Split by the number
+      $j$ of red items: for each $j$ there are $\binom mj\binom n{k-j}$ subsets, and the classes are disjoint.
+      With $m = K$, $n = N - K$, $k = m$, the numerators of (8) therefore sum to $\binom Nm$.</p>
+    </details>
+  </li>
+  <li>
+    <p>How many solutions does $x_1 + \cdots + x_r = n$ have in <em>positive</em> integers?<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Substitute $y_i = x_i - 1 \ge 0$: $y_1 + \cdots + y_r = n - r$. By (4) with $r$ types and size
+      $n - r$, the count is $\binom{n-1}{n-r} = \binom{n-1}{r-1}$. (Directly: choose $r-1$ of the $n-1$ gaps
+      between $n$ stars to place bars.)</p>
+    </details>
+  </li>
+  <li>
+    <p>Using only (7), find the smallest $k$ that guarantees $\P[\text{shared}] \ge \tfrac12$ for
+    $n = 365$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>We need $e^{-k(k-1)/730} \le \tfrac12$, i.e. $k(k-1) \ge 730 \ln 2 \approx 505.997$. Since
+      $22 \cdot 21 = 462$ and $23 \cdot 22 = 506$, the answer is $k = 23$, which happens to be the exact
+      answer too.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that for fixed $m$, $j$ and $K/N \to p \in (0,1)$ as $N \to \infty$, the hypergeometric
+    probability (8) converges to $\binom mj p^j (1-p)^{m-j}$.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Rewrite with falling factorials using (2):
+      $$\frac{\binom Kj \binom{N-K}{m-j}}{\binom Nm} = \binom mj \frac{(K)_j\,(N-K)_{m-j}}{(N)_m}.$$
+      There are $j$ factors in $(K)_j$, $m - j$ in $(N-K)_{m-j}$ and $m$ in $(N)_m$. Divide each factor by
+      $N$: $(K - i)/N \to p$, $(N - K - i)/N \to 1 - p$ and $(N - i)/N \to 1$ for each fixed $i$. A product of
+      finitely many convergent factors converges to the product of the limits, giving
+      $\binom mj p^j (1-p)^{m-j}$.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 08</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 2 (counting methods).</li>
+  <li>Feller, <em>An Introduction to Probability Theory and Its Applications</em>, vol. 1, 3rd ed., ch. II, the classic treatment of occupancy problems.</li>
+  <li>Graham, Knuth &amp; Patashnik, <em>Concrete Mathematics</em>, 2nd ed., ch. 5, for binomial identities.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="independence.html"><span class="dir">← previous</span><span class="t">1.4 Independence and sequential experiments</span></a>
+  <span class="next"><span class="dir">next →</span><span class="t">2.1 Discrete random variables and PMFs</span></span>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("birthday", (fig, { scope, rng, colors }) => {
+  const KMAX = 100, REPS = 400;
+  const q = (s) => fig.querySelector(s);
+  const nIn = q("[data-n]"), kIn = q("[data-k]"), out = q("[data-p]");
+
+  function draw() {
+    const n = +nIn.value, k0 = +kIn.value;
+    q("[data-n-out]").value = n;
+    q("[data-k-out]").value = k0;
+    const ks = Array.from({ length: KMAX }, (_, i) => i + 1);
+    const exact = [];
+    let logp = 0;
+    for (const k of ks) { logp += k - 1 < n ? Math.log(1 - (k - 1) / n) : -Infinity; exact.push(1 - Math.exp(logp)); }
+    const approx = ks.map((k) => 1 - Math.exp(-(k * (k - 1)) / (2 * n)));
+
+    scope.axes([0, KMAX], [0, 1], { xticks: 5, yticks: 4, fmt: (v) => (v > 1 ? v.toFixed(0) : v.toFixed(2)) });
+    const kc = Math.sqrt(2 * n * Math.LN2);
+    scope.trace([kc, kc], [0, 1], { color: colors.fgFaint, width: 1, glow: false, dash: [4, 4] });
+    scope.trace([k0, k0], [0, 1], { color: colors.fgFaint, width: 1, glow: false, dash: [2, 3] });
+    scope.trace(ks, approx, { color: colors.alt, width: 1.2 });
+    scope.trace(ks, exact);
+
+    const u = rng(n * 7919);
+    for (let k = 5; k <= KMAX; k += 5) {
+      let hits = 0;
+      for (let r = 0; r < REPS; r++) {
+        const seen = new Set();
+        for (let i = 0; i < k; i++) { const d = Math.floor(u() * n); if (seen.has(d)) { hits++; break; } seen.add(d); }
+      }
+      scope.label("•", k, hits / REPS, { align: "center", color: colors.fg });
+    }
+    out.textContent = `P[shared | k=${k0}] = ${exact[k0 - 1].toFixed(4)}   bound ${approx[k0 - 1].toFixed(4)}`;
+  }
+  [nIn, kIn].forEach((el) => el.addEventListener("input", draw));
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

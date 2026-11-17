@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The axioms of probability — Learn — Sayf</title>
+<meta name="description" content="Kolmogorov's three axioms and everything that follows from them: complements, monotonicity, inclusion-exclusion, the union bound and continuity." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 1.2" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 1.2</span>
+    <h1>The axioms of probability</h1>
+    <p class="deck">Three axioms, and every rule you have ever used for probabilities <em>follows by proof</em>.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 1</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 1.2" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>state the three axioms of a probability measure;</li>
+    <li>derive from them the complement rule, monotonicity, inclusion–exclusion and the union bound;</li>
+    <li>prove continuity of probability along monotone sequences of events;</li>
+    <li>build a probability model on a finite or countable sample space from point masses.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Definition</span>Three axioms</h2>
+<p>A probability model is a sample space $\Omega$, a $\sigma$-algebra $\mathcal F$ of events
+(<a href="events.html">lesson 1.1</a>), and a rule that assigns each event a number. Kolmogorov's
+insight (1933) was that three requirements on that rule are enough: everything else is a theorem.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">probability measure</span></span>
+  <p>A function $\P : \mathcal F \to \R$ is a <strong>probability measure</strong> if</p>
+  <ol>
+    <li><em>Non-negativity:</em> $\P[A] \ge 0$ for every $A \in \mathcal F$;</li>
+    <li><em>Normalisation:</em> $\P[\Omega] = 1$;</li>
+    <li><em>Countable additivity:</em> for pairwise disjoint $A_1, A_2, \dots \in \mathcal F$,
+    $$\P\Big[\bigcup_{i=1}^\infty A_i\Big] = \sum_{i=1}^\infty \P[A_i]. \tag{1}$$</li>
+  </ol>
+  <p>The triple $(\Omega, \mathcal F, \P)$ is a <strong>probability space</strong>.</p>
+</div>
+
+<p>The axioms say nothing about <em>which</em> numbers are right for a given experiment; that is the
+modelling step, informed by symmetry, physics or data. They only rule out assignments that are
+internally inconsistent. The usual reading is frequentist, $\P[A]$ being the long-run fraction of runs
+on which $A$ occurs, and each axiom is a property relative frequencies obviously have. The law of
+large numbers (lesson 5.1) later closes the loop: from the axioms alone it proves that relative
+frequencies converge to $\P[A]$.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Consequences</span>The rules you already use, proved</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">elementary properties</span></span>
+  <p>For events $A, B$ in a probability space:</p>
+  <ol type="a">
+    <li>$\P[\varnothing] = 0$;</li>
+    <li><em>finite additivity:</em> if $A_1, \dots, A_n$ are pairwise disjoint,
+      $\P\big[\bigcup_{i=1}^n A_i\big] = \sum_{i=1}^n \P[A_i]$;</li>
+    <li>$\P[A^c] = 1 - \P[A]$, and hence $\P[A] \le 1$;</li>
+    <li><em>monotonicity:</em> $A \subseteq B \Rightarrow \P[A] \le \P[B]$, and in fact $\P[B \setminus A] = \P[B] - \P[A]$;</li>
+    <li>$\P[A \cup B] = \P[A] + \P[B] - \P[A \cap B]$.</li>
+  </ol>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>(a)</em> Take $A_1 = \Omega$ and $A_i = \varnothing$ for $i \ge 2$. These are pairwise disjoint
+  with union $\Omega$, so (1) gives $1 = \P[\Omega] = 1 + \sum_{i \ge 2} \P[\varnothing]$. A series of
+  identical non-negative terms is finite only if the terms are $0$, so $\P[\varnothing] = 0$.</p>
+  <p><em>(b)</em> Pad the finite family with $A_i = \varnothing$ for $i &gt; n$; the padded family is still
+  pairwise disjoint and has the same union, and by (a) the extra terms contribute $0$ to (1).</p>
+  <p><em>(c)</em> $A$ and $A^c$ are disjoint with union $\Omega$, so by (b)
+  $1 = \P[A] + \P[A^c]$. Since $\P[A^c] \ge 0$, $\P[A] \le 1$.</p>
+  <p><em>(d)</em> If $A \subseteq B$ then $B = A \cup (B \setminus A)$ with the two pieces disjoint, so
+  $\P[B] = \P[A] + \P[B \setminus A] \ge \P[A]$.</p>
+  <p><em>(e)</em> Use the two disjoint decompositions from exercise 1 of lesson 1.1:
+  $A \cup B = A \cup (B \setminus A)$ and $B = (A \cap B) \cup (B \setminus A)$. By (b),</p>
+  $$\P[A \cup B] = \P[A] + \P[B \setminus A], \qquad \P[B] = \P[A \cap B] + \P[B \setminus A].$$
+  <p>Solve the second for $\P[B \setminus A]$ and substitute into the first. <span class="qed">∎</span></p>
+</details>
+
+<p>Rule (e) generalises to $n$ events. Write $A_J = \bigcap_{j \in J} A_j$ for a non-empty index set
+$J \subseteq \{1, \dots, n\}$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">inclusion–exclusion</span></span>
+  $$\P\Big[\bigcup_{i=1}^n A_i\Big] = \sum_{k=1}^{n} (-1)^{k+1} \sum_{\substack{J \subseteq \{1,\dots,n\} \\ |J| = k}} \P[A_J]. \tag{2}$$
+  <p>Equivalently, $\P[\bigcup_i A_i] = \sum_{\varnothing \ne J} (-1)^{|J|+1} \P[A_J]$: add the singles,
+  subtract the pairs, add the triples, and so on.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Induction on $n$. For $n = 1$ the formula reads $\P[A_1] = \P[A_1]$. Assume it holds for any $n$
+  events and let $U = \bigcup_{i=1}^n A_i$. By Theorem 1(e) and distributivity,</p>
+  $$\P\Big[\bigcup_{i=1}^{n+1} A_i\Big] = \P[U] + \P[A_{n+1}] - \P\Big[\bigcup_{i=1}^n (A_i \cap A_{n+1})\Big].$$
+  <p>Apply the hypothesis to both $n$-fold unions. The first gives
+  $\P[U] = \sum_{\varnothing \ne J \subseteq [n]} (-1)^{|J|+1}\P[A_J]$: these are exactly the terms of
+  (2) for $n+1$ events whose index set $J$ does <em>not</em> contain $n+1$. For the second, note
+  $\bigcap_{j \in J} (A_j \cap A_{n+1}) = A_{J \cup \{n+1\}}$, so</p>
+  $$-\P\Big[\bigcup_{i=1}^n (A_i \cap A_{n+1})\Big] = \sum_{\varnothing \ne J \subseteq [n]} (-1)^{|J|+2}\, \P[A_{J \cup \{n+1\}}]
+    = \sum_{\substack{J' \subseteq [n+1],\ n+1 \in J' \\ |J'| \ge 2}} (-1)^{|J'|+1}\, \P[A_{J'}],$$
+  <p>with $J' = J \cup \{n+1\}$, $|J'| = |J| + 1$. Together with $\P[A_{n+1}]$, which is the term
+  $J' = \{n+1\}$ with sign $(-1)^{1+1} = +1$, these are exactly the terms of (2) whose index set
+  <em>does</em> contain $n+1$. Adding both groups gives (2) for $n+1$ events. <span class="qed">∎</span></p>
+</details>
+
+<p>Exact formulas are often unnecessary; an upper bound that needs no intersections is usually what we
+want, for example when controlling the probability that <em>any</em> of many tests fails.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">union bound (Boole's inequality)</span></span>
+  <p>For any events $A_1, A_2, \dots$ (disjoint or not),</p>
+  $$\P\Big[\bigcup_{i=1}^\infty A_i\Big] \le \sum_{i=1}^\infty \P[A_i]. \tag{3}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Disjointification.</em> Let $B_1 = A_1$ and $B_k = A_k \setminus \bigcup_{j &lt; k} A_j$ for
+  $k \ge 2$, so $B_k$ is "the first $A$ that $\omega$ lands in is $A_k$". Then:</p>
+  <ul>
+    <li>the $B_k$ are pairwise disjoint: if $j &lt; k$, then $B_k \subseteq A_j^c$ while $B_j \subseteq A_j$;</li>
+    <li>$\bigcup_k B_k = \bigcup_k A_k$: "$\subseteq$" since $B_k \subseteq A_k$; for "$\supseteq$", if
+      $\omega \in \bigcup_k A_k$ let $k^*$ be the smallest $k$ with $\omega \in A_k$; then $\omega \in B_{k^*}$;</li>
+    <li>$B_k \subseteq A_k$, so $\P[B_k] \le \P[A_k]$ by monotonicity.</li>
+  </ul>
+  <p>Hence $\P[\bigcup_k A_k] = \P[\bigcup_k B_k] = \sum_k \P[B_k] \le \sum_k \P[A_k]$. <span class="qed">∎</span></p>
+</details>
+
+<figure class="demo" data-demo="incl-excl">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">inclusion–exclusion · uniform on the unit square</span></div>
+    <canvas aria-label="Random points in the unit square with two overlapping discs A and B; estimates of P of A, B, their intersection and union"></canvas>
+    <div class="controls">
+      <label>centre distance d <input type="range" min="0" max="0.5" step="0.01" value="0.2" data-d /> <output data-d-out>0.20</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-est></span>
+    </div>
+  </div>
+  <figcaption>$\Omega = [0,1]^2$ with $\P$ = area; $A$ and $B$ are discs of radius $1/4$. 2000 uniform
+  points; bright points lie in $A \cap B$. Readout: Monte Carlo estimate of $\P[A \cup B]$, the same
+  quantity via $\hat\P[A] + \hat\P[B] - \hat\P[A\cap B]$ (identical, as (e) holds for empirical
+  frequencies too), and the exact value from the lens area.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 03</span> Limits</span>Continuity of probability</h2>
+<p>Countable additivity is what lets probabilities pass to the limit. A sequence of events is
+<em>increasing</em> if $A_1 \subseteq A_2 \subseteq \cdots$, with limit $\bigcup_n A_n$, and
+<em>decreasing</em> if $A_1 \supseteq A_2 \supseteq \cdots$, with limit $\bigcap_n A_n$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">continuity</span></span>
+  <p>If $A_n \uparrow A = \bigcup_n A_n$, then $\P[A_n] \to \P[A]$. If $A_n \downarrow A = \bigcap_n A_n$,
+  then $\P[A_n] \to \P[A]$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Increasing.</em> Set $B_1 = A_1$ and $B_k = A_k \setminus A_{k-1}$. Because the sequence
+  increases, this is the disjointification from Theorem 3, so the $B_k$ are pairwise disjoint,
+  $\bigcup_{k \le n} B_k = A_n$ and $\bigcup_k B_k = A$. Then</p>
+  $$\P[A] = \sum_{k=1}^\infty \P[B_k] = \lim_{n\to\infty} \sum_{k=1}^n \P[B_k] = \lim_{n\to\infty} \P[A_n],$$
+  <p>where the first equality is (1), the second is the definition of a series, and the third is
+  finite additivity.</p>
+  <p><em>Decreasing.</em> $A_n^c$ increases to $\bigcup_n A_n^c = \big(\bigcap_n A_n\big)^c = A^c$ by
+  De Morgan, so $1 - \P[A_n] = \P[A_n^c] \to \P[A^c] = 1 - \P[A]$. <span class="qed">∎</span></p>
+</details>
+
+<div class="callout">
+  <span class="lbl">Why it matters</span>
+  <p>Continuity is how we compute $\P[X \le x] = \lim_{n} \P[X \le x + 1/n]$ (right-continuity of
+  CDFs, lesson 2.3) and $\P[\text{a head eventually}] = \lim_n \P[\text{a head in } n \text{ tosses}] = 1$.
+  It is, in fact, equivalent to countable additivity given finite additivity.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 04</span> Building models</span>Point masses on countable spaces</h2>
+<p>On a countable $\Omega$ a probability measure is completely determined by the probabilities of
+single outcomes, and any non-negative assignment that sums to one works.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 5<span class="name">discrete probability models</span></span>
+  <p>Let $\Omega$ be countable and $p : \Omega \to [0,1]$ with $\sum_{\omega \in \Omega} p(\omega) = 1$.
+  Then $\P[A] = \sum_{\omega \in A} p(\omega)$ defines a probability measure on $2^\Omega$. Conversely,
+  every probability measure on $2^\Omega$ arises this way, with $p(\omega) = \P[\{\omega\}]$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Series of non-negative terms can be summed in any order and grouped arbitrarily, so the sum over
+  $A$ is well defined. Non-negativity and normalisation are immediate. For disjoint $A_i$, the terms of
+  $\sum_{\omega \in \cup_i A_i} p(\omega)$ split into the groups $\omega \in A_i$, each $\omega$
+  appearing in exactly one group, so it equals $\sum_i \sum_{\omega \in A_i} p(\omega)$: this is (1).
+  Conversely, any $A \subseteq \Omega$ is the countable disjoint union of the singletons
+  $\{\omega\}$, $\omega \in A$, so (1) forces $\P[A] = \sum_{\omega \in A} \P[\{\omega\}]$. <span class="qed">∎</span></p>
+</details>
+
+<p>The special case of a finite $\Omega$ whose outcomes are <strong>equally likely</strong>,
+$p(\omega) = 1/|\Omega|$, gives the classical formula</p>
+$$\P[A] = \frac{|A|}{|\Omega|}, \tag{4}$$
+<p>which turns probability into counting (lesson 1.5). Equal likelihood is an assumption about the
+experiment, not a consequence of the axioms, and it depends on the sample space: three fair tosses
+make the 8 sequences equally likely, but not the 4 head-counts.</p>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>Checking inclusion–exclusion exactly</h2>
+<p>With exact rational arithmetic, (2) can be checked on any finite model, including one with
+non-uniform point masses.</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">stdlib</span></div>
+    <div class="body"><pre><code class="language-python">from fractions import Fraction
+from itertools import combinations, product
+import random
+
+def prob(p, A):                                   # P[A] = sum of point masses
+    return sum((p[w] for w in A), Fraction(0))
+
+def incl_excl(p, events):
+    n, total = len(events), Fraction(0)
+    for k in range(1, n + 1):
+        for J in combinations(events, k):
+            total += (-1) ** (k + 1) * prob(p, frozenset.intersection(*J))
+    return total
+
+# two fair dice, three overlapping events
+omega = list(product(range(1, 7), repeat=2))
+p = {w: Fraction(1, 36) for w in omega}
+A = frozenset(w for w in omega if sum(w) == 7)
+B = frozenset(w for w in omega if w[0] == 3)
+C = frozenset(w for w in omega if w[1] % 2 == 0)
+assert incl_excl(p, [A, B, C]) == prob(p, A | B | C)  # 2/3
+
+# random non-uniform model on 20 outcomes, 5 random events
+w = [random.randint(1, 9) for _ in range(20)]
+p = {i: Fraction(wi, sum(w)) for i, wi in enumerate(w)}
+ev = [frozenset(i for i in range(20) if random.random() &lt; 0.4) for _ in range(5)]
+assert incl_excl(p, ev) == prob(p, frozenset().union(*ev))</code></pre></div>
+  </div>
+  <figcaption><code>Fraction</code> keeps the check exact: no floating-point tolerance hides an error.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Prove Bonferroni's inequality $\P[A \cap B] \ge \P[A] + \P[B] - 1$, and its $n$-event form
+    $\P\big[\bigcap_{i=1}^n A_i\big] \ge 1 - \sum_{i=1}^n \P[A_i^c]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>From Theorem 1(e), $\P[A \cap B] = \P[A] + \P[B] - \P[A \cup B] \ge \P[A] + \P[B] - 1$. For
+      $n$ events, De Morgan and the union bound give
+      $\P\big[\bigcap_i A_i\big] = 1 - \P\big[\bigcup_i A_i^c\big] \ge 1 - \sum_i \P[A_i^c]$. This is how
+      simultaneous confidence statements are built: if each of $n$ intervals fails with probability
+      $\alpha/n$, all hold with probability at least $1 - \alpha$.</p>
+    </details>
+  </li>
+  <li>
+    <p>The symmetric difference is $A \,\triangle\, B = (A \setminus B) \cup (B \setminus A)$. Show
+    $\P[A \triangle B] = \P[A] + \P[B] - 2\P[A \cap B]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>The two pieces are disjoint, and by Theorem 1(d) applied to $A \cap B \subseteq A$,
+      $\P[A \setminus B] = \P[A \setminus (A \cap B)] = \P[A] - \P[A \cap B]$; likewise for
+      $B \setminus A$. Add the two.</p>
+    </details>
+  </li>
+  <li>
+    <p>Toss a fair coin until the first head and let $\Omega = \{1, 2, \dots\}$ record the toss on
+    which it appears, with $p(k) = 2^{-k}$. Check this is a valid model, and compute the probability that
+    the first head comes on an even-numbered toss.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\sum_{k \ge 1} 2^{-k} = \frac{1/2}{1 - 1/2} = 1$, so Theorem 5 applies. Then
+      $\P[\text{even}] = \sum_{m \ge 1} 2^{-2m} = \sum_{m \ge 1} 4^{-m} = \frac{1/4}{1 - 1/4} = \frac13.$</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that there is no probability measure on $\Omega = \N$ under which all outcomes are equally
+    likely.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Suppose $\P[\{n\}] = c$ for all $n$. By (1), $1 = \P[\N] = \sum_{n} c$, which is $0$ if $c = 0$
+      and $\infty$ if $c &gt; 0$. Either way a contradiction. Finite additivity alone would not rule this out;
+      countable additivity does.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $A_n$ be the event that the first $n$ tosses of a fair coin are all tails. Use continuity to
+    find the probability that the coin never shows heads.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$A_n$ is decreasing and $\bigcap_n A_n$ is "all tosses are tails". On the first $n$ tosses
+      $\P[A_n] = 2^{-n}$ (one of $2^n$ equally likely sequences). By Theorem 4,
+      $\P[\bigcap_n A_n] = \lim_n 2^{-n} = 0$: a head eventually appears with probability one.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 1 (the axioms and their consequences).</li>
+  <li>A. N. Kolmogorov, <em>Foundations of the Theory of Probability</em> (1933; English transl. Chelsea, 1956), ch. 1–2.</li>
+  <li>Grimmett &amp; Stirzaker, <em>Probability and Random Processes</em>, 4th ed., § 1.3 (continuity and its equivalence with countable additivity).</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="events.html"><span class="dir">← previous</span><span class="t">1.1 Experiments, outcomes and events</span></a>
+  <a class="next" href="conditional-probability.html"><span class="dir">next →</span><span class="t">1.3 Conditional probability and Bayes' rule</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("incl-excl", (fig, { scope, rng, colors }) => {
+  const N = 2000, R = 0.25;
+  const dIn = fig.querySelector("[data-d]"), dOut = fig.querySelector("[data-d-out]");
+  const est = fig.querySelector("[data-est]");
+  let seed = 7;
+
+  function draw() {
+    const d = +dIn.value;
+    dOut.value = d.toFixed(2);
+    const ca = [0.5 - d / 2, 0.5], cb = [0.5 + d / 2, 0.5];
+    // keep the square square: widen the x-range to the plot's aspect ratio
+    const { w, h } = scope.axes([0, 1], [0, 1], { xticks: 0, yticks: 0, fmt: () => "" });
+    const a = (w - 54) / (h - 40);
+    const { sx, sy, ctx } = scope.axes([0.5 - a / 2, 0.5 + a / 2], [0, 1], { xticks: 0, yticks: 2, fmt: (v) => v.toFixed(1) });
+    ctx.strokeStyle = colors.line;
+    ctx.strokeRect(sx(0), sy(1), sx(1) - sx(0), sy(0) - sy(1));
+
+    const u = rng(seed);
+    let nA = 0, nB = 0, nAB = 0, nU = 0;
+    for (let i = 0; i < N; i++) {
+      const x = u(), y = u();
+      const inA = (x - ca[0]) ** 2 + (y - ca[1]) ** 2 <= R * R;
+      const inB = (x - cb[0]) ** 2 + (y - cb[1]) ** 2 <= R * R;
+      nA += inA; nB += inB; nAB += inA && inB; nU += inA || inB;
+      ctx.fillStyle = inA && inB ? colors.accent : inA || inB ? colors.fgDim : colors.lineSoft;
+      ctx.fillRect(sx(x) - 1, sy(y) - 1, 2, 2);
+    }
+    const ts = Array.from({ length: 121 }, (_, i) => (2 * Math.PI * i) / 120);
+    for (const c of [ca, cb]) scope.trace(ts.map((t) => c[0] + R * Math.cos(t)), ts.map((t) => c[1] + R * Math.sin(t)), { width: 1.2 });
+    scope.label("A", ca[0] - R + 0.03, 0.5 + R - 0.02, { color: colors.fg });
+    scope.label("B", cb[0] + R - 0.07, 0.5 + R - 0.02, { color: colors.fg });
+
+    const lens = d >= 2 * R ? 0 : 2 * R * R * Math.acos(d / (2 * R)) - (d / 2) * Math.sqrt(4 * R * R - d * d);
+    const exact = 2 * Math.PI * R * R - lens;
+    const pa = nA / N, pb = nB / N, pab = nAB / N;
+    est.textContent = `P̂[A∪B]=${(nU / N).toFixed(3)}  P̂A+P̂B−P̂AB=${(pa + pb - pab).toFixed(3)}  exact=${exact.toFixed(3)}`;
+  }
+  dIn.addEventListener("input", draw);
+  fig.querySelector("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

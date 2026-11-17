@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Experiments, outcomes and events — Learn — Sayf</title>
+<meta name="description" content="Sample spaces, events as sets, partitions and sigma-algebras: the vocabulary every probability model is written in." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 1.1" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 1.1</span>
+    <h1>Experiments, outcomes and events</h1>
+    <p class="deck">Before any number is assigned, a model has to say <em>what can happen</em>. This lesson builds that vocabulary from sets.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>20 min</span>
+      <span>Y&amp;G ch. 1</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 1.1" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>model an experiment by a sample space $\Omega$ at the right level of detail;</li>
+    <li>manipulate events with set operations and prove identities such as De Morgan's laws;</li>
+    <li>decompose any event along a partition of $\Omega$;</li>
+    <li>say which collections of events a probability can live on (a $\sigma$-algebra), and why one is needed.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Model</span>Experiments and sample spaces</h2>
+<p>Probability theory never talks about the world directly. It talks about a <em>model</em> of a
+procedure whose result we cannot predict: toss a coin three times, measure a resistor, wait for the
+next packet. We call such a procedure an <strong>experiment</strong>. What makes it an experiment
+in the technical sense is not the physics but the list of things we agree to record.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">outcome, sample space</span></span>
+  <p>An <strong>outcome</strong> $\omega$ is one complete, indivisible result of the experiment. The
+  <strong>sample space</strong> $\Omega$ is the set of all outcomes. Its elements must be</p>
+  <ul>
+    <li><em>mutually exclusive</em>: one run of the experiment produces exactly one $\omega$, and</li>
+    <li><em>collectively exhaustive</em>: every run produces some $\omega \in \Omega$.</li>
+  </ul>
+</div>
+
+<p>The same physical procedure admits many sample spaces, and choosing one is a modelling decision.
+Toss a coin three times. If we record the sequence,</p>
+$$\Omega_1 = \{H,T\}^3 = \{HHH, HHT, HTH, HTT, THH, THT, TTH, TTT\}, \qquad |\Omega_1| = 8.$$
+<p>If we record only the number of heads, $\Omega_2 = \{0,1,2,3\}$. The map
+$f:\Omega_1 \to \Omega_2$ that counts heads shows that $\Omega_2$ is a <em>coarsening</em> of
+$\Omega_1$: every question about $\Omega_2$ can be asked of $\Omega_1$, but not the other way round
+("was the first toss heads?" has no answer in $\Omega_2$). The rule of thumb is to pick the finest
+space you will need and no finer, because later the equally-likely assumption is often natural on
+the fine space ($\Omega_1$) and false on the coarse one ($\Omega_2$).</p>
+
+<p>Sample spaces need not be finite. Tossing until the first head gives $\Omega = \{1, 2, 3, \dots\}$,
+countably infinite. Measuring a waiting time gives $\Omega = [0, \infty)$, uncountable. All three
+cases matter in this course, and the uncountable one is what forces the extra care of § 04.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Events</span>Events are sets</h2>
+<p>We rarely care about individual outcomes. We ask whether something happened: "at least two heads",
+"the voltage exceeded 5 V". Each such statement is true for some outcomes and false for others, so it
+is identified with the set of outcomes where it is true.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">event</span></span>
+  <p>An <strong>event</strong> is a subset $A \subseteq \Omega$. The event $A$ <em>occurs</em> on a run
+  of the experiment if the outcome $\omega$ of that run satisfies $\omega \in A$. The empty set
+  $\varnothing$ is the impossible event; $\Omega$ is the certain event.</p>
+</div>
+
+<p>Logic on statements becomes algebra on sets. For events $A, B \subseteq \Omega$:</p>
+<ul>
+  <li>"not $A$" is the <strong>complement</strong> $A^c = \{\omega \in \Omega : \omega \notin A\}$;</li>
+  <li>"$A$ or $B$" is the <strong>union</strong> $A \cup B = \{\omega : \omega \in A \text{ or } \omega \in B\}$;</li>
+  <li>"$A$ and $B$" is the <strong>intersection</strong> $A \cap B$, often written $AB$;</li>
+  <li>"$A$ but not $B$" is the <strong>difference</strong> $A \setminus B = A \cap B^c$;</li>
+  <li>"$A$ implies $B$" is <strong>inclusion</strong> $A \subseteq B$;</li>
+  <li>$A$ and $B$ are <strong>disjoint</strong> (mutually exclusive) if $A \cap B = \varnothing$: they cannot occur on the same run.</li>
+</ul>
+<p>Unions and intersections extend to any indexed family $\{A_i\}_{i \in I}$:
+$\bigcup_i A_i$ is the set of outcomes in <em>at least one</em> $A_i$, and $\bigcap_i A_i$ the set of
+outcomes in <em>every</em> $A_i$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">De Morgan's laws</span></span>
+  <p>For any family of events $\{A_i\}_{i \in I}$,</p>
+  $$\Big(\bigcup_{i \in I} A_i\Big)^c = \bigcap_{i \in I} A_i^c, \qquad
+    \Big(\bigcap_{i \in I} A_i\Big)^c = \bigcup_{i \in I} A_i^c. \tag{1}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Two sets are equal when each contains the other, so we chase an arbitrary element. For the first
+  identity,</p>
+  $$\omega \in \Big(\bigcup_i A_i\Big)^c
+    \iff \neg\,(\exists i : \omega \in A_i)
+    \iff \forall i : \omega \notin A_i
+    \iff \forall i : \omega \in A_i^c
+    \iff \omega \in \bigcap_i A_i^c.$$
+  <p>The middle step is the logical rule $\neg \exists \equiv \forall \neg$. For the second identity,
+  apply the first to the family $\{A_i^c\}$ and use $(A^c)^c = A$:
+  $\big(\bigcup_i A_i^c\big)^c = \bigcap_i A_i$; taking complements of both sides gives
+  $\bigcup_i A_i^c = \big(\bigcap_i A_i\big)^c$. <span class="qed">∎</span></p>
+</details>
+
+<p>The same element-chasing proves the distributive laws
+$A \cap \big(\bigcup_i B_i\big) = \bigcup_i (A \cap B_i)$ and
+$A \cup \big(\bigcap_i B_i\big) = \bigcap_i (A \cup B_i)$, which we use constantly.</p>
+
+<h2><span class="sec"><span class="n">§ 03</span> Structure</span>Partitions</h2>
+<p>The most useful way to break a hard question into easy ones is to split $\Omega$ into cases.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">partition</span></span>
+  <p>A countable family of events $\{B_1, B_2, \dots\}$ is a <strong>partition</strong> of $\Omega$
+  (Yates &amp; Goodman call it an <em>event space</em>) if the $B_i$ are pairwise disjoint,
+  $B_i \cap B_j = \varnothing$ for $i \ne j$, and $\bigcup_i B_i = \Omega$.</p>
+</div>
+
+<p>A partition is exactly a coarser sample space: every outcome lands in exactly one $B_i$, so "which
+$B_i$ occurred" is itself a mutually exclusive, collectively exhaustive description of the result.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">decomposition along a partition</span></span>
+  <p>If $\{B_i\}$ is a partition of $\Omega$ and $A \subseteq \Omega$ is any event, then the events
+  $C_i = A \cap B_i$ are pairwise disjoint and</p>
+  $$A = \bigcup_i C_i = \bigcup_i (A \cap B_i). \tag{2}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Disjointness.</em> For $i \ne j$, $C_i \cap C_j = A \cap (B_i \cap B_j) = A \cap \varnothing = \varnothing$.</p>
+  <p><em>Union.</em> By the distributive law,
+  $\bigcup_i (A \cap B_i) = A \cap \big(\bigcup_i B_i\big) = A \cap \Omega = A$. <span class="qed">∎</span></p>
+</details>
+
+<p>Once probabilities are additive over disjoint sets (next lesson), (2) becomes
+$\P[A] = \sum_i \P[A \cap B_i]$, and with conditioning it becomes the law of total probability.</p>
+
+<figure class="demo" data-demo="dice-events">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">two dice · 36 outcomes</span></div>
+    <canvas aria-label="The 36 outcomes of two dice as a 6 by 6 grid, with cells shaded by membership in events A and B"></canvas>
+    <div class="controls">
+      <label>A: sum = <input type="range" min="2" max="12" step="1" value="7" data-s /> <output data-s-out>7</output></label>
+      <label>B: first die ≤ <input type="range" min="0" max="6" step="1" value="3" data-k /> <output data-k-out>3</output></label>
+      <span class="readout-val" data-counts></span>
+    </div>
+  </div>
+  <figcaption>Each cell is one outcome $\omega = (i, j)$: first die $i$ along the horizontal axis, second die $j$ along the vertical. Bright cells are in $A \cap B$, outlined
+  cells are in $A$ only, dim filled cells are in $B$ only. Counts are $|A|$, $|B|$, $|A\cap B|$ and
+  $|A \cup B|$; check that $|A \cup B| = |A| + |B| - |A \cap B|$ for every setting.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 04</span> Technicalities</span>Which subsets are events?</h2>
+<p>On a finite or countable $\Omega$ every subset can be an event. On $\Omega = [0,1]$ that is too
+much to ask: there is no function on <em>all</em> subsets of $[0,1]$ that is countably additive,
+invariant under translation (mod 1) and gives an interval its length. (The Vitali construction, which
+uses the axiom of choice, produces such a non-measurable set.) The fix is to fix in advance a
+collection of subsets that will be called events, closed under the operations we need.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">σ-algebra</span></span>
+  <p>A collection $\mathcal F$ of subsets of $\Omega$ is a <strong>$\sigma$-algebra</strong> if</p>
+  <ol>
+    <li>$\Omega \in \mathcal F$;</li>
+    <li>$A \in \mathcal F \Rightarrow A^c \in \mathcal F$;</li>
+    <li>$A_1, A_2, \dots \in \mathcal F \Rightarrow \bigcup_{i=1}^\infty A_i \in \mathcal F$.</li>
+  </ol>
+</div>
+
+<p>Closure under countable intersections follows: if $A_i \in \mathcal F$ then $A_i^c \in \mathcal F$,
+so $\bigcup_i A_i^c \in \mathcal F$, so its complement, which by (1) is $\bigcap_i A_i$, is in
+$\mathcal F$. Also $\varnothing = \Omega^c \in \mathcal F$, and finite unions are countable unions
+padded with $\varnothing$. In short: any event you can describe with countably many "and", "or" and
+"not" operations is still an event.</p>
+
+<div class="callout">
+  <span class="lbl">In practice</span>
+  <p>For countable $\Omega$ take $\mathcal F = 2^\Omega$, all subsets. For $\Omega = \R^n$ take the
+  Borel sets, the smallest $\sigma$-algebra containing all open boxes. Every set you will meet in this
+  course is Borel, so after this section we stop mentioning $\mathcal F$ unless it matters.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>Events as Python sets</h2>
+<p>For finite experiments, building $\Omega$ explicitly and treating events as <code>frozenset</code>s
+is the fastest way to check an identity or a count.</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">stdlib</span></div>
+    <div class="body"><pre><code class="language-python">from itertools import product
+
+omega = frozenset(product("HT", repeat=3))          # 8 sequences
+event = lambda pred: frozenset(w for w in omega if pred(w))
+comp = lambda a: omega - a
+
+A = event(lambda w: w.count("H") >= 2)             # at least two heads
+B = event(lambda w: w[0] == "H")                   # first toss heads
+
+assert comp(A | B) == comp(A) & comp(B)            # De Morgan
+assert comp(A & B) == comp(A) | comp(B)
+
+# partition by number of heads, then decompose A along it
+parts = [event(lambda w, k=k: w.count("H") == k) for k in range(4)]
+assert frozenset().union(*parts) == omega
+assert all(not (p & q) for i, p in enumerate(parts) for q in parts[i + 1:])
+assert frozenset().union(*(A & p for p in parts)) == A
+print(len(A), len(B), len(A & B), len(A | B))      # 4 4 3 5</code></pre></div>
+  </div>
+  <figcaption>Every identity in this lesson is a one-line <code>assert</code> on a finite $\Omega$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Show that $A \cup B$ is the disjoint union of $A$ and $B \setminus A$, and that $B$ is the
+    disjoint union of $A \cap B$ and $B \setminus A$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$A \cap (B \setminus A) = A \cap B \cap A^c = \varnothing$. And
+      $A \cup (B \cap A^c) = (A \cup B) \cap (A \cup A^c) = (A \cup B) \cap \Omega = A \cup B$ by
+      distributivity. For the second, $(A \cap B) \cap (B \cap A^c) = B \cap (A \cap A^c) = \varnothing$
+      and $(B \cap A) \cup (B \cap A^c) = B \cap (A \cup A^c) = B$. These two decompositions are the whole
+      proof of inclusion–exclusion in the next lesson.</p>
+    </details>
+  </li>
+  <li>
+    <p>Prove that $\{A,\; B \setminus A,\; (A \cup B)^c\}$ is a partition of $\Omega$ for any events
+    $A, B$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By Exercise 1, $A$ and $B \setminus A$ are disjoint with union $A \cup B$. The third set is the
+      complement of $A \cup B$, so it is disjoint from both (each is a subset of $A \cup B$), and the
+      union of all three is $(A \cup B) \cup (A \cup B)^c = \Omega$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Find the smallest $\sigma$-algebra on $\Omega$ that contains a given event $A$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Any $\sigma$-algebra containing $A$ must contain $\Omega$, $A^c$ and $\varnothing = \Omega^c$, so
+      it contains $\{\varnothing, A, A^c, \Omega\}$. That collection is closed under complements (they pair
+      up) and under unions (any union of its members is again one of the four), so it is a
+      $\sigma$-algebra, and therefore the smallest.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $\{B_1, \dots, B_n\}$ be a finite partition with every $B_i \ne \varnothing$. Show that the
+    smallest $\sigma$-algebra containing every $B_i$ has exactly $2^n$ elements.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Let $\mathcal G = \{\bigcup_{i \in S} B_i : S \subseteq \{1,\dots,n\}\}$. Any $\sigma$-algebra
+      containing the $B_i$ is closed under finite unions, so it contains $\mathcal G$. Conversely
+      $\mathcal G$ is a $\sigma$-algebra: $\Omega$ corresponds to $S = \{1,\dots,n\}$; the complement of
+      $\bigcup_{i \in S} B_i$ is $\bigcup_{i \notin S} B_i$ because the $B_i$ partition $\Omega$; and a
+      union of members indexed by $S_1, S_2, \dots$ is the member indexed by $\bigcup_k S_k$. Finally the
+      map $S \mapsto \bigcup_{i\in S} B_i$ is injective because the $B_i$ are disjoint and non-empty (pick
+      $\omega_i \in B_i$; then $\omega_i$ is in the union iff $i \in S$). Hence
+      $|\mathcal G| = |2^{\{1,\dots,n\}}| = 2^n$.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 1 (set theory and sample spaces).</li>
+  <li>Grimmett &amp; Stirzaker, <em>Probability and Random Processes</em>, 4th ed., § 1.1–1.2 (events and $\sigma$-fields).</li>
+  <li>Billingsley, <em>Probability and Measure</em>, § 2–3, for why non-measurable sets force the $\sigma$-algebra.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <span class="prev"><span class="dir">← previous</span><span class="t">—</span></span>
+  <a class="next" href="axioms.html"><span class="dir">next →</span><span class="t">1.2 The axioms of probability</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("dice-events", (fig, { scope, colors }) => {
+  const sIn = fig.querySelector("[data-s]"), kIn = fig.querySelector("[data-k]");
+  const sOut = fig.querySelector("[data-s-out]"), kOut = fig.querySelector("[data-k-out]");
+  const counts = fig.querySelector("[data-counts]");
+
+  function draw() {
+    const s = +sIn.value, k = +kIn.value;
+    sOut.value = s; kOut.value = k;
+    // keep cells square: widen the x-range to the plot's aspect ratio
+    let { w, h } = scope.axes([0, 6], [0, 6], { xticks: 0, yticks: 0, fmt: () => "" });
+    const a = (w - 54) / (h - 40), x0 = 3 - 3 * a;
+    const { sx, sy, ctx } = scope.axes([x0, x0 + 6 * a], [0, 6], { xticks: 0, yticks: 0, fmt: () => "" });
+    let nA = 0, nB = 0, nAB = 0;
+    for (let i = 1; i <= 6; i++) for (let j = 1; j <= 6; j++) {
+      const inA = i + j === s, inB = i <= k;
+      nA += inA; nB += inB; nAB += inA && inB;
+      const px = sx(i - 1 + 0.08), py = sy(j - 0.08), cw = sx(i - 0.08) - px, ch = sy(j - 1 + 0.08) - py;
+      ctx.save();
+      if (inA && inB) { ctx.fillStyle = colors.accent; ctx.shadowColor = colors.accent; ctx.shadowBlur = 8; ctx.fillRect(px, py, cw, ch); }
+      else if (inB) { ctx.fillStyle = colors.lineSoft; ctx.fillRect(px, py, cw, ch); ctx.strokeStyle = colors.line; ctx.strokeRect(px + 0.5, py + 0.5, cw - 1, ch - 1); }
+      else if (inA) { ctx.strokeStyle = colors.accent; ctx.lineWidth = 1.5; ctx.strokeRect(px + 1, py + 1, cw - 2, ch - 2); }
+      else { ctx.strokeStyle = colors.lineSoft; ctx.strokeRect(px + 0.5, py + 0.5, cw - 1, ch - 1); }
+      ctx.restore();
+    }
+    for (let i = 1; i <= 6; i++) {
+      scope.label(String(i), i - 0.5, -0.25, { align: "center", color: colors.fgFaint });
+      scope.label(String(i), -0.3, i - 0.5, { align: "center", color: colors.fgFaint });
+    }
+    counts.textContent = `|A|=${nA} |B|=${nB} |A∩B|=${nAB} |A∪B|=${nA + nB - nAB}`;
+  }
+  sIn.addEventListener("input", draw);
+  kIn.addEventListener("input", draw);
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

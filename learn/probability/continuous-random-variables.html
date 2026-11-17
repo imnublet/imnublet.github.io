@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Continuous random variables, CDFs and PDFs — Learn — Sayf</title>
+<meta name="description" content="Cumulative distribution functions and their properties, densities, uniform and exponential laws, and inverse-transform sampling." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 2.3" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 2.3</span>
+    <h1>Continuous random variables, CDFs and PDFs</h1>
+    <p class="deck">The CDF works for every random variable. When it has a derivative, the density is <em>probability per unit length</em>.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 4</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 2.3" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>define the CDF of any random variable and prove its four characteristic properties;</li>
+    <li>define a continuous random variable through its density and compute probabilities and moments by integration;</li>
+    <li>derive the moments of the uniform and exponential laws and the memorylessness of the exponential;</li>
+    <li>prove that inverse-transform sampling produces a given CDF, using the generalised inverse.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Definition</span>The cumulative distribution function</h2>
+<p>A PMF is useless for a voltage or a waiting time: each exact value has probability zero. One object
+describes the distribution of <em>every</em> random variable, discrete or not.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">CDF</span></span>
+  <p>The <strong>cumulative distribution function</strong> of a random variable $X$ is</p>
+  $$F_X(x) = \P[X \le x], \qquad x \in \R. \tag{1}$$
+</div>
+
+<p>This is defined for every $x$ because $\{X \le x\}$ is an event, which is exactly the requirement in
+the definition of a random variable (lesson 2.1).</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">properties of a CDF</span></span>
+  <ol type="a">
+    <li>$F_X$ is non-decreasing, and $\P[a &lt; X \le b] = F_X(b) - F_X(a)$ for $a &lt; b$;</li>
+    <li>$\lim_{x \to -\infty} F_X(x) = 0$ and $\lim_{x \to \infty} F_X(x) = 1$;</li>
+    <li>$F_X$ is right-continuous: $\lim_{h \downarrow 0} F_X(x + h) = F_X(x)$;</li>
+    <li>$F_X$ has left limits, $F_X(x^-) = \P[X &lt; x]$, so $\P[X = x] = F_X(x) - F_X(x^-)$: jumps are atoms.</li>
+  </ol>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>(a) For $a &lt; b$, $\{X \le b\}$ is the disjoint union of $\{X \le a\}$ and $\{a &lt; X \le b\}$, so
+  $F_X(b) = F_X(a) + \P[a &lt; X \le b] \ge F_X(a)$.</p>
+  <p>Because $F_X$ is monotone, each one-sided limit exists and equals the limit along any monotone sequence
+  approaching the point, so it suffices to use sequences and the continuity theorem (lesson 1.2, Theorem 4).</p>
+  <p>(b) $\{X \le -n\} \downarrow \bigcap_n \{X \le -n\} = \varnothing$ (no real number is $\le -n$ for all $n$),
+  so $F_X(-n) \to 0$. And $\{X \le n\} \uparrow \bigcup_n \{X \le n\} = \Omega$, so $F_X(n) \to 1$.</p>
+  <p>(c) $\{X \le x + 1/n\} \downarrow \bigcap_n \{X \le x + 1/n\} = \{X \le x\}$, so
+  $F_X(x + 1/n) \to F_X(x)$.</p>
+  <p>(d) $\{X \le x - 1/n\} \uparrow \bigcup_n \{X \le x - 1/n\} = \{X &lt; x\}$, so
+  $F_X(x - 1/n) \to \P[X &lt; x]$. Then $\P[X = x] = \P[X \le x] - \P[X &lt; x]$. <span class="qed">∎</span></p>
+</details>
+
+<p>The converse also holds: every function with properties (a)–(c) is the CDF of some random variable
+(Theorem 4 below constructs one). For a discrete $X$ the CDF is a staircase,
+$F_X(x) = \sum_{y \le x} P_X(y)$, rising by $P_X(y)$ at each $y \in S_X$ and flat in between. Right-continuity
+is the convention that the value at a jump is the top of the step.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Densities</span>Continuous random variables</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">continuous random variable, PDF</span></span>
+  <p>$X$ is a <strong>continuous random variable</strong> if there is a function $f_X \ge 0$, its
+  <strong>probability density function</strong>, with</p>
+  $$F_X(x) = \int_{-\infty}^{x} f_X(u) \d u \quad \text{for all } x \in \R. \tag{2}$$
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">working with a density</span></span>
+  <ol type="a">
+    <li>$\int_{-\infty}^{\infty} f_X(x) \d x = 1$;</li>
+    <li>$\P[a &lt; X \le b] = \int_a^b f_X(x) \d x$, and $\P[X = x] = 0$ for every $x$;</li>
+    <li>at every point $x$ where $f_X$ is continuous, $F_X'(x) = f_X(x)$.</li>
+  </ol>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>(a) Let $x \to \infty$ in (2) and use Theorem 1(b). (b) $F_X(b) - F_X(a) = \int_a^b f_X$ by (2) and
+  additivity of the integral; this is $\P[a &lt; X \le b]$ by Theorem 1(a). $F_X$ is continuous because it is
+  an integral of an integrable function, so by Theorem 1(d) $\P[X = x] = F_X(x) - F_X(x^-) = 0$. (c) is the
+  fundamental theorem of calculus applied to (2). <span class="qed">∎</span></p>
+</details>
+
+<p>Because single points carry no probability, $\le$ and $&lt;$ are interchangeable for continuous variables:
+$\P[a \le X \le b] = \P[a &lt; X &lt; b]$. The density is <em>not</em> a probability. It is a probability per
+unit length, $\P[x &lt; X \le x + \Delta] = f_X(x)\Delta + o(\Delta)$ at continuity points, and it can exceed 1:
+Uniform$(0, \tfrac12)$ has density $2$ on its support. Changing $f_X$ at finitely many points (or on any set
+of length zero) changes no probability, so densities are only defined "almost everywhere".</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">expectation of a continuous random variable</span></span>
+  <p>If $\int |x| f_X(x) \d x &lt; \infty$, then $\E[X] = \int_{-\infty}^{\infty} x\, f_X(x) \d x$. More generally,
+  for $g$ with $\int |g(x)| f_X(x) \d x &lt; \infty$,</p>
+  $$\E[g(X)] = \int_{-\infty}^{\infty} g(x)\, f_X(x) \d x. \tag{3}$$
+</div>
+
+<p>Equation (3) is the continuous law of the unconscious statistician. Its proof for general $g$ needs the
+measure-theoretic integral; we take it as given (for monotone differentiable $g$ it follows from the change of
+variables in lesson 3.4). Everything proved in <a href="expectation.html">lesson 2.2</a> from (2) of that
+lesson carries over with sums replaced by integrals: linearity, $\Var[X] = \E[X^2] - \mu_X^2$, the MSE
+identity, and Markov and Chebyshev. The tail-sum formula becomes
+$\E[X] = \int_0^\infty \P[X &gt; x] \d x$ for $X \ge 0$ (exercise 5).</p>
+
+<h2><span class="sec"><span class="n">§ 03</span> Families</span>Uniform and exponential</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">uniform and exponential laws</span></span>
+  <p><em>Uniform$(a, b)$</em>: $f_X(x) = \frac{1}{b-a}$ on $(a, b)$ and $0$ elsewhere. Then
+  $\E[X] = \frac{a+b}{2}$ and $\Var[X] = \frac{(b-a)^2}{12}$.</p>
+  <p><em>Exponential$(\lambda)$</em>, $\lambda &gt; 0$: $f_X(x) = \lambda e^{-\lambda x}$ for $x \ge 0$ and $0$
+  otherwise. Then $F_X(x) = 1 - e^{-\lambda x}$ for $x \ge 0$, $\E[X] = 1/\lambda$, $\Var[X] = 1/\lambda^2$, and
+  $X$ is memoryless:</p>
+  $$\P[X &gt; s + t \mid X &gt; s] = \P[X &gt; t] \quad \text{for all } s, t \ge 0. \tag{4}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Uniform.</em> $\E[X] = \frac{1}{b-a}\int_a^b x \d x = \frac{b^2 - a^2}{2(b-a)} = \frac{a+b}{2}$. Since
+  variance is shift invariant, compute it for $Y = X - \frac{a+b}{2}$, uniform on $(-h, h)$ with
+  $h = \frac{b-a}{2}$: $\E[Y^2] = \frac{1}{2h}\int_{-h}^{h} y^2 \d y = \frac{h^2}{3} = \frac{(b-a)^2}{12}$.</p>
+  <p><em>Exponential.</em> $F_X(x) = \int_0^x \lambda e^{-\lambda u} \d u = 1 - e^{-\lambda x}$. For the moments,
+  integrate by parts with $\int_0^\infty x^n \lambda e^{-\lambda x} \d x = \big[-x^n e^{-\lambda x}\big]_0^\infty + n\int_0^\infty x^{n-1}e^{-\lambda x} \d x$.
+  The boundary term vanishes for $n \ge 1$, so $\E[X^n] = \frac{n}{\lambda}\E[X^{n-1}]$, and by induction from
+  $\E[X^0] = 1$, $\E[X^n] = n!/\lambda^n$. Hence $\E[X] = 1/\lambda$ and
+  $\Var[X] = 2/\lambda^2 - 1/\lambda^2 = 1/\lambda^2$.</p>
+  <p><em>Memorylessness.</em> $\P[X &gt; x] = e^{-\lambda x}$, and $\{X &gt; s+t\} \subseteq \{X &gt; s\}$, so
+  $\P[X &gt; s+t \mid X &gt; s] = e^{-\lambda(s+t)}/e^{-\lambda s} = e^{-\lambda t}$. <span class="qed">∎</span></p>
+</details>
+
+<p>The exponential is the continuous counterpart of the geometric law: if a Bernoulli trial with success
+probability $\lambda\delta$ happens every $\delta$ seconds, the waiting time $\delta L$ satisfies
+$\P[\delta L &gt; t] = (1 - \lambda\delta)^{\lfloor t/\delta \rfloor} \to e^{-\lambda t}$ as $\delta \to 0$, by
+the same limit as in the Poisson theorem of lesson 2.1. It is also the only continuous law with property (4)
+(exercise 4).</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Simulation</span>Inverse-transform sampling</h2>
+<p>Every random-number library starts from (approximately) uniform numbers on $(0,1)$. The CDF is the
+bridge to any other law. When $F$ is continuous and strictly increasing, $F^{-1}$ exists and
+$\P[F^{-1}(U) \le x] = \P[U \le F(x)] = F(x)$. To handle jumps and flat pieces we need a more careful
+inverse.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">generalised inverse (quantile function)</span></span>
+  <p>For a CDF $F$ and $u \in (0, 1)$, let $F^{-}(u) = \inf\{x \in \R : F(x) \ge u\}$.</p>
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">inverse-transform sampling</span></span>
+  <p>Let $F$ satisfy (a)–(c) of Theorem 1. For $u \in (0,1)$ and $x \in \R$,</p>
+  $$F^{-}(u) \le x \iff u \le F(x). \tag{5}$$
+  <p>Consequently, if $U \sim \text{Uniform}(0,1)$, then $X = F^{-}(U)$ has CDF $F$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Fix $u \in (0,1)$ and let $A_u = \{x : F(x) \ge u\}$. By (b), $F(x) \to 1 &gt; u$ as $x \to \infty$, so
+  $A_u \ne \varnothing$; and $F(x) \to 0 &lt; u$ as $x \to -\infty$, so $A_u$ is bounded below. Hence
+  $F^{-}(u) = \inf A_u$ is a finite real number. Because $F$ is non-decreasing, $A_u$ is an interval
+  unbounded to the right ($x \in A_u$, $y &gt; x$ $\Rightarrow$ $y \in A_u$). It contains its infimum: take
+  $x_n \in A_u$ with $x_n \downarrow F^{-}(u)$; by right-continuity
+  $F(F^{-}(u)) = \lim_n F(x_n) \ge u$. So $A_u = [F^{-}(u), \infty)$.</p>
+  <p>Now (5) is just a restatement: $u \le F(x) \iff x \in A_u \iff x \ge F^{-}(u)$.</p>
+  <p>For the consequence, $U \in (0,1)$ with probability one, so by (5)
+  $\P[F^{-}(U) \le x] = \P[U \le F(x)] = F(x)$, the last step because $\P[U \le t] = t$ for $t \in [0,1]$. <span class="qed">∎</span></p>
+</details>
+
+<p>For the exponential, $F^{-}(u) = -\ln(1-u)/\lambda$, and since $1 - U$ is also uniform, $-\ln U / \lambda$
+works too. For a discrete law, $F^{-}(U)$ is "walk up the staircase until it first reaches $U$", which is how
+the geometric sampler in the lesson 2.2 demo works. Sampling a law reduces to computing its quantile
+function, which is how <code>scipy.stats</code>' <code>ppf</code> is used in practice, and how normalising flows
+and copulas move between distributions.</p>
+
+<figure class="demo" data-demo="inverse-transform">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">inverse transform · histogram vs density</span></div>
+    <canvas aria-label="Histogram of samples generated by the inverse CDF, overlaid with the target density"></canvas>
+    <div class="controls">
+      <button type="button" data-law>law: exponential</button>
+      <label>λ <input type="range" min="0.25" max="3" step="0.05" value="1" data-l /> <output data-l-out>1.00</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-stats></span>
+    </div>
+  </div>
+  <figcaption>4000 samples $X = F^{-}(U)$ for the exponential ($-\ln(1-U)/\lambda$), the Laplace law with
+  scale $1/\lambda$, and the Cauchy law with scale $1/\lambda$ ($\tan(\pi(U - \tfrac12))/\lambda$). Bright: the
+  density. The readout compares the sample mean with $\E[X]$; for the Cauchy law $\E|X| = \infty$ and the sample
+  mean refuses to settle when you resample.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>A sampler from a quantile function</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy · scipy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+from scipy import stats
+
+rng = np.random.default_rng(0)
+u = rng.random(100_000)
+
+lam = 2.0
+x = -np.log1p(-u) / lam                         # F^-(u) for Exponential(lam)
+print(x.mean(), 1 / lam, x.var(), 1 / lam**2)
+print(stats.kstest(x, stats.expon(scale=1 / lam).cdf).pvalue)   # large: no evidence against
+
+# any scipy law samples the same way, through its quantile function
+for law in (stats.gamma(3), stats.beta(2, 5), stats.poisson(4)):
+    y = law.ppf(u)
+    print(f"{law.dist.name:8s} mean {y.mean():.3f} vs {law.mean():.3f}")
+
+# memorylessness: P[X > s + t | X > s] == P[X > t]
+s, t = 0.7, 0.4
+print((x &gt; s + t).sum() / (x &gt; s).sum(), np.exp(-lam * t))</code></pre></div>
+  </div>
+  <figcaption><code>log1p(-u)</code> computes $\ln(1 - u)$ accurately for small $u$. The Poisson line shows the generalised inverse working on a staircase CDF.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>$X$ has density $f_X(x) = c\,x^2$ on $[0, 1]$ and $0$ elsewhere. Find $c$, $F_X$, $\E[X]$ and $\Var[X]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\int_0^1 cx^2 \d x = c/3 = 1$, so $c = 3$. $F_X(x) = x^3$ on $[0,1]$, $0$ below, $1$ above.
+      $\E[X] = \int_0^1 3x^3 \d x = \tfrac34$, $\E[X^2] = \int_0^1 3x^4 \d x = \tfrac35$, so
+      $\Var[X] = \tfrac35 - \tfrac9{16} = \tfrac{3}{80}$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Find the median of Exponential$(\lambda)$ and compare it with the mean.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$1 - e^{-\lambda m} = \tfrac12$ gives $m = \ln 2/\lambda \approx 0.693/\lambda$, below the mean $1/\lambda$: the
+      long right tail pulls the mean up.</p>
+    </details>
+  </li>
+  <li>
+    <p>(Probability integral transform.) If $F_X$ is continuous, show that $F_X(X) \sim \text{Uniform}(0,1)$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>For $u \in (0,1)$, $\{F_X(X) \ge u\} = \{X \ge F_X^{-}(u)\}$ by (5) with $x = X$. Continuity of $F_X$ means
+      $\P[X = x] = 0$ for all $x$, and $F_X(F_X^{-}(u)) = u$: the proof of Theorem 4 gives $\ge$, and since $F_X(x) &lt; u$ for every
+      $x &lt; F_X^{-}(u)$, left-continuity gives $\le$. Hence
+      $\P[F_X(X) \ge u] = 1 - F_X(F_X^{-}(u)) = 1 - u$, so $\P[F_X(X) &lt; u] = u$, and $F_X(X)$ is uniform. This is
+      why p-values of continuous test statistics are uniform under the null.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that a non-negative random variable with $G(t) = \P[X &gt; t] &gt; 0$ for all $t$ that satisfies (4) must
+    be exponential.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>(4) says $G(s+t) = G(s)G(t)$. Let $g = \ln G$, so $g(s+t) = g(s) + g(t)$ on $[0, \infty)$ (Cauchy's functional
+      equation). By induction $g(n t) = n g(t)$, so $g(m/n) = \frac mn g(1)$ for positive integers $m, n$:
+      $g(q) = q\,g(1)$ on the positive rationals. $G$ is non-increasing, hence so is $g$, and a monotone function
+      equal to $q\,g(1)$ on a dense set is $t\,g(1)$ everywhere (squeeze between rationals). With
+      $\lambda = -g(1) = -\ln G(1) \ge 0$, $G(t) = e^{-\lambda t}$; $\lambda &gt; 0$ since $G(t) \to 0$ as $t \to \infty$ by
+      Theorem 1(b).</p>
+    </details>
+  </li>
+  <li>
+    <p>For $X \ge 0$ continuous with $\E[X] &lt; \infty$, prove $\E[X] = \int_0^\infty \P[X &gt; x] \d x$.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Write $x = \int_0^x \d t = \int_0^\infty \ind\{t &lt; x\} \d t$ and swap the order of integration (Tonelli,
+      the integrand is non-negative):
+      $$\int_0^\infty x f_X(x) \d x = \int_0^\infty \!\! \int_0^\infty \ind\{t &lt; x\} f_X(x) \d x \d t = \int_0^\infty \P[X &gt; t] \d t.$$
+      For the exponential this gives $\int_0^\infty e^{-\lambda t} \d t = 1/\lambda$ in one line.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 4 (CDFs, PDFs, expected values, families of continuous random variables).</li>
+  <li>Devroye, <em>Non-Uniform Random Variate Generation</em> (Springer, 1986; free online), ch. II, for the inversion method and its generalised inverse.</li>
+  <li>Embrechts &amp; Hofert, "A note on generalized inverses", <em>Math. Meth. Oper. Res.</em> 77 (2013), for properties like (5) in full.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="expectation.html"><span class="dir">← previous</span><span class="t">2.2 Expectation, variance and moments</span></a>
+  <a class="next" href="gaussian.html"><span class="dir">next →</span><span class="t">2.4 The Gaussian random variable</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("inverse-transform", (fig, { scope, rng, colors }) => {
+  const N = 4000, BINS = 48;
+  const q = (s) => fig.querySelector(s);
+  const lawBtn = q("[data-law]"), lIn = q("[data-l]"), stats = q("[data-stats]");
+  const LAWS = [
+    { name: "exponential", inv: (u, l) => -Math.log(1 - u) / l, pdf: (x, l) => (x < 0 ? 0 : l * Math.exp(-l * x)), lo: () => 0, hi: (l) => 5 / l, mean: (l) => (1 / l).toFixed(3) },
+    { name: "laplace", inv: (u, l) => (u < 0.5 ? Math.log(2 * u) : -Math.log(2 * (1 - u))) / l, pdf: (x, l) => 0.5 * l * Math.exp(-l * Math.abs(x)), lo: (l) => -5 / l, hi: (l) => 5 / l, mean: () => "0" },
+    { name: "cauchy", inv: (u, l) => Math.tan(Math.PI * (u - 0.5)) / l, pdf: (x, l) => l / (Math.PI * (1 + (l * x) ** 2)), lo: (l) => -8 / l, hi: (l) => 8 / l, mean: () => "undefined" },
+  ];
+  let li = 0, seed = 5;
+
+  function draw() {
+    const law = LAWS[li], l = +lIn.value;
+    q("[data-l-out]").value = l.toFixed(2);
+    const lo = law.lo(l), hi = law.hi(l), w = (hi - lo) / BINS;
+    const u = rng(seed), counts = new Array(BINS).fill(0);
+    let sum = 0;
+    for (let i = 0; i < N; i++) {
+      const x = law.inv(u(), l);
+      sum += x;
+      const b = Math.floor((x - lo) / w);
+      if (b >= 0 && b < BINS) counts[b]++;
+    }
+    const dens = counts.map((c) => c / (N * w));
+    const xs = Array.from({ length: 301 }, (_, i) => lo + ((hi - lo) * i) / 300);
+    const ymax = Math.max(...xs.map((x) => law.pdf(x, l)), ...dens) * 1.1;
+    const { sx, sy, ctx } = scope.axes([lo, hi], [0, ymax], { xticks: 4, yticks: 4, fmt: (v) => +v.toFixed(2) });
+    ctx.save();
+    ctx.fillStyle = colors.lineSoft; ctx.strokeStyle = colors.line;
+    dens.forEach((d, b) => { const x0 = sx(lo + b * w), x1 = sx(lo + (b + 1) * w); ctx.fillRect(x0, sy(d), x1 - x0 - 1, sy(0) - sy(d)); });
+    ctx.restore();
+    scope.trace(xs, xs.map((x) => law.pdf(x, l)));
+    stats.textContent = `sample mean ${(sum / N).toFixed(3)}  E[X] = ${law.mean(l)}`;
+  }
+  lawBtn.addEventListener("click", () => { li = (li + 1) % LAWS.length; lawBtn.textContent = `law: ${LAWS[li].name}`; draw(); });
+  lIn.addEventListener("input", draw);
+  q("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

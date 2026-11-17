@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Expectation, variance and moments — Learn — Sayf</title>
+<meta name="description" content="Expected value, the law of the unconscious statistician, the tail-sum formula, variance, moments, and the Markov and Chebyshev inequalities." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 2.2" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 2.2</span>
+    <h1>Expectation, variance and moments</h1>
+    <p class="deck">The expectation compresses a distribution to one number, and the variance says <em>how much that compression loses</em>.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 3</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 2.2" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>define $\E[X]$ for a discrete random variable, including when it fails to exist;</li>
+    <li>compute $\E[g(X)]$ directly from $P_X$ (the law of the unconscious statistician);</li>
+    <li>use the tail-sum formula for non-negative integer variables;</li>
+    <li>derive the mean and variance of the Bernoulli, binomial, geometric and Poisson laws;</li>
+    <li>prove the Markov and Chebyshev inequalities and the mean-squared-error decomposition.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Definition</span>The expected value</h2>
+<p>A PMF is a whole function. Often we want one number that says where the distribution sits. The
+natural choice weights each value by its probability, like a centre of mass with masses $P_X(x)$ at
+positions $x$.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">expected value</span></span>
+  <p>Let $X$ be discrete. If $\sum_{x \in S_X} |x|\,P_X(x) &lt; \infty$, the <strong>expected value</strong>
+  (mean, expectation) of $X$ is</p>
+  $$\E[X] = \mu_X = \sum_{x \in S_X} x\, P_X(x). \tag{1}$$
+  <p>Otherwise $\E[X]$ is undefined. If $X \ge 0$ the sum always makes sense in $[0, \infty]$, and we write
+  $\E[X] = \infty$ when it diverges.</p>
+</div>
+
+<p>Why demand <em>absolute</em> convergence? Because $S_X$ has no preferred order, and a series that
+converges only conditionally can be rearranged to any value (Riemann's rearrangement theorem). Absolute
+convergence makes the sum independent of the order, so $\E[X]$ is well defined. The connection to
+averages is the law of large numbers (lesson 5.1): the average of many independent copies of $X$ converges
+to $\E[X]$, and when $\E[X] = \infty$ the average drifts off to infinity instead, as the demo below shows.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Tools</span>Two ways to compute an expectation</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">law of the unconscious statistician</span></span>
+  <p>Let $X$ be discrete, $g : \R \to \R$ and $Y = g(X)$. If $\sum_{x} |g(x)|\, P_X(x) &lt; \infty$, then
+  $\E[Y]$ exists and</p>
+  $$\E[g(X)] = \sum_{x \in S_X} g(x)\, P_X(x). \tag{2}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>The definition says $\E[Y] = \sum_{y \in S_Y} y\, P_Y(y)$. By the PMF of a function (lesson 2.1, Theorem
+  4), $P_Y(y) = \sum_{x : g(x) = y} P_X(x)$, so</p>
+  $$\sum_{y \in S_Y} |y|\, P_Y(y) = \sum_{y \in S_Y} \sum_{x : g(x) = y} |g(x)|\, P_X(x) = \sum_{x \in S_X} |g(x)|\, P_X(x) &lt; \infty,$$
+  <p>where the middle step regroups a series of non-negative terms: the sets $\{x : g(x) = y\}$ partition
+  $S_X$. So $\E[Y]$ exists. Repeating the same regrouping without absolute values is now legitimate (an
+  absolutely convergent series may be regrouped freely), and gives (2). <span class="qed">∎</span></p>
+</details>
+
+<p>The name is a joke about people who use (2) without noticing it needs a proof. Two immediate
+consequences, both from (2) with $g(x) = ax + b$ and with $g = g_1 + g_2$:</p>
+$$\E[aX + b] = a\,\E[X] + b, \qquad \E[g_1(X) + g_2(X)] = \E[g_1(X)] + \E[g_2(X)]. \tag{3}$$
+<p>Linearity for sums of <em>different</em> random variables, $\E[X + Y] = \E[X] + \E[Y]$, also holds but
+needs their joint distribution to state; it comes in module 3. Monotonicity also follows from (2): if
+$g_1(x) \le g_2(x)$ for all $x \in S_X$ then $\E[g_1(X)] \le \E[g_2(X)]$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">tail-sum formula</span></span>
+  <p>If $X$ takes values in $\{0, 1, 2, \dots\}$, then</p>
+  $$\E[X] = \sum_{k=0}^{\infty} \P[X &gt; k], \tag{4}$$
+  <p>with both sides possibly infinite.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Write $\P[X &gt; k] = \sum_{j &gt; k} P_X(j)$ and exchange the order of summation, which is allowed for
+  non-negative terms (Tonelli for series):</p>
+  $$\sum_{k=0}^\infty \sum_{j=k+1}^\infty P_X(j) = \sum_{j=1}^\infty P_X(j) \cdot \#\{k : 0 \le k \le j - 1\}
+    = \sum_{j=1}^{\infty} j\, P_X(j) = \E[X].$$
+  <p><span class="qed">∎</span></p>
+</details>
+
+<p>Formula (4) is often easier than (1), because tail probabilities are often easier than point
+probabilities. For the geometric law, $\P[L &gt; k] = (1-p)^k$, so
+$\E[L] = \sum_{k \ge 0} (1-p)^k = 1/p$ immediately. On average you wait $1/p$ trials for a success.</p>
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">a variable with infinite mean</span></span>
+  <p>Let $\P[X \ge k] = 1/k$ for $k = 1, 2, \dots$, i.e. $P_X(k) = \frac1k - \frac1{k+1} = \frac{1}{k(k+1)}$.
+  This is a valid PMF (the sum telescopes to $1$), but by (4),
+  $\E[X] = \sum_{k \ge 0} \P[X &gt; k] = \sum_{k \ge 0} \frac{1}{k+1} = \infty$, the harmonic series. Such
+  variables are easy to sample: if $U$ is uniform on $(0,1)$, then $X = \lfloor 1/U \rfloor$ has exactly this
+  law, since $\P[\lfloor 1/U \rfloor \ge k] = \P[1/U \ge k] = \P[U \le 1/k] = 1/k$.</p>
+</div>
+
+<figure class="demo" data-demo="running-mean">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">running average · finite vs infinite mean</span></div>
+    <canvas aria-label="Running averages of samples from a geometric law and from a law with infinite mean"></canvas>
+    <div class="controls">
+      <button type="button" data-law>law: geometric(0.3)</button>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-final></span>
+    </div>
+  </div>
+  <figcaption>Five independent runs of the running average $\frac1n\sum_{i \le n} X_i$, $n \le 5000$. For the
+  geometric law the runs settle at $\E[X] = 1/0.3$ (dashed). For $\P[X \ge k] = 1/k$ they never settle:
+  occasional huge samples kick the average up, and it creeps upward roughly like $\ln n + \gamma$ (dashed), where
+  $\gamma \approx 0.577$ is Euler's constant: the mean of $X$ truncated at $n$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 03</span> Spread</span>Variance and moments</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">moments and variance</span></span>
+  <p>The $n$-th <strong>moment</strong> of $X$ is $\E[X^n]$ and the $n$-th <strong>central moment</strong> is
+  $\E[(X - \mu_X)^n]$, when they exist. The <strong>variance</strong> is the second central moment,</p>
+  $$\Var[X] = \sigma_X^2 = \E\big[(X - \mu_X)^2\big], \tag{5}$$
+  <p>and the <strong>standard deviation</strong> is $\sigma_X = \sqrt{\Var[X]}$, which has the units of $X$.</p>
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">variance identities</span></span>
+  <p>If $\E[X^2] &lt; \infty$, then</p>
+  $$\Var[X] = \E[X^2] - \mu_X^2, \qquad \Var[aX + b] = a^2 \Var[X], \tag{6}$$
+  <p>and for every constant $c$,</p>
+  $$\E\big[(X - c)^2\big] = \Var[X] + (\mu_X - c)^2. \tag{7}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>First, $\E[X^2] &lt; \infty$ implies $\E[|X|] &lt; \infty$ because $|x| \le 1 + x^2$, so $\mu_X$ exists. Expand
+  the square and use linearity (3):
+  $\E[(X - c)^2] = \E[X^2] - 2c\,\mu_X + c^2$. Adding and subtracting $\mu_X^2$,
+  $\E[(X - c)^2] = (\E[X^2] - \mu_X^2) + (\mu_X - c)^2$. With $c = \mu_X$ the left side is $\Var[X]$, which
+  gives the first identity in (6), and substituting it back gives (7). For the second identity in (6),
+  $aX + b$ has mean $a\mu_X + b$, so
+  $\Var[aX+b] = \E[(aX + b - a\mu_X - b)^2] = a^2\, \E[(X - \mu_X)^2]$. <span class="qed">∎</span></p>
+</details>
+
+<p>Identity (7) says the mean is the constant that best predicts $X$ in mean squared error, and the
+minimal error is the variance. This is the simplest instance of the bias–variance decomposition, and of
+MMSE estimation (lesson 5.4), where the constant $c$ will become a function of observed data.</p>
+
+<p>For integer-valued laws the <em>factorial moment</em> $\E[X(X-1)]$ is usually easier than $\E[X^2]$, and
+$\Var[X] = \E[X(X-1)] + \E[X] - \E[X]^2$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">means and variances of the standard laws</span></span>
+  <p>$\text{Bernoulli}(p)$: $\mu = p$, $\sigma^2 = p(1-p)$. &nbsp; $\text{Binomial}(n,p)$: $\mu = np$,
+  $\sigma^2 = np(1-p)$. &nbsp; $\text{Geometric}(p)$: $\mu = 1/p$, $\sigma^2 = (1-p)/p^2$. &nbsp;
+  $\text{Poisson}(\alpha)$: $\mu = \sigma^2 = \alpha$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Write $q = 1 - p$.</p>
+  <p><em>Bernoulli.</em> $\E[X] = 0 \cdot q + 1 \cdot p = p$, and $X^2 = X$, so $\Var[X] = p - p^2$.</p>
+  <p><em>Binomial.</em> Use $k\binom nk = n\binom{n-1}{k-1}$ (both count a $k$-subset of $n$ items with a
+  marked member) and $k(k-1)\binom nk = n(n-1)\binom{n-2}{k-2}$ (two marked members, in order). Then</p>
+  $$\E[K] = \sum_{k=1}^n n\binom{n-1}{k-1}p^k q^{n-k} = np\sum_{j=0}^{n-1}\binom{n-1}{j}p^j q^{n-1-j} = np(p+q)^{n-1} = np,$$
+  <p>and in the same way $\E[K(K-1)] = n(n-1)p^2 (p+q)^{n-2} = n(n-1)p^2$. So
+  $\Var[K] = n(n-1)p^2 + np - n^2p^2 = np - np^2 = npq$.</p>
+  <p><em>Geometric.</em> $\E[L] = 1/p$ by the tail-sum formula above. Differentiating the power series
+  $\sum_{\ell \ge 0} q^\ell = (1-q)^{-1}$ twice term by term (valid inside the radius of convergence $|q| &lt; 1$)
+  gives $\sum_{\ell \ge 2} \ell(\ell-1) q^{\ell - 2} = 2(1-q)^{-3}$. Hence
+  $\E[L(L-1)] = \sum_{\ell} \ell(\ell-1)\, p\, q^{\ell-1} = pq \cdot 2/p^3 = 2q/p^2$, and
+  $\Var[L] = 2q/p^2 + 1/p - 1/p^2 = (2q + p - 1)/p^2 = q/p^2$.</p>
+  <p><em>Poisson.</em> $\E[X] = \sum_{x \ge 1} x\frac{\alpha^x e^{-\alpha}}{x!} = \alpha\sum_{x \ge 1}\frac{\alpha^{x-1}e^{-\alpha}}{(x-1)!} = \alpha$,
+  and the same shift by two gives $\E[X(X-1)] = \alpha^2$, so $\Var[X] = \alpha^2 + \alpha - \alpha^2 = \alpha$. <span class="qed">∎</span></p>
+</details>
+
+<p>The binomial and Poisson results agree in the Poisson limit: with $p = \alpha/n$,
+$np(1-p) = \alpha(1 - \alpha/n) \to \alpha$.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Bounds</span>Markov and Chebyshev</h2>
+<p>Knowing only a mean, or only a mean and a variance, already bounds the tails.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 5<span class="name">Markov's inequality</span></span>
+  <p>If $X \ge 0$ and $a &gt; 0$, then $\displaystyle \P[X \ge a] \le \frac{\E[X]}{a}$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Drop the terms with $x &lt; a$ (they are non-negative) and bound $x \ge a$ on the rest:</p>
+  $$\E[X] = \sum_{x} x\,P_X(x) \ge \sum_{x \ge a} x\,P_X(x) \ge a\sum_{x \ge a} P_X(x) = a\,\P[X \ge a].$$
+  <p>The same argument with integrals proves it for continuous $X$ (lesson 2.3). <span class="qed">∎</span></p>
+</details>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 6<span class="name">Chebyshev's inequality</span></span>
+  <p>If $\Var[X] = \sigma^2 &lt; \infty$ and $c &gt; 0$, then
+  $\displaystyle \P\big[|X - \mu_X| \ge c\big] \le \frac{\sigma^2}{c^2}$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>$\{|X - \mu_X| \ge c\} = \{(X - \mu_X)^2 \ge c^2\}$. Apply Markov to the non-negative variable
+  $(X - \mu_X)^2$ with $a = c^2$; its expectation is $\sigma^2$. <span class="qed">∎</span></p>
+</details>
+
+<p>With $c = k\sigma$: at most $1/k^2$ of the mass is more than $k$ standard deviations from the mean, for
+<em>any</em> law with finite variance. Exercise 4 shows the bound cannot be improved without more
+assumptions. For a specific law it is usually loose: for a Gaussian, the probability of $3\sigma$ or more
+is $0.0027$, against Chebyshev's $0.111$.</p>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>Moments by the unconscious statistician</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy · scipy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+from scipy import stats
+
+def moments(pmf, xs):
+    """Mean and variance from a PMF by (2), on a truncated support."""
+    p = pmf(xs)
+    m = (xs * p).sum()
+    return m, ((xs - m) ** 2 * p).sum()
+
+xs = np.arange(0, 2000)
+for name, law, (mu, var) in [
+    ("binomial(30, .2)", stats.binom(30, 0.2), (6.0, 4.8)),
+    ("geometric(.3)",    stats.geom(0.3),      (1 / 0.3, 0.7 / 0.09)),
+    ("poisson(4)",       stats.poisson(4),     (4.0, 4.0)),
+]:
+    print(f"{name:18s}", np.round(moments(law.pmf, xs), 6), (mu, round(var, 6)))
+
+# infinite mean: X = floor(1/U) has P[X >= k] = 1/k
+rng = np.random.default_rng(0)
+x = np.floor(1 / rng.random(10**6))
+for n in (10**2, 10**4, 10**6):
+    print(n, x[:n].mean().round(2), np.log(n).round(2))   # grows, roughly like log n</code></pre></div>
+  </div>
+  <figcaption>The truncation at 2000 is harmless here because all three tails are geometrically small.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>For $X \sim \text{Poisson}(\alpha)$, compute $\E\big[1/(1+X)\big]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By (2), $\sum_{x \ge 0} \frac{1}{x+1}\frac{\alpha^x e^{-\alpha}}{x!} = \frac{e^{-\alpha}}{\alpha}\sum_{x \ge 0}\frac{\alpha^{x+1}}{(x+1)!}
+      = \frac{e^{-\alpha}}{\alpha}(e^\alpha - 1) = \frac{1 - e^{-\alpha}}{\alpha}$. Note that this is not
+      $1/(1 + \E[X])$: in general $\E[g(X)] \ne g(\E[X])$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that $X \sim \text{Uniform}\{1, \dots, n\}$ has mean $\frac{n+1}{2}$ and variance $\frac{n^2-1}{12}$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\E[X] = \frac1n\cdot\frac{n(n+1)}{2}$ and $\E[X^2] = \frac1n\cdot\frac{n(n+1)(2n+1)}{6}$. By (6),
+      $\Var[X] = \frac{(n+1)(2n+1)}{6} - \frac{(n+1)^2}{4} = \frac{(n+1)\big(2(2n+1) - 3(n+1)\big)}{12} = \frac{(n+1)(n-1)}{12}$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that $\Var[X] = 0$ if and only if $\P[X = \mu_X] = 1$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\Var[X] = \sum_x (x - \mu_X)^2 P_X(x)$ is a sum of non-negative terms, so it vanishes iff
+      $P_X(x) = 0$ for every $x \ne \mu_X$, i.e. iff all mass sits at $\mu_X$. (For general $X$, Chebyshev gives
+      $\P[|X - \mu_X| \ge 1/n] = 0$ for every $n$, and continuity of probability finishes it.)</p>
+    </details>
+  </li>
+  <li>
+    <p>For $c \ge 1$, let $X$ take the values $-c, 0, c$ with probabilities $\frac{1}{2c^2}, 1 - \frac{1}{c^2}, \frac{1}{2c^2}$.
+    Show that Chebyshev's inequality holds with equality at this $c$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By symmetry $\mu_X = 0$, and $\sigma^2 = c^2 \cdot \frac{1}{c^2} = 1$. Then $\P[|X| \ge c] = \frac{1}{c^2} = \sigma^2/c^2$.
+      So no better bound in terms of $\sigma^2$ and $c$ alone is possible.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that every median $m$ of $X$ (a point with $\P[X \le m] \ge \tfrac12$ and $\P[X \ge m] \ge \tfrac12$)
+    minimises $c \mapsto \E|X - c|$, assuming $\E|X| &lt; \infty$.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Take $c &gt; m$. Pointwise, $|x - c| - |x - m|$ equals $c - m$ when $x \le m$, and is at least
+      $-(c - m)$ for every $x$ (triangle inequality). So
+      $$\E|X - c| - \E|X - m| \ge (c - m)\,\P[X \le m] - (c - m)\,\P[X &gt; m] = (c - m)\big(2\P[X \le m] - 1\big) \ge 0.$$
+      The case $c &lt; m$ is symmetric, using $\P[X \ge m] \ge \tfrac12$. Compare (7): squared error picks the
+      mean, absolute error picks the median.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 3 (expected value, functions of a random variable, variance and standard deviation).</li>
+  <li>Grimmett &amp; Stirzaker, <em>Probability and Random Processes</em>, 4th ed., § 3.3 and § 7.3, for expectations and the classical inequalities.</li>
+  <li>Rudin, <em>Principles of Mathematical Analysis</em>, 3rd ed., § 3.54, for the rearrangement theorem behind the absolute-convergence requirement.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="discrete-random-variables.html"><span class="dir">← previous</span><span class="t">2.1 Discrete random variables and PMFs</span></a>
+  <a class="next" href="continuous-random-variables.html"><span class="dir">next →</span><span class="t">2.3 Continuous random variables, CDFs and PDFs</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("running-mean", (fig, { scope, rng, colors }) => {
+  const N = 5000, RUNS = 5, P = 0.3;
+  const lawBtn = fig.querySelector("[data-law]"), final = fig.querySelector("[data-final]");
+  let seed = 11, heavy = false;
+  const draws = {
+    geo: (u) => Math.max(1, Math.ceil(Math.log(1 - u()) / Math.log(1 - P))),   // inverse transform for geometric(P)
+    heavy: (u) => Math.floor(1 / (1 - u())),                        // P[X >= k] = 1/k
+  };
+
+  function draw() {
+    const sample = heavy ? draws.heavy : draws.geo;
+    const ns = Array.from({ length: N }, (_, i) => i + 1);
+    const runs = [];
+    for (let r = 0; r < RUNS; r++) {
+      const u = rng(seed * 131 + r);
+      let s = 0;
+      runs.push(ns.map((n) => (s += sample(u)) / n));
+    }
+    const ymax = heavy ? Math.max(12, ...runs.map((m) => Math.max(...m.slice(20)))) * 1.1 : 6;
+    scope.axes([0, N], [0, ymax], { xticks: 5, yticks: 4, fmt: (v) => (v >= 100 ? v.toFixed(0) : v.toFixed(1)) });
+    if (!heavy) scope.trace([0, N], [1 / P, 1 / P], { color: colors.fgFaint, width: 1, glow: false, dash: [4, 4] });
+    else scope.trace(ns, ns.map((n) => Math.log(n) + 0.5772), { color: colors.fgFaint, width: 1, glow: false, dash: [4, 4] });
+    for (let r = RUNS - 1; r >= 0; r--) scope.trace(ns, runs[r], r ? { color: colors.fgFaint, width: 1, glow: false } : {});
+    final.textContent = heavy ? `mean of 5000 = ${runs[0][N - 1].toFixed(2)} (E[X] = ∞)` : `mean of 5000 = ${runs[0][N - 1].toFixed(3)}  E[X] = ${(1 / P).toFixed(3)}`;
+  }
+  lawBtn.addEventListener("click", () => { heavy = !heavy; lawBtn.textContent = heavy ? "law: P[X≥k]=1/k" : "law: geometric(0.3)"; draw(); });
+  fig.querySelector("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Independence and sequential experiments — Learn — Sayf</title>
+<meta name="description" content="Independent events, pairwise versus mutual independence, product experiments, Bernoulli trials, the binomial law and reliability." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 1.4" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 1.4</span>
+    <h1>Independence and sequential experiments</h1>
+    <p class="deck">Independence is a statement about numbers, not about causes, and it is what lets <em>probabilities multiply</em>.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 1–2</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 1.4" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>define independence of two and of $n$ events, and tell it apart from disjointness;</li>
+    <li>construct a counterexample showing pairwise independence does not imply mutual independence;</li>
+    <li>distinguish independence from conditional independence;</li>
+    <li>model repeated trials as a product experiment and derive the binomial law;</li>
+    <li>compute the reliability of series and parallel systems.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Definition</span>Independent events</h2>
+<p>Intuitively, $B$ is irrelevant to $A$ if learning that $B$ occurred does not change the probability of
+$A$: $\P[A \mid B] = \P[A]$. Multiplying by $\P[B]$ gives a symmetric statement that also makes sense
+when $\P[B] = 0$, and that is the one we adopt.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">independence of two events</span></span>
+  <p>Events $A$ and $B$ are <strong>independent</strong> if</p>
+  $$\P[A \cap B] = \P[A]\,\P[B]. \tag{1}$$
+</div>
+
+<p>When $\P[B] &gt; 0$, (1) is equivalent to $\P[A \mid B] = \P[A]$, by the definition of conditional
+probability. Two points are worth stating explicitly.</p>
+<ul>
+  <li><strong>Independence is a property of $\P$, not of the sets.</strong> The same two events can be
+  independent under one measure and dependent under another. It need not reflect physical separation
+  either: for one fair die, $A = \{2,4,6\}$ and $B = \{1,2\}$ satisfy
+  $\P[A \cap B] = \tfrac16 = \tfrac12 \cdot \tfrac13$, although both are about the same roll.</li>
+  <li><strong>Disjoint is almost the opposite of independent.</strong> If $A \cap B = \varnothing$ with
+  $\P[A], \P[B] &gt; 0$, then $\P[A \cap B] = 0 \ne \P[A]\P[B]$: learning that $B$ occurred tells you
+  for certain that $A$ did not.</li>
+</ul>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">complements preserve independence</span></span>
+  <p>If $A$ and $B$ are independent, so are $A$ and $B^c$, $A^c$ and $B$, and $A^c$ and $B^c$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>$A$ is the disjoint union of $A \cap B$ and $A \cap B^c$, so</p>
+  $$\P[A \cap B^c] = \P[A] - \P[A \cap B] = \P[A] - \P[A]\P[B] = \P[A]\,(1 - \P[B]) = \P[A]\,\P[B^c].$$
+  <p>By symmetry $A^c$ and $B$ are independent; applying the first result to the independent pair
+  $(A^c, B)$ gives $A^c$ and $B^c$. <span class="qed">∎</span></p>
+</details>
+
+<h2><span class="sec"><span class="n">§ 02</span> Many events</span>Pairwise is not enough</h2>
+<p>For more than two events we must ask for the product rule on <em>every</em> sub-collection.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">mutual independence</span></span>
+  <p>Events $A_1, \dots, A_n$ are <strong>(mutually) independent</strong> if for every index set
+  $J \subseteq \{1, \dots, n\}$ with $|J| \ge 2$,</p>
+  $$\P\Big[\bigcap_{j \in J} A_j\Big] = \prod_{j \in J} \P[A_j]. \tag{2}$$
+  <p>That is $2^n - n - 1$ equations. An infinite family is independent if every finite sub-family is.</p>
+</div>
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">pairwise but not mutually independent</span></span>
+  <p>Toss two fair coins: $\Omega = \{HH, HT, TH, TT\}$, equally likely. Let $A$ = "first is $H$",
+  $B$ = "second is $H$", $C$ = "the two tosses agree" $= \{HH, TT\}$. Each has probability $\tfrac12$,
+  and each pairwise intersection is a single outcome:
+  $A \cap B = A \cap C = B \cap C = \{HH\}$, with probability $\tfrac14 = \tfrac12 \cdot \tfrac12$. So the
+  three pairs are independent. But $A \cap B \cap C = \{HH\}$ too, and
+  $\P[A \cap B \cap C] = \tfrac14 \ne \tfrac18$. Any two of the events determine the third, which
+  three-way independence must forbid.</p>
+</div>
+
+<p>Conversely, the single equation $\P[A_1 A_2 A_3] = \P[A_1]\P[A_2]\P[A_3]$ does not imply the
+pairwise ones either (exercise 2), which is why the definition lists every sub-collection. Theorem 1
+extends: if $A_1, \dots, A_n$ are independent, replacing any of them by their complements leaves them
+independent (exercise 3). And independence passes to events built from disjoint groups, e.g. $A_1$ is
+independent of $A_2 \cup A_3$ (exercise 4).</p>
+
+<h2><span class="sec"><span class="n">§ 03</span> Given a third event</span>Conditional independence</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">conditional independence</span></span>
+  <p>For $\P[C] &gt; 0$, events $A$ and $B$ are <strong>conditionally independent given $C$</strong> if
+  $\P[A \cap B \mid C] = \P[A \mid C]\,\P[B \mid C]$, i.e. if they are independent under the measure
+  $\P[\,\cdot \mid C]$.</p>
+</div>
+
+<p>Neither notion implies the other. A coin is chosen at random: fair, or two-headed, each with
+probability $\tfrac12$. It is tossed twice. Given the coin, the tosses are independent. Unconditionally,
+by the law of total probability,</p>
+$$\P[H_1] = \tfrac12 \cdot \tfrac12 + \tfrac12 \cdot 1 = \tfrac34, \qquad
+  \P[H_1 H_2] = \tfrac12 \cdot \tfrac14 + \tfrac12 \cdot 1 = \tfrac58 \ne \tfrac{9}{16} = \P[H_1]\P[H_2].$$
+<p>The first head is evidence for the two-headed coin, which makes a second head more likely. This is the
+structure of every latent-variable model: observations are independent given the parameters and
+dependent after the parameters are integrated out. (For the reverse failure, independence destroyed by
+conditioning, see the "explaining away" exercise 5.)</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Stages</span>Sequential experiments and Bernoulli trials</h2>
+<p>Most experiments in this course are built from stages that "do not influence each other". The product
+construction is what makes that phrase precise.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">product experiments</span></span>
+  <p>Let $(\Omega_1, p_1)$ and $(\Omega_2, p_2)$ be discrete models (lesson 1.2, Theorem 5). On
+  $\Omega = \Omega_1 \times \Omega_2$, $p(\omega_1, \omega_2) = p_1(\omega_1)\,p_2(\omega_2)$ is a valid
+  model, and for any $A \subseteq \Omega_1$, $B \subseteq \Omega_2$ the events
+  $\tilde A = A \times \Omega_2$ ("stage 1 lands in $A$") and $\tilde B = \Omega_1 \times B$ are
+  independent with $\P[\tilde A] = \P_1[A]$ and $\P[\tilde B] = \P_2[B]$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>For any $A \subseteq \Omega_1$, $B \subseteq \Omega_2$, since the series have non-negative terms
+  they may be summed iteratively:</p>
+  $$\P[A \times B] = \sum_{\omega_1 \in A} \sum_{\omega_2 \in B} p_1(\omega_1)\,p_2(\omega_2)
+    = \Big(\sum_{\omega_1 \in A} p_1(\omega_1)\Big)\Big(\sum_{\omega_2 \in B} p_2(\omega_2)\Big) = \P_1[A]\,\P_2[B].$$
+  <p>With $A = \Omega_1$, $B = \Omega_2$ this gives $\P[\Omega] = 1$, so $p$ is valid. With
+  $B = \Omega_2$ it gives $\P[\tilde A] = \P_1[A]$, and with $A = \Omega_1$, $\P[\tilde B] = \P_2[B]$.
+  Finally $\tilde A \cap \tilde B = A \times B$, so $\P[\tilde A \cap \tilde B] = \P_1[A]\P_2[B] = \P[\tilde A]\P[\tilde B]$. <span class="qed">∎</span></p>
+</details>
+
+<p>By induction the same holds for $n$ stages, with mutual independence of events that depend on
+different stages. The most important case: $n$ independent <strong>Bernoulli trials</strong>, each a
+success ($1$) with probability $p$ and a failure ($0$) with probability $1-p$. Then
+$\Omega = \{0,1\}^n$ and an outcome with $k$ ones has probability $p^k (1-p)^{n-k}$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">binomial law</span></span>
+  <p>The probability of exactly $k$ successes in $n$ independent Bernoulli$(p)$ trials is</p>
+  $$\P[K = k] = \binom{n}{k} p^k (1-p)^{n-k}, \qquad k = 0, 1, \dots, n. \tag{3}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>The event $\{K = k\}$ is the disjoint union of the singletons $\{\omega\}$, one for each binary string
+  with exactly $k$ ones. Each has probability $p^k(1-p)^{n-k}$ by the product model. Such a string is
+  determined by which $k$ of the $n$ positions hold the ones, and there are $\binom nk$ ways to choose
+  $k$ positions out of $n$ (proved in <a href="counting.html">lesson 1.5</a>). Finite additivity gives
+  (3). As a check, $\sum_k \binom nk p^k(1-p)^{n-k} = (p + 1 - p)^n = 1$ by the binomial theorem. <span class="qed">∎</span></p>
+</details>
+
+<figure class="demo" data-demo="binomial">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">binomial(n, p) · exact vs simulated</span></div>
+    <canvas aria-label="Binomial probability mass function as bars, with simulated relative frequencies as dots"></canvas>
+    <div class="controls">
+      <label>n <input type="range" min="1" max="60" step="1" value="20" data-n /> <output data-n-out>20</output></label>
+      <label>p <input type="range" min="0.02" max="0.98" step="0.02" value="0.3" data-p /> <output data-p-out>0.30</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-stats></span>
+    </div>
+  </div>
+  <figcaption>Bars: (3). Dots: relative frequencies of $K$ in 2000 simulated runs of $n$ coin flips, each
+  flip drawn independently, i.e. sampled from the product model. The mode is
+  $\lfloor (n+1)p \rfloor$ (exercise 6).</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> Application</span>Reliability of series and parallel systems</h2>
+<p>A system is built from $n$ components that fail independently, component $i$ working with probability
+$p_i$. Let $W_i$ be the event "component $i$ works".</p>
+<ul>
+  <li><strong>Series</strong>: the system works only if all components work. By (2),
+    $\P[\text{works}] = \P\big[\bigcap_i W_i\big] = \prod_{i} p_i$.</li>
+  <li><strong>Parallel</strong>: the system works if at least one works. By De Morgan and independence of
+    the complements (Theorem 1, extended),
+    $\P[\text{works}] = 1 - \P\big[\bigcap_i W_i^c\big] = 1 - \prod_{i} (1 - p_i)$.</li>
+</ul>
+<p>Series systems are weaker than their weakest link; parallel systems are stronger than their strongest.
+Ten components in series, each with $p = 0.99$, work with probability $0.99^{10} \approx 0.904$.
+Duplicate each component in parallel and every stage works with probability $1 - 0.01^2 = 0.9999$, so the
+system works with probability $0.9999^{10} \approx 0.9990$: redundancy cut the failure probability from
+about $9.6\%$ to $0.1\%$. Any series–parallel network is evaluated by applying the two rules from the
+inside out, provided the blocks share no components.</p>
+
+<h2><span class="sec"><span class="n">§ 06</span> In code</span>Checking the counterexample and the binomial law</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy · stdlib</span></div>
+    <div class="body"><pre><code class="language-python">from fractions import Fraction
+from itertools import product
+from math import comb
+import numpy as np
+
+# pairwise but not mutually independent
+omega = list(product("HT", repeat=2))
+P = lambda E: Fraction(sum(map(E, omega)), len(omega))
+A = lambda w: w[0] == "H"
+B = lambda w: w[1] == "H"
+C = lambda w: w[0] == w[1]
+both = lambda *Es: lambda w: all(E(w) for E in Es)
+
+for X, Y in [(A, B), (A, C), (B, C)]:
+    assert P(both(X, Y)) == P(X) * P(Y)            # 1/4 == 1/2 * 1/2
+print(P(both(A, B, C)), P(A) * P(B) * P(C))        # 1/4 vs 1/8
+
+# binomial law from the product model
+rng = np.random.default_rng(1)
+n, p, reps = 20, 0.3, 200_000
+K = (rng.random((reps, n)) &lt; p).sum(axis=1)       # each row: n independent trials
+freq = np.bincount(K, minlength=n + 1) / reps
+pmf = np.array([comb(n, k) * p**k * (1 - p)**(n - k) for k in range(n + 1)])
+print(np.abs(freq - pmf).max())                    # ~1e-3</code></pre></div>
+  </div>
+  <figcaption>Each row of the uniform matrix is one outcome of the $n$-fold product experiment.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 07</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Show that $A$ is independent of itself if and only if $\P[A] \in \{0, 1\}$. Deduce that an event of
+    probability $0$ or $1$ is independent of every event.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\P[A \cap A] = \P[A]$, so independence means $\P[A] = \P[A]^2$, i.e. $\P[A] \in \{0,1\}$. If
+      $\P[A] = 0$ then $0 \le \P[A \cap B] \le \P[A] = 0 = \P[A]\P[B]$. If $\P[A] = 1$ then $\P[A^c] = 0$
+      is independent of $B$, hence so is $A$ by Theorem 1.</p>
+    </details>
+  </li>
+  <li>
+    <p>Roll two fair dice. Let $A$ = "first die is 1, 2 or 3", $B$ = "first die is 3, 4 or 5",
+    $C$ = "the sum is 9". Show that $\P[ABC] = \P[A]\P[B]\P[C]$ but that no two of the events are
+    independent.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\P[A] = \P[B] = \tfrac12$ and $C = \{(3,6),(4,5),(5,4),(6,3)\}$, so $\P[C] = \tfrac19$.
+      $ABC = \{(3,6)\}$, so $\P[ABC] = \tfrac1{36} = \tfrac12 \cdot \tfrac12 \cdot \tfrac19$. But
+      $\P[AB] = \P[\text{first} = 3] = \tfrac16 \ne \tfrac14$, $\P[AC] = \P\{(3,6)\} = \tfrac1{36} \ne \tfrac1{18}$
+      and $\P[BC] = \P\{(3,6),(4,5),(5,4)\} = \tfrac1{12} \ne \tfrac1{18}$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Prove that if $A_1, \dots, A_n$ are independent, then so are $A_1^c, A_2, \dots, A_n$. Conclude
+    that any choice of complements preserves independence.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>We must check (2) for every $J$ with $|J| \ge 2$. If $1 \notin J$ nothing changed. If $1 \in J$, let
+      $J' = J \setminus \{1\} \ne \varnothing$ and $D = \bigcap_{j \in J'} A_j$. Since $D$ is the disjoint union
+      of $A_1 \cap D$ and $A_1^c \cap D$,
+      $$\P[A_1^c \cap D] = \P[D] - \P[A_1 \cap D] = \prod_{j \in J'} \P[A_j] - \P[A_1]\prod_{j \in J'} \P[A_j]
+        = \P[A_1^c] \prod_{j \in J'} \P[A_j],$$
+      using (2) for $J'$ (or the trivial identity if $|J'| = 1$) and for $J$. Repeating the argument one index
+      at a time handles any set of complements.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $A, B, C$ be independent. Show that $A$ is independent of $B \cup C$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By distributivity and inclusion–exclusion,
+      $\P[A \cap (B \cup C)] = \P[AB] + \P[AC] - \P[ABC] = \P[A]\big(\P[B] + \P[C] - \P[B]\P[C]\big)$, and
+      the bracket is $\P[B] + \P[C] - \P[BC] = \P[B \cup C]$.</p>
+    </details>
+  </li>
+  <li>
+    <p><em>Explaining away.</em> Two independent fair coins are tossed; $A$ = "first is $H$", $B$ = "second
+    is $H$", $C$ = "at least one $H$". Show that $A$ and $B$ are independent but not conditionally
+    independent given $C$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\P[C] = \tfrac34$, $\P[A \mid C] = \P[B \mid C] = \tfrac{1/2}{3/4} = \tfrac23$ and
+      $\P[AB \mid C] = \tfrac{1/4}{3/4} = \tfrac13 \ne \tfrac49$. Given that at least one head occurred,
+      learning the first was a tail <em>forces</em> the second to be a head.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that the binomial PMF (3) increases in $k$ while $k &lt; (n+1)p$ and decreases afterwards, so
+    its mode is $\lfloor (n+1)p \rfloor$ (two modes when $(n+1)p$ is an integer).<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>For $1 \le k \le n$, with $b_k = \P[K = k]$,
+      $$\frac{b_k}{b_{k-1}} = \frac{\binom nk}{\binom n{k-1}} \cdot \frac{p}{1-p} = \frac{(n-k+1)\,p}{k\,(1-p)}.$$
+      This is $&gt; 1$ iff $(n-k+1)p &gt; k(1-p)$ iff $(n+1)p &gt; k$, and $= 1$ iff $k = (n+1)p$. So $b_k$
+      rises while $k &lt; (n+1)p$, then falls; the largest term is at $k = \lfloor (n+1)p \rfloor$, tied with
+      $k - 1$ when $(n+1)p$ is an integer.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 08</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 1 (independence) and ch. 2 (sequential experiments, independent trials, reliability).</li>
+  <li>Feller, <em>An Introduction to Probability Theory and Its Applications</em>, vol. 1, 3rd ed., ch. V–VI.</li>
+  <li>Pearl, <em>Probabilistic Reasoning in Intelligent Systems</em>, ch. 2–3, on conditional independence and explaining away.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="conditional-probability.html"><span class="dir">← previous</span><span class="t">1.3 Conditional probability and Bayes' rule</span></a>
+  <a class="next" href="counting.html"><span class="dir">next →</span><span class="t">1.5 Counting methods</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("binomial", (fig, { scope, rng, colors }) => {
+  const REPS = 2000;
+  const q = (s) => fig.querySelector(s);
+  const nIn = q("[data-n]"), pIn = q("[data-p]"), stats = q("[data-stats]");
+  let seed = 3;
+
+  const pmf = (n, p) => {
+    const b = [Math.pow(1 - p, n)];
+    for (let k = 1; k <= n; k++) b.push((b[k - 1] * (n - k + 1) * p) / (k * (1 - p)));
+    return b;
+  };
+
+  function draw() {
+    const n = +nIn.value, p = +pIn.value;
+    q("[data-n-out]").value = n;
+    q("[data-p-out]").value = p.toFixed(2);
+    const b = pmf(n, p);
+    const u = rng(seed), counts = new Array(n + 1).fill(0);
+    for (let r = 0; r < REPS; r++) { let k = 0; for (let i = 0; i < n; i++) k += u() < p; counts[k]++; }
+    const freq = counts.map((c) => c / REPS);
+    const ymax = Math.max(...b, ...freq) * 1.15;
+    let tick = 0; // axes() formats the 5 y-ticks first; x labels are drawn at integer k below
+    const { sx, sy, ctx } = scope.axes([-0.5, n + 0.5], [0, ymax], {
+      xticks: 0, yticks: 4, fmt: (v) => (tick++ < 5 ? v.toFixed(2) : ""),
+    });
+    const step = Math.ceil((n + 1) / 7);
+    for (let k = 0; k <= n; k += step) scope.label(String(k), k, -ymax * 0.07, { align: "center", color: colors.fgFaint });
+    const bw = Math.max(1, (sx(1) - sx(0)) * 0.7);
+    ctx.save();
+    ctx.fillStyle = colors.accentGlow; ctx.strokeStyle = colors.accentDim;
+    b.forEach((v, k) => { const x = sx(k) - bw / 2; ctx.fillRect(x, sy(v), bw, sy(0) - sy(v)); ctx.strokeRect(x + 0.5, sy(v) + 0.5, bw - 1, sy(0) - sy(v) - 1); });
+    ctx.fillStyle = colors.accent; ctx.shadowColor = colors.accent; ctx.shadowBlur = 6;
+    freq.forEach((f, k) => { ctx.beginPath(); ctx.arc(sx(k), sy(f), 2.4, 0, 2 * Math.PI); ctx.fill(); });
+    ctx.restore();
+    stats.textContent = `np=${(n * p).toFixed(2)}  mode=${Math.floor((n + 1) * p + 1e-9)}`;
+  }
+  [nIn, pIn].forEach((el) => el.addEventListener("input", draw));
+  q("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

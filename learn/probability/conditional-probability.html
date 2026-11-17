@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Conditional probability and Bayes' rule — Learn — Sayf</title>
+<meta name="description" content="Conditioning as renormalisation, the chain rule, the law of total probability and Bayes' rule in probability and odds form." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 1.3" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 1.3</span>
+    <h1>Conditional probability and Bayes' rule</h1>
+    <p class="deck">Learning that $B$ happened shrinks the world to $B$. Everything else is <em>renormalisation</em>.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 1</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 1.3" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>define $\P[A \mid B]$ and prove it is itself a probability measure;</li>
+    <li>factor a joint probability with the chain rule;</li>
+    <li>compute a probability by splitting into cases with the law of total probability;</li>
+    <li>invert a conditional with Bayes' rule, in both probability and odds form, and update sequentially.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Definition</span>Conditioning shrinks the sample space</h2>
+<p>Suppose a run of the experiment has happened and we are told only that the event $B$ occurred. Which
+probability should we now give $A$? Think in frequencies: over $N$ runs, $B$ occurs $N_B$ times and $A$
+and $B$ together $N_{AB}$ times. Among the runs where $B$ occurred, the fraction where $A$ also occurred
+is</p>
+$$\frac{N_{AB}}{N_B} = \frac{N_{AB}/N}{N_B/N} \approx \frac{\P[A \cap B]}{\P[B]}.$$
+<p>The right-hand side is taken as the definition.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">conditional probability</span></span>
+  <p>For events $A, B$ with $\P[B] &gt; 0$, the <strong>conditional probability of $A$ given $B$</strong> is</p>
+  $$\P[A \mid B] = \frac{\P[A \cap B]}{\P[B]}. \tag{1}$$
+</div>
+
+<p>Geometrically: discard every outcome outside $B$, keep the relative weights of the outcomes inside
+$B$, and rescale them so they sum to one. On a finite space of equally likely outcomes this is
+literally $\P[A \mid B] = |A \cap B| / |B|$: uniform on the smaller space $B$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">conditioning gives a probability measure</span></span>
+  <p>Fix $B$ with $\P[B] &gt; 0$. Then $\P_B[\,\cdot\,] = \P[\,\cdot \mid B]$ satisfies the three axioms,
+  and $\P_B[B] = 1$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Non-negativity:</em> a ratio of a non-negative and a positive number.
+  <em>Normalisation:</em> $\P_B[\Omega] = \P[\Omega \cap B]/\P[B] = \P[B]/\P[B] = 1$, and the same
+  computation gives $\P_B[B] = 1$.
+  <em>Countable additivity:</em> if the $A_i$ are pairwise disjoint, so are the $A_i \cap B$, and by
+  distributivity $\big(\bigcup_i A_i\big) \cap B = \bigcup_i (A_i \cap B)$. So</p>
+  $$\P_B\Big[\bigcup_i A_i\Big] = \frac{\P\big[\bigcup_i (A_i \cap B)\big]}{\P[B]}
+    = \frac{\sum_i \P[A_i \cap B]}{\P[B]} = \sum_i \P_B[A_i].$$
+  <p><span class="qed">∎</span></p>
+</details>
+
+<p>Consequently every rule from <a href="axioms.html">lesson 1.2</a> holds verbatim with
+"$\mid B$" appended everywhere: $\P[A^c \mid B] = 1 - \P[A \mid B]$, conditional inclusion–exclusion,
+the conditional union bound, and so on. A useful corollary (exercise 5): conditioning on $B$ and then
+on $C$ is the same as conditioning on $B \cap C$.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Factoring</span>The chain rule</h2>
+<p>Rearranging (1) gives $\P[A \cap B] = \P[A \mid B]\,\P[B]$. This is the more useful direction:
+experiments that unfold in stages specify conditional probabilities directly, and we multiply along the
+way.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">chain rule</span></span>
+  <p>If $\P[A_1 \cap \cdots \cap A_{n-1}] &gt; 0$, then</p>
+  $$\P[A_1 \cap \cdots \cap A_n] = \P[A_1]\, \prod_{k=2}^{n} \P\big[A_k \,\big|\, A_1 \cap \cdots \cap A_{k-1}\big]. \tag{2}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Write $C_k = A_1 \cap \cdots \cap A_k$. Since $C_{n-1} \subseteq C_{k}$ for $k \le n-1$, monotonicity
+  gives $\P[C_k] \ge \P[C_{n-1}] &gt; 0$, so every conditional in (2) is defined. By (1),
+  $\P[A_k \mid C_{k-1}] = \P[C_k]/\P[C_{k-1}]$, and the product telescopes:</p>
+  $$\P[C_1] \prod_{k=2}^{n} \frac{\P[C_k]}{\P[C_{k-1}]} = \P[C_n].$$
+  <p><span class="qed">∎</span></p>
+</details>
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">three aces</span></span>
+  <p>Deal three cards from a well-shuffled 52-card deck. With $A_k$ = "card $k$ is an ace", the chain rule
+  gives $\P[A_1A_2A_3] = \frac{4}{52}\cdot\frac{3}{51}\cdot\frac{2}{50} = \frac{1}{5525}$. Each factor is
+  read off the state of the deck after the previous draws; no sample space of $52 \cdot 51 \cdot 50$
+  ordered triples needs to be written down.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 03</span> Cases</span>The law of total probability</h2>
+<p>Combine the partition decomposition from <a href="events.html">lesson 1.1</a> with the chain rule and
+we can compute a probability by cases.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">law of total probability</span></span>
+  <p>Let $\{B_1, B_2, \dots\}$ be a partition of $\Omega$ with $\P[B_i] &gt; 0$ for every $i$. For any
+  event $A$,</p>
+  $$\P[A] = \sum_i \P[A \mid B_i]\,\P[B_i]. \tag{3}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>By Theorem 2 of lesson 1.1, $A$ is the disjoint union of the $A \cap B_i$, so countable additivity
+  gives $\P[A] = \sum_i \P[A \cap B_i]$, and each term equals $\P[A \mid B_i]\P[B_i]$ by (1). <span class="qed">∎</span></p>
+</details>
+
+<p>(If some $B_i$ has probability zero, simply drop it: $\P[A \cap B_i] \le \P[B_i] = 0$, so it adds
+nothing.) Formula (3) says $\P[A]$ is a weighted average of the conditional probabilities, with the
+probabilities of the cases as weights; in particular it lies between the smallest and largest
+$\P[A \mid B_i]$.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Inversion</span>Bayes' rule</h2>
+<p>Models are usually specified forwards, cause to effect: $\P[\text{symptom} \mid \text{disease}]$,
+$\P[\text{received bit} \mid \text{sent bit}]$. Inference runs backwards: we observe the effect and ask
+about the cause. Bayes' rule is the inversion.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">Bayes' rule</span></span>
+  <p>Under the hypotheses of Theorem 3, and if $\P[A] &gt; 0$,</p>
+  $$\P[B_j \mid A] = \frac{\P[A \mid B_j]\,\P[B_j]}{\sum_i \P[A \mid B_i]\,\P[B_i]}. \tag{4}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>By (1) twice, $\P[B_j \mid A]\,\P[A] = \P[A \cap B_j] = \P[A \mid B_j]\,\P[B_j]$. Divide by
+  $\P[A]$ and expand it with (3). <span class="qed">∎</span></p>
+</details>
+
+<p>The vocabulary: $\P[B_j]$ is the <strong>prior</strong>, $\P[A \mid B_j]$ as a function of $j$ is the
+<strong>likelihood</strong>, $\P[B_j \mid A]$ is the <strong>posterior</strong>, and the denominator is
+the <strong>evidence</strong>, which only normalises. Hence the slogan
+<em>posterior $\propto$ likelihood $\times$ prior</em>.</p>
+
+<p>With just two hypotheses $B$ and $B^c$, the normaliser cancels if we work with odds,
+$O(B) = \P[B]/\P[B^c]$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 5<span class="name">Bayes' rule in odds form</span></span>
+  $$\underbrace{\frac{\P[B \mid A]}{\P[B^c \mid A]}}_{\text{posterior odds}}
+    = \underbrace{\frac{\P[A \mid B]}{\P[A \mid B^c]}}_{\text{likelihood ratio } \Lambda(A)}
+    \cdot \underbrace{\frac{\P[B]}{\P[B^c]}}_{\text{prior odds}}. \tag{5}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Write (4) for $B_j = B$ and for $B_j = B^c$ (the partition $\{B, B^c\}$) and divide; the common
+  denominator $\P[A]$ cancels. <span class="qed">∎</span></p>
+</details>
+
+<p>Taking logs, $\log O(B \mid A) = \log \Lambda(A) + \log O(B)$: evidence <em>adds</em> on the log-odds
+scale. If observations $A_1, \dots, A_n$ are <em>conditionally independent</em> given $B$ and given
+$B^c$ (meaning $\P[A_1 \cdots A_n \mid B] = \prod_k \P[A_k \mid B]$, and likewise for $B^c$; see
+<a href="independence.html">lesson 1.4</a>), the likelihood ratio of the joint observation factorises
+and</p>
+$$\log O(B \mid A_1 \cdots A_n) = \log O(B) + \sum_{k=1}^n \log \Lambda(A_k). \tag{6}$$
+<p>This is the computation inside a naive Bayes classifier and inside a sequential probability ratio test.</p>
+
+<div class="block block--ex">
+  <span class="lbl">Example<span class="name">a good test for a rare condition</span></span>
+  <p>A condition $D$ has prevalence $\P[D] = 0.01$. A test has sensitivity $\P[+ \mid D] = 0.95$ and
+  specificity $\P[- \mid D^c] = 0.95$. By (4),</p>
+  $$\P[D \mid +] = \frac{0.95 \cdot 0.01}{0.95 \cdot 0.01 + 0.05 \cdot 0.99}
+    = \frac{0.0095}{0.0590} \approx 0.161.$$
+  <p>In odds: prior odds $1/99$, likelihood ratio $0.95/0.05 = 19$, posterior odds $19/99$, i.e.
+  probability $19/118$. A positive result raises the probability sixteen-fold, but most positives are
+  still false, because healthy people outnumber sick ones 99 to 1 and 5% of a large number is large.
+  Ignoring the prior here is the <em>base-rate fallacy</em>.</p>
+</div>
+
+<figure class="demo" data-demo="bayes">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">posterior vs prior · diagnostic test</span></div>
+    <canvas aria-label="Posterior probability of disease after one and two positive tests, as a function of prevalence on a log scale"></canvas>
+    <div class="controls">
+      <label>sensitivity <input type="range" min="0.5" max="0.999" step="0.001" value="0.95" data-sens /> <output data-sens-out>0.950</output></label>
+      <label>specificity <input type="range" min="0.5" max="0.999" step="0.001" value="0.95" data-spec /> <output data-spec-out>0.950</output></label>
+      <label>prevalence <input type="range" min="-4" max="-0.05" step="0.01" value="-2" data-prev /> <output data-prev-out>0.0100</output></label>
+      <span class="readout-val" data-post></span>
+    </div>
+  </div>
+  <figcaption>Horizontal axis: prevalence $\P[D]$ on a log scale. Bright: $\P[D \mid +]$ after one
+  positive test. Blue: after two conditionally independent positives, by (6). Dashed: the diagonal
+  $\P[D \mid +] = \P[D]$ (an uninformative test). Push specificity towards $0.999$ and watch the rare-disease
+  end move most: the false-positive rate $1 - \text{spec}$ dominates when $\P[D]$ is small.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>Simulating the base-rate fallacy</h2>
+<p>Generate a population, test everyone, and compare the empirical $\P[D \mid +]$ with (4).</p>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+
+rng = np.random.default_rng(0)
+n, prev, sens, spec = 1_000_000, 0.01, 0.95, 0.95
+
+sick = rng.random(n) &lt; prev
+pos = np.where(sick, rng.random(n) &lt; sens, rng.random(n) &gt; spec)
+
+empirical = sick[pos].mean()                       # fraction of positives who are sick
+bayes = sens * prev / (sens * prev + (1 - spec) * (1 - prev))
+print(f"P[D|+]  empirical {empirical:.4f}   Bayes {bayes:.4f}")
+
+# two tests, conditionally independent given the true state
+pos2 = pos &amp; np.where(sick, rng.random(n) &lt; sens, rng.random(n) &gt; spec)
+odds = prev / (1 - prev) * (sens / (1 - spec)) ** 2
+print(f"P[D|++] empirical {sick[pos2].mean():.4f}   Bayes {odds / (1 + odds):.4f}")</code></pre></div>
+  </div>
+  <figcaption>Boolean indexing <code>sick[pos]</code> is conditioning: it keeps exactly the runs on which $+$ occurred.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>A binary channel sends $0$ with probability $0.6$ and $1$ with probability $0.4$. A sent $0$ is
+    received as $1$ with probability $0.1$; a sent $1$ is received as $0$ with probability $0.2$. Find
+    $\P[\text{receive } 1]$ and $\P[\text{sent } 1 \mid \text{receive } 1]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By (3), $\P[R_1] = 0.1 \cdot 0.6 + 0.8 \cdot 0.4 = 0.06 + 0.32 = 0.38$. By (4),
+      $\P[S_1 \mid R_1] = 0.32 / 0.38 \approx 0.842$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $\P[A], \P[B] &gt; 0$. Show that $\P[A \mid B] &gt; \P[A]$ if and only if
+    $\P[B \mid A] &gt; \P[B]$. (Positive association is symmetric.)<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Both inequalities are equivalent to $\P[A \cap B] &gt; \P[A]\,\P[B]$: multiply the first by
+      $\P[B] &gt; 0$, the second by $\P[A] &gt; 0$, and use (1).</p>
+    </details>
+  </li>
+  <li>
+    <p>A prize is behind one of three doors, uniformly at random. You pick door 1. The host, who knows where
+    the prize is, opens one of doors 2 and 3 that does <em>not</em> hide it, choosing uniformly if both are
+    empty. Given that the host opens door 3, what is the probability the prize is behind door 2?<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Let $C$ be the prize door and $H$ the opened door. The likelihoods are $\P[H{=}3 \mid C{=}1] = 1/2$,
+      $\P[H{=}3 \mid C{=}2] = 1$ (door 3 is the only empty one he may open), $\P[H{=}3 \mid C{=}3] = 0$.
+      By (3), $\P[H{=}3] = \tfrac13(\tfrac12 + 1 + 0) = \tfrac12$, and by (4)
+      $\P[C{=}2 \mid H{=}3] = \tfrac{1 \cdot 1/3}{1/2} = \tfrac23$. Switching wins with probability $2/3$.
+      Note how the host's rule enters through the likelihood: a host who opens a door at random (and
+      happens to reveal no prize) gives $1/2$ instead.</p>
+    </details>
+  </li>
+  <li>
+    <p>In the diagnostic example, a patient tests positive twice, with the two results conditionally
+    independent given $D$ and given $D^c$. Find $\P[D \mid {+}{+}]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By (6) the posterior odds are $\frac{1}{99} \cdot 19^2 = \frac{361}{99}$, so
+      $\P[D \mid {+}{+}] = \frac{361}{361 + 99} = \frac{361}{460} \approx 0.785$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $\P[B \cap C] &gt; 0$. Show that $\P_B[A \mid C] = \P[A \mid B \cap C]$, where $\P_B$ is the
+    measure of Theorem 1. Conclude that Bayes' rule may be applied inside a conditional world.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\P_B[C] = \P[B \cap C]/\P[B] &gt; 0$, so the left side is defined, and by (1) applied to
+      $\P_B$,
+      $$\P_B[A \mid C] = \frac{\P_B[A \cap C]}{\P_B[C]} = \frac{\P[A \cap C \cap B]/\P[B]}{\P[C \cap B]/\P[B]}
+        = \P[A \mid B \cap C].$$
+      Since $\P_B$ is a probability measure, every theorem of this lesson holds for it; rewritten with
+      this identity, it holds with an extra "$\cap B$" in every conditioning event.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 1 (conditional probability, partitions, total probability, Bayes).</li>
+  <li>Blitzstein &amp; Hwang, <em>Introduction to Probability</em>, 2nd ed., ch. 2, for many more worked conditioning puzzles.</li>
+  <li>Jaynes, <em>Probability Theory: The Logic of Science</em>, ch. 4, on sequential updating in log-odds ("evidence in decibels").</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="axioms.html"><span class="dir">← previous</span><span class="t">1.2 The axioms of probability</span></a>
+  <a class="next" href="independence.html"><span class="dir">next →</span><span class="t">1.4 Independence and sequential experiments</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("bayes", (fig, { scope, colors }) => {
+  const q = (s) => fig.querySelector(s);
+  const sIn = q("[data-sens]"), cIn = q("[data-spec]"), pIn = q("[data-prev]");
+  const post = q("[data-post]");
+  const xs = Array.from({ length: 241 }, (_, i) => -4 + (4 * i) / 240);
+
+  function draw() {
+    const s = +sIn.value, c = +cIn.value, lp = +pIn.value, p0 = 10 ** lp;
+    q("[data-sens-out]").value = s.toFixed(3);
+    q("[data-spec-out]").value = c.toFixed(3);
+    q("[data-prev-out]").value = p0 < 0.01 ? p0.toExponential(1) : p0.toFixed(3);
+    const lr = s / (1 - c);
+    const postOf = (x, k) => { const o = (10 ** x / (1 - 10 ** x)) * lr ** k; return isFinite(o) ? o / (1 + o) : 1; };
+
+    let tick = 0; // axes() formats the 5 y-ticks first, then the x-ticks (log10 prevalence)
+    scope.axes([-4, 0], [0, 1], { xticks: 4, yticks: 4, fmt: (v) => (tick++ < 5 ? v.toFixed(2) : v === 0 ? "1" : `1e${v}`) });
+    scope.trace(xs, xs.map((x) => 10 ** x), { color: colors.fgFaint, width: 1, glow: false, dash: [4, 4] });
+    scope.trace(xs, xs.map((x) => postOf(x, 2)), { color: colors.alt, width: 1.4 });
+    scope.trace(xs, xs.map((x) => postOf(x, 1)));
+    const p1 = postOf(lp, 1), p2 = postOf(lp, 2);
+    scope.trace([lp, lp], [0, 1], { color: colors.fgFaint, width: 1, glow: false, dash: [2, 3] });
+    post.textContent = `P[D|+]=${p1.toFixed(3)}  P[D|++]=${p2.toFixed(3)}  LR=${lr.toFixed(1)}`;
+  }
+  [sIn, cIn, pIn].forEach((el) => el.addEventListener("input", draw));
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Gaussian random variable — Learn — Sayf</title>
+<meta name="description" content="The normal density, the Gaussian integral, standardisation, the Q-function and its tail bounds, Stein's identity and Gaussian moments." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 2.4" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 2.4</span>
+    <h1>The Gaussian random variable</h1>
+    <p class="deck">One density, two parameters, and <em>tails that fall faster than any exponential</em>.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 4</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 2.4" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>prove that the Gaussian density integrates to one, and derive its mean and variance;</li>
+    <li>standardise any Gaussian and compute its probabilities with $\Phi$ and $Q$;</li>
+    <li>bound the Gaussian tail from above and below and know how sharp each bound is;</li>
+    <li>prove Stein's identity and use it to get every Gaussian moment.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Definition</span>The Gaussian density</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">Gaussian random variable</span></span>
+  <p>$X$ is <strong>Gaussian</strong> (normal) with parameters $\mu \in \R$ and $\sigma &gt; 0$, written
+  $X \sim \mathcal N(\mu, \sigma^2)$, if</p>
+  $$f_X(x) = \frac{1}{\sqrt{2\pi\sigma^2}}\, e^{-(x - \mu)^2 / 2\sigma^2}, \qquad x \in \R. \tag{1}$$
+  <p>The <strong>standard normal</strong> is $Z \sim \mathcal N(0,1)$, with density
+  $\phi(z) = \frac{1}{\sqrt{2\pi}}e^{-z^2/2}$ and CDF $\Phi(z) = \int_{-\infty}^z \phi(t) \d t$.</p>
+</div>
+
+<p>The Gaussian earns its place for two reasons that later lessons make precise. Sums of many small
+independent effects are approximately Gaussian whatever the effects' own laws (the central limit theorem,
+lesson 4.6), so measurement noise usually is. And Gaussians are closed under every linear operation we will
+apply to them (lesson 4.4), so models built from them stay tractable. Among all laws with a given variance,
+it also has maximal entropy, which makes it the least committal choice when only the first two moments are
+known.</p>
+
+<p>First, (1) has to be a valid density. The difficulty is that $e^{-x^2/2}$ has no elementary
+antiderivative, so the normalising constant needs a trick.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">Gaussian integral</span></span>
+  $$\int_{-\infty}^{\infty} e^{-x^2/2} \d x = \sqrt{2\pi}. \tag{2}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Call the integral $I$; it is finite (the integrand is below $e^{1/2 - |x|}$, since $x^2/2 \ge |x| - 1/2$) and
+  positive. Square it and write the product as a double integral, which is legitimate for a non-negative
+  integrand (Tonelli):</p>
+  $$I^2 = \int_{-\infty}^\infty e^{-x^2/2} \d x \int_{-\infty}^\infty e^{-y^2/2} \d y = \iint_{\R^2} e^{-(x^2 + y^2)/2} \d x \d y.$$
+  <p>Change to polar coordinates $x = r\cos\theta$, $y = r\sin\theta$, whose Jacobian determinant is $r$:</p>
+  $$I^2 = \int_0^{2\pi} \!\! \int_0^\infty e^{-r^2/2}\, r \d r \d\theta = 2\pi \Big[-e^{-r^2/2}\Big]_0^\infty = 2\pi.$$
+  <p>The factor $r$ is what makes the inner integral elementary. Since $I &gt; 0$, $I = \sqrt{2\pi}$. <span class="qed">∎</span></p>
+</details>
+
+<p>With the substitution $z = (x - \mu)/\sigma$, $\d x = \sigma \d z$, the integral of (1) becomes
+$\int \phi(z) \d z = 1$ by (2). So (1) is a density for every $\mu$ and $\sigma &gt; 0$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">standardisation, mean and variance</span></span>
+  <p>$X \sim \mathcal N(\mu, \sigma^2)$ if and only if $Z = (X - \mu)/\sigma \sim \mathcal N(0,1)$. Moreover
+  $\E[Z] = 0$, $\Var[Z] = 1$, and therefore $\E[X] = \mu$, $\Var[X] = \sigma^2$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Standardisation.</em> If $X \sim \mathcal N(\mu, \sigma^2)$, then for any $z$, substituting
+  $t = (x - \mu)/\sigma$,</p>
+  $$\P[Z \le z] = \P[X \le \mu + \sigma z] = \int_{-\infty}^{\mu + \sigma z} \frac{1}{\sigma}\,\phi\Big(\frac{x - \mu}{\sigma}\Big) \d x = \int_{-\infty}^{z} \phi(t) \d t = \Phi(z).$$
+  <p>The converse is the same computation read backwards: if $Z \sim \mathcal N(0,1)$ then
+  $\P[\mu + \sigma Z \le x] = \Phi((x - \mu)/\sigma)$, and differentiating gives (1).</p>
+  <p><em>Moments of $Z$.</em> $\int |z|\phi(z) \d z = 2\int_0^\infty z\phi(z)\d z = 2\big[-\phi(z)\big]_0^\infty = 2\phi(0) &lt; \infty$,
+  so $\E[Z]$ exists, and it is $0$ because $z\phi(z)$ is odd. For the second moment use $\phi'(z) = -z\phi(z)$ and
+  integrate by parts with $u = z$, $\d v = z\phi(z)\d z$, $v = -\phi(z)$:</p>
+  $$\E[Z^2] = \int_{-\infty}^\infty z \cdot z\phi(z) \d z = \Big[-z\phi(z)\Big]_{-\infty}^{\infty} + \int_{-\infty}^\infty \phi(z) \d z = 0 + 1.$$
+  <p>So $\Var[Z] = 1$. Since $X = \mu + \sigma Z$, lesson 2.2's linearity and $\Var[aZ + b] = a^2\Var[Z]$ give the rest. <span class="qed">∎</span></p>
+</details>
+
+<p>So every Gaussian probability is a standard-normal probability:
+$\P[a &lt; X \le b] = \Phi\big(\tfrac{b - \mu}{\sigma}\big) - \Phi\big(\tfrac{a - \mu}{\sigma}\big)$. By the symmetry
+$\phi(-z) = \phi(z)$, $\Phi(-z) = 1 - \Phi(z)$, so tables and code only need $z \ge 0$. The probability of
+landing within $1, 2, 3$ standard deviations of the mean is $2\Phi(k) - 1 = 0.6827,\ 0.9545,\ 0.9973$.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Tails</span>The Q-function and its bounds</h2>
+<p>Communications and statistics care mostly about the upper tail,</p>
+$$Q(z) = \P[Z &gt; z] = 1 - \Phi(z) = \tfrac12 \operatorname{erfc}\big(z/\sqrt2\big), \tag{3}$$
+<p>where $\operatorname{erfc}(x) = \frac{2}{\sqrt\pi}\int_x^\infty e^{-t^2}\d t$ is the function numerical libraries
+implement accurately. $Q$ has no closed form, but it is pinned down very tightly by elementary functions.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">Gaussian tail bounds</span></span>
+  <p>For every $z &gt; 0$,</p>
+  $$\frac{z}{1 + z^2}\,\phi(z) \;\le\; Q(z) \;\le\; \frac{\phi(z)}{z}, \tag{4}$$
+  <p>and for every $z \ge 0$,</p>
+  $$Q(z) \le \tfrac12\, e^{-z^2/2}. \tag{5}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Upper bound in (4).</em> On the range of integration $t \ge z &gt; 0$, so $1 \le t/z$:</p>
+  $$Q(z) = \int_z^\infty \phi(t) \d t \le \int_z^\infty \frac tz\,\phi(t) \d t = \frac1z\Big[-\phi(t)\Big]_z^\infty = \frac{\phi(z)}{z}.$$
+  <p><em>Lower bound in (4).</em> Differentiate $-\phi(t)/t$ using $\phi'(t) = -t\phi(t)$:
+  $\frac{\d}{\d t}\big(-\phi(t)/t\big) = \phi(t) + \phi(t)/t^2 = (1 + t^{-2})\phi(t)$. Integrating from $z$ to $\infty$,</p>
+  $$\frac{\phi(z)}{z} = \int_z^\infty \Big(1 + \frac1{t^2}\Big)\phi(t) \d t \le \Big(1 + \frac1{z^2}\Big)\int_z^\infty \phi(t)\d t = \frac{1 + z^2}{z^2}\,Q(z),$$
+  <p>since $t^{-2} \le z^{-2}$ for $t \ge z$. Rearranging gives the lower bound.</p>
+  <p><em>Bound (5).</em> Substitute $t = z + s$ and expand $(z+s)^2/2 = z^2/2 + zs + s^2/2$, so
+  $\phi(z + s) = e^{-z^2/2}e^{-zs}\phi(s)$ and</p>
+  $$Q(z) = e^{-z^2/2}\int_0^\infty e^{-zs}\phi(s) \d s \le e^{-z^2/2}\int_0^\infty \phi(s) \d s = \tfrac12 e^{-z^2/2},$$
+  <p>using $e^{-zs} \le 1$ for $z, s \ge 0$. <span class="qed">∎</span></p>
+</details>
+
+<p>The two bounds in (4) differ by the factor $z^2/(1+z^2)$, which tends to $1$, so
+$Q(z) \sim \phi(z)/z$ as $z \to \infty$: the relative error of the upper bound is below $1\%$ for $z &gt; 10$ and
+below $10\%$ for $z &gt; 3$. Bound (5) is looser by the factor $\sim z\sqrt{\pi/2}$ but needs no division by $z$, and it
+is the shape the Chernoff bound will give for sums in lesson 4.5. The headline is the $e^{-z^2/2}$: the
+Gaussian tail decays faster than any exponential $e^{-cz}$, which is why "$5\sigma$" events are about one in
+3.5 million, and why Gaussian noise models are badly wrong for heavy-tailed data.</p>
+
+<figure class="demo" data-demo="q-bounds">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">Gaussian tail · exact and bounds</span></div>
+    <canvas aria-label="The Gaussian tail Q of z on a log scale, with the Mills-ratio upper and lower bounds and the half exp bound"></canvas>
+    <div class="controls">
+      <label>z <input type="range" min="0.25" max="6" step="0.05" value="3" data-z /> <output data-z-out>3.00</output></label>
+      <span class="readout-val" data-vals></span>
+    </div>
+  </div>
+  <figcaption>Vertical axis: $\log_{10}$. Bright: $Q(z)$. Blue solid: the upper bound $\phi(z)/z$; blue dashed:
+  the lower bound $z\phi(z)/(1+z^2)$; grey dashed: $\tfrac12 e^{-z^2/2}$. The two blue curves squeeze $Q$ ever more
+  tightly as $z$ grows.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 03</span> Moments</span>Stein's identity</h2>
+<p>The relation $\phi'(z) = -z\phi(z)$ used three times above is worth turning into a tool.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">Stein's identity</span></span>
+  <p>Let $Z \sim \mathcal N(0,1)$ and $g$ continuously differentiable with $\E|g'(Z)| &lt; \infty$,
+  $\E|Z g(Z)| &lt; \infty$ and $g(z)\phi(z) \to 0$ as $|z| \to \infty$. Then</p>
+  $$\E[Z\, g(Z)] = \E[g'(Z)]. \tag{6}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Integrate by parts on $[-R, R]$ with $z\phi(z) = -\phi'(z)$:</p>
+  $$\int_{-R}^{R} g(z)\, z\phi(z) \d z = -\int_{-R}^{R} g(z)\phi'(z) \d z = \Big[-g(z)\phi(z)\Big]_{-R}^{R} + \int_{-R}^{R} g'(z)\phi(z) \d z.$$
+  <p>Let $R \to \infty$. The boundary term tends to $0$ by assumption, and both integrals converge to the full
+  integrals because the integrands are absolutely integrable. <span class="qed">∎</span></p>
+</details>
+
+<p>With $g(z) = z^{n-1}$ (all hypotheses hold because polynomials times $\phi$ are integrable and vanish at
+infinity) we get the recursion $\E[Z^n] = (n-1)\,\E[Z^{n-2}]$. Starting from $\E[Z^0] = 1$ and $\E[Z] = 0$,</p>
+$$\E[Z^{2k+1}] = 0, \qquad \E[Z^{2k}] = (2k-1)(2k-3)\cdots 3 \cdot 1 = \frac{(2k)!}{2^k\, k!}. \tag{7}$$
+<p>In particular $\E[Z^4] = 3$: the Gaussian has kurtosis $3$, the reference value for "excess kurtosis". Stein's
+identity also characterises the Gaussian (if (6) holds for all bounded smooth $g$, then $Z$ is standard
+normal). That characterisation is the starting point of Stein's method for proving central limit theorems,
+and, in machine learning, of kernel Stein discrepancies and Stein variational gradient descent.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> In code</span>Tails, bounds and moments numerically</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy · scipy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+from scipy import stats
+from scipy.special import erfc
+
+phi, Q = stats.norm.pdf, stats.norm.sf            # sf = 1 - cdf, accurate in the tail
+z = np.array([1.0, 2.0, 3.0, 5.0, 8.0])
+assert np.allclose(Q(z), 0.5 * erfc(z / np.sqrt(2)))
+lower, upper, chern = z * phi(z) / (1 + z**2), phi(z) / z, 0.5 * np.exp(-z**2 / 2)
+assert np.all((lower &lt;= Q(z)) &amp; (Q(z) &lt;= upper) &amp; (Q(z) &lt;= chern))
+print(np.c_[z, Q(z), upper / Q(z), chern / Q(z)])    # ratios -&gt; 1 and grow like z
+
+print([round(2 * stats.norm.cdf(k) - 1, 4) for k in (1, 2, 3)])   # 68-95-99.7
+
+rng = np.random.default_rng(0)
+Z = rng.standard_normal(2_000_000)
+print((Z * np.sin(Z)).mean(), np.cos(Z).mean())   # Stein: E[Z g(Z)] = E[g'(Z)]
+print([(Z**n).mean().round(2) for n in (2, 4, 6)])  # 1, 3, 15</code></pre></div>
+  </div>
+  <figcaption>Never compute $Q(z)$ as <code>1 - norm.cdf(z)</code> for large $z$: the subtraction cancels every significant digit once $\Phi(z)$ rounds to $1$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Let $X \sim \mathcal N(\mu, \sigma^2)$ and $a \ne 0$. Show $aX + b \sim \mathcal N(a\mu + b, a^2\sigma^2)$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Write $X = \mu + \sigma Z$ (Theorem 2). Then $aX + b = (a\mu + b) + a\sigma Z$. If $a &gt; 0$ this is of the form
+      $\mu' + \sigma' Z$ with $\sigma' = a\sigma$, so Theorem 2 applies. If $a &lt; 0$, write it as
+      $(a\mu + b) + |a|\sigma(-Z)$ and note $-Z \sim \mathcal N(0,1)$ because $\phi$ is even:
+      $\P[-Z \le z] = \P[Z \ge -z] = 1 - \Phi(-z) = \Phi(z)$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show $\E|Z| = \sqrt{2/\pi}$, and hence that for $X \sim \mathcal N(\mu,\sigma^2)$ the mean absolute deviation is
+    $\sigma\sqrt{2/\pi} \approx 0.80\,\sigma$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>From the proof of Theorem 2, $\E|Z| = 2\phi(0) = 2/\sqrt{2\pi} = \sqrt{2/\pi}$. And $|X - \mu| = \sigma|Z|$.</p>
+    </details>
+  </li>
+  <li>
+    <p>A bit $s \in \{-A, +A\}$ is sent over a channel that adds $N \sim \mathcal N(0, \sigma^2)$, and the receiver decides
+    by the sign of $s + N$. Show the error probability is $Q(A/\sigma)$. Use (5) to find an SNR $A/\sigma$ that guarantees
+    an error rate of at most $10^{-6}$, and compare with the exact requirement.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Given $s = +A$, an error is $A + N &lt; 0$, i.e. $N/\sigma &lt; -A/\sigma$, with probability $\Phi(-A/\sigma) = Q(A/\sigma)$; the
+      case $s = -A$ is symmetric. Requiring $\tfrac12 e^{-z^2/2} \le 10^{-6}$ gives $z \ge \sqrt{2\ln(5 \cdot 10^5)} \approx 5.12$.
+      The exact requirement is $z \ge Q^{-1}(10^{-6}) \approx 4.75$: the bound costs about $0.65$ dB.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that $\E[e^{tZ}] = e^{t^2/2}$ for every real $t$, and deduce $\E[e^{tX}]$ for $X \sim \mathcal N(\mu,\sigma^2)$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Complete the square: $tz - z^2/2 = t^2/2 - (z - t)^2/2$. So
+      $\E[e^{tZ}] = e^{t^2/2}\int \frac{1}{\sqrt{2\pi}}e^{-(z-t)^2/2}\d z = e^{t^2/2}$, the integral being that of the
+      $\mathcal N(t,1)$ density. Then $\E[e^{tX}] = e^{t\mu}\E[e^{t\sigma Z}] = e^{t\mu + t^2\sigma^2/2}$. This is the moment
+      generating function of lesson 4.5; expanding both sides in powers of $t$ recovers (7).</p>
+    </details>
+  </li>
+  <li>
+    <p>Use Stein's identity to show $\E[Z^2 g(Z)] = \E[g(Z)] + \E[g''(Z)]$ for suitably regular $g$, and evaluate
+    $\E[Z^2 \cos Z]$.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Apply (6) to $h(z) = z g(z)$: $\E[Z \cdot Z g(Z)] = \E[h'(Z)] = \E[g(Z)] + \E[Z g'(Z)]$, and apply (6) again to the last
+      term with $g'$: $\E[Z g'(Z)] = \E[g''(Z)]$. For $g = \cos$, $g'' = -\cos$, so $\E[Z^2\cos Z] = 0$. (Check: $\E[\cos Z] = e^{-1/2}$, the real part of
+      $\E[e^{iZ}]$, which completing the square as in exercise 4 gives; the two terms cancel.)</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 06</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 4 (Gaussian random variables, the $\Phi$ and $Q$ functions).</li>
+  <li>Stein, "A bound for the error in the normal approximation…", <em>Proc. Sixth Berkeley Symp.</em> 2 (1972), and Chen, Goldstein &amp; Shao, <em>Normal Approximation by Stein's Method</em> (Springer, 2011).</li>
+  <li>Abramowitz &amp; Stegun, <em>Handbook of Mathematical Functions</em>, ch. 7 and 26, for erfc and the Mills ratio.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="continuous-random-variables.html"><span class="dir">← previous</span><span class="t">2.3 Continuous random variables, CDFs and PDFs</span></a>
+  <a class="next" href="mixed-random-variables.html"><span class="dir">next →</span><span class="t">2.5 Mixed random variables and the delta function</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+// Q(z) = erfc(z/√2)/2 via the Numerical Recipes erfc approximation (relative error < 1.2e-7 everywhere)
+function erfc(x) {
+  const z = Math.abs(x), t = 1 / (1 + 0.5 * z);
+  const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 +
+    t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+  return x >= 0 ? r : 2 - r;
+}
+const Qf = (z) => 0.5 * erfc(z / Math.SQRT2);
+const phi = (z) => Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+
+Learn.demo("q-bounds", (fig, { scope, colors }) => {
+  const zIn = fig.querySelector("[data-z]"), vals = fig.querySelector("[data-vals]");
+  const zs = Array.from({ length: 300 }, (_, i) => 0.25 + (5.75 * i) / 299);
+  const L = Math.log10;
+
+  function draw() {
+    const z0 = +zIn.value;
+    fig.querySelector("[data-z-out]").value = z0.toFixed(2);
+    let tick = 0; // axes() formats the 6 y-ticks (log10 values) first, then the x-ticks
+    scope.axes([0, 6], [-10, 0], { xticks: 6, yticks: 5, fmt: (v) => (tick++ < 6 ? (v === 0 ? "1" : `1e${v}`) : v.toFixed(0)) });
+    scope.trace(zs, zs.map((z) => L(0.5 * Math.exp(-z * z / 2))), { color: colors.fgFaint, width: 1, glow: false, dash: [4, 4] });
+    scope.trace(zs, zs.map((z) => L((z * phi(z)) / (1 + z * z))), { color: colors.alt, width: 1.2, glow: false, dash: [5, 3] });
+    scope.trace(zs, zs.map((z) => L(phi(z) / z)), { color: colors.alt, width: 1.2 });
+    scope.trace(zs, zs.map((z) => L(Qf(z))));
+    scope.trace([z0, z0], [-10, 0], { color: colors.fgFaint, width: 1, glow: false, dash: [2, 3] });
+    const qv = Qf(z0);
+    vals.textContent = `Q=${qv.toExponential(3)}  upper/Q=${(phi(z0) / z0 / qv).toFixed(3)}  lower/Q=${((z0 * phi(z0)) / (1 + z0 * z0) / qv).toFixed(3)}`;
+  }
+  zIn.addEventListener("input", draw);
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

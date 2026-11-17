@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mixed random variables and the delta function — Learn — Sayf</title>
+<meta name="description" content="Random variables with both atoms and densities, the Dirac delta and unit step, generalised densities, and the moments of a rectified Gaussian." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 2.5" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 2.5</span>
+    <h1>Mixed random variables and the delta function</h1>
+    <p class="deck">Pass a Gaussian through a ReLU and you get a variable that is <em>neither discrete nor continuous</em>. Deltas handle both at once.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 4</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 2.5" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>recognise random variables that are neither discrete nor continuous, and read their atoms off the CDF;</li>
+    <li>prove that a CDF has at most countably many jumps and split it into a jump part and a continuous part;</li>
+    <li>define the Dirac delta as a limit of pulses and prove its sifting property;</li>
+    <li>write one generalised density that covers discrete, continuous and mixed variables, and compute expectations with it;</li>
+    <li>derive the mean and variance of a rectified Gaussian, $\max(0, Y)$.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Motivation</span>A ReLU makes an atom</h2>
+<p>Let $Y \sim \mathcal N(\mu, \sigma^2)$ be the pre-activation of a unit and $X = \max(0, Y)$ its ReLU output.
+Every negative $Y$ is mapped to the single value $0$, so</p>
+$$\P[X = 0] = \P[Y \le 0] = \Phi(-\mu/\sigma) &gt; 0.$$
+<p>$X$ is not continuous (a continuous variable gives every point probability zero). Nor is it discrete:
+for $0 &lt; a &lt; b$, $\P[a &lt; X \le b] = \P[a &lt; Y \le b]$ is spread smoothly over the interval. Its CDF is</p>
+$$F_X(x) = \begin{cases} 0, &amp; x &lt; 0, \\ \Phi\big((x - \mu)/\sigma\big), &amp; x \ge 0, \end{cases} \tag{1}$$
+<p>with a jump of height $\Phi(-\mu/\sigma)$ at $0$ and a smooth rise after. Saturating sensors, clipped
+gradients, censored survival times, rainfall (zero on dry days) and insurance claims all have the same shape.
+The CDF handles them already; this lesson builds the matching notion of a density.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Structure</span>Jumps and the rest</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">a CDF has countably many jumps</span></span>
+  <p>The set $D = \{x : \P[X = x] &gt; 0\}$ of atoms of any random variable $X$ is countable.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Let $D_n = \{x : \P[X = x] &gt; 1/n\}$. If $D_n$ contained $n$ distinct points $x_1, \dots, x_n$, the disjoint events
+  $\{X = x_i\}$ would have total probability greater than $n \cdot \frac1n = 1$, which is impossible. So $|D_n| &lt; n$.
+  Then $D = \bigcup_{n \ge 1} D_n$ is a countable union of finite sets, hence countable. <span class="qed">∎</span></p>
+</details>
+
+<p>List the atoms as $x_1, x_2, \dots$ with masses $p_i = \P[X = x_i]$, and define the <em>jump part</em>
+$F_d(x) = \sum_{i : x_i \le x} p_i$ and the <em>continuous part</em> $F_c = F_X - F_d$.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">jump–continuous decomposition</span></span>
+  <p>$F_c$ is continuous and non-decreasing, so every CDF splits as $F_X = F_d + F_c$, a pure-jump part plus a
+  continuous part.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Non-decreasing.</em> Fix $a &lt; b$ and any finite set of atoms $x_{i_1} &lt; \dots &lt; x_{i_m}$ in $(a, b]$. The events
+  $\{X = x_{i_k}\}$ are disjoint subsets of $\{a &lt; X \le b\}$, so $\sum_k p_{i_k} \le F_X(b) - F_X(a)$. Taking the supremum
+  over finite sets, $F_d(b) - F_d(a) = \sum_{a &lt; x_i \le b} p_i \le F_X(b) - F_X(a)$, which says $F_c(a) \le F_c(b)$.</p>
+  <p><em>Continuous.</em> $F_d$ is right-continuous: $F_d(x + h) - F_d(x) = \sum_{x &lt; x_i \le x + h} p_i \to 0$ as $h \downarrow 0$,
+  because each term eventually drops out and the series is dominated by $\sum p_i \le 1$. Its left limit is
+  $F_d(x^-) = \sum_{x_i &lt; x} p_i$ by the same argument, so $F_d$ jumps by exactly $\P[X = x]$ at $x$ (and by $0$ at
+  non-atoms). $F_X$ is right-continuous and jumps by $\P[X = x]$ at $x$ (lesson 2.3, Theorem 1). The difference
+  $F_c$ is therefore right-continuous with jumps $\P[X = x] - \P[X = x] = 0$, i.e. continuous. <span class="qed">∎</span></p>
+</details>
+
+<div class="callout">
+  <span class="lbl">Fine print</span>
+  <p>A continuous $F_c$ need not have a density: the Cantor function is continuous, rises from $0$ to $1$, and has
+  derivative $0$ almost everywhere. Lebesgue's decomposition splits $F_c$ further into an absolutely continuous part
+  (with a density) and such a <em>singular</em> part. Singular laws do not occur in engineering models, and in this
+  course $F_c$ will always be $\int_{-\infty}^x f_c$ for some $f_c \ge 0$.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 03</span> Tool</span>The Dirac delta</h2>
+<p>We would like a "density" for an atom: something that is zero away from $x_0$, yet integrates to one. No
+function does that, but a limit of ordinary functions does what we need inside integrals.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">unit pulse, delta, unit step</span></span>
+  <p>For $\varepsilon &gt; 0$ let $\delta_\varepsilon(x) = \frac1\varepsilon$ for $|x| &lt; \varepsilon/2$ and $0$ otherwise, a
+  pulse of unit area. The <strong>Dirac delta</strong> $\delta(x)$ is the symbol defined by its action on functions
+  $g$ that are continuous at $x_0$:</p>
+  $$\int_{-\infty}^\infty g(x)\,\delta(x - x_0) \d x := \lim_{\varepsilon \to 0}\int_{-\infty}^\infty g(x)\,\delta_\varepsilon(x - x_0) \d x. \tag{2}$$
+  <p>The <strong>unit step</strong> is $u(x) = 1$ for $x \ge 0$ and $0$ for $x &lt; 0$.</p>
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">sifting property</span></span>
+  <p>If $g$ is continuous at $x_0$ (and bounded near it), the limit in (2) exists and</p>
+  $$\int_{-\infty}^\infty g(x)\,\delta(x - x_0) \d x = g(x_0). \tag{3}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>The integral against the pulse is the average of $g$ over an interval:
+  $\int g(x)\delta_\varepsilon(x - x_0)\d x = \frac1\varepsilon\int_{x_0 - \varepsilon/2}^{x_0 + \varepsilon/2} g(x)\d x$. Given $\eta &gt; 0$, continuity at
+  $x_0$ gives $\rho &gt; 0$ with $|g(x) - g(x_0)| &lt; \eta$ for $|x - x_0| &lt; \rho$. For $\varepsilon &lt; 2\rho$,</p>
+  $$\Big|\frac1\varepsilon\int_{x_0 - \varepsilon/2}^{x_0 + \varepsilon/2} g(x)\d x - g(x_0)\Big| \le \frac1\varepsilon\int_{x_0 - \varepsilon/2}^{x_0 + \varepsilon/2} |g(x) - g(x_0)|\d x \le \eta.$$
+  <p>As $\eta$ was arbitrary, the limit is $g(x_0)$. <span class="qed">∎</span></p>
+</details>
+
+<p>With $g = \ind\{x \le t\}$, which is continuous at $0$ whenever $t \ne 0$, (3) gives
+$\int_{-\infty}^t \delta(x)\d x = u(t)$ for $t \ne 0$. So $\delta$ is the derivative of the unit step in this
+generalised sense: a jump of height $p$ in a CDF differentiates to $p\,\delta$. (At the jump itself the integral
+is ambiguous; we resolve it below by the CDF's right-continuity.) Any other family of unit-area pulses that
+shrinks to $x_0$, Gaussians $\mathcal N(x_0, \varepsilon^2)$ for instance, gives the same limit (3), which is why the
+delta is the natural model of an impulse in signal processing.</p>
+
+<h2><span class="sec"><span class="n">§ 04</span> Unification</span>Generalised densities</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">generalised PDF</span></span>
+  <p>If $F_X = F_d + F_c$ with atoms $p_i$ at $x_i$ and $F_c(x) = \int_{-\infty}^x f_c(t)\d t$, the
+  <strong>generalised PDF</strong> of $X$ is</p>
+  $$f_X(x) = f_c(x) + \sum_i p_i\, \delta(x - x_i), \tag{4}$$
+  <p>and for any $g$ continuous at every atom with $\int |g| f_c + \sum_i |g(x_i)|p_i &lt; \infty$,</p>
+  $$\E[g(X)] = \int_{-\infty}^\infty g(x) f_X(x) \d x = \int_{-\infty}^\infty g(x) f_c(x) \d x + \sum_i p_i\, g(x_i). \tag{5}$$
+</div>
+
+<p>The second equality is (3) applied term by term. Formula (5) is the Lebesgue–Stieltjes integral
+$\int g \d F_X$ written in engineering notation, and it reduces to the two cases we already have: a discrete
+$X$ has $f_c = 0$ and (5) is lesson 2.2's sum; a continuous one has no atoms and (5) is lesson 2.3's integral. A
+PMF is a comb of deltas. Probabilities follow from (5) with $g = \ind_B$, with the convention that an atom on the
+boundary of $B$ counts if it lies in $B$: $\P[X \le x] = \int_{-\infty}^{x^+} f_X$, consistent with right-continuity.</p>
+
+<h2><span class="sec"><span class="n">§ 05</span> Application</span>The rectified Gaussian</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">moments of a ReLU of a Gaussian</span></span>
+  <p>Let $Y \sim \mathcal N(\mu, \sigma^2)$, $X = \max(0, Y)$ and $m = \mu/\sigma$. Then</p>
+  $$f_X(x) = \Phi(-m)\,\delta(x) + \frac1\sigma\,\phi\Big(\frac{x - \mu}{\sigma}\Big)\, \ind\{x > 0\}, \tag{6}$$
+  $$\E[X] = \mu\,\Phi(m) + \sigma\,\phi(m), \qquad \E[X^2] = (\mu^2 + \sigma^2)\,\Phi(m) + \mu\sigma\,\phi(m). \tag{7}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Density.</em> From (1), $F_X$ has one atom, at $0$, of mass $\Phi(-m)$. For $x &gt; 0$, $F_X(x) = \Phi((x - \mu)/\sigma)$ has
+  derivative $\frac1\sigma\phi((x - \mu)/\sigma)$, and for $x &lt; 0$ it is constant. That gives (6).</p>
+  <p><em>Moments.</em> By (5), the atom contributes $0^k\,\Phi(-m) = 0$ to $\E[X^k]$ for $k \ge 1$, so
+  $\E[X^k] = \int_0^\infty x^k \frac1\sigma\phi\big(\frac{x-\mu}\sigma\big)\d x$. Substitute $x = \mu + \sigma z$; the lower limit becomes
+  $z = -m$:</p>
+  $$\E[X^k] = \int_{-m}^\infty (\mu + \sigma z)^k\, \phi(z) \d z.$$
+  <p>Three integrals appear. $\int_{-m}^\infty \phi = 1 - \Phi(-m) = \Phi(m)$. Since $\phi' = -z\phi$,
+  $\int_{-m}^\infty z\phi(z)\d z = \big[-\phi(z)\big]_{-m}^\infty = \phi(-m) = \phi(m)$. And integrating by parts as in lesson 2.4,
+  $\int_{-m}^\infty z^2\phi(z)\d z = \big[-z\phi(z)\big]_{-m}^\infty + \int_{-m}^\infty \phi = -m\,\phi(m) + \Phi(m)$. Hence</p>
+  $$\E[X] = \mu\Phi(m) + \sigma\phi(m), \qquad
+    \E[X^2] = \mu^2\Phi(m) + 2\mu\sigma\phi(m) + \sigma^2\big(\Phi(m) - m\phi(m)\big),$$
+  <p>and $\sigma^2 m = \mu\sigma$ turns the second into (7). <span class="qed">∎</span></p>
+</details>
+
+<p>Sanity checks: as $\mu \to \infty$ with $\sigma$ fixed, $\Phi(m) \to 1$ and $\phi(m) \to 0$, so $\E[X] \to \mu$ (the ReLU is
+almost always in its linear regime); as $\mu \to -\infty$, $\E[X] \to 0$. For the standard case $\mu = 0$, $\sigma = 1$:
+$\E[X] = \phi(0) = 1/\sqrt{2\pi} \approx 0.399$ and $\E[X^2] = \tfrac12$. Formulas (7) are exactly what
+moment-propagation methods for Bayesian neural networks push through each ReLU layer, and they explain why
+He initialisation scales weights by $\sqrt{2/\text{fan-in}}$: a ReLU of a centred input keeps only half of the
+second moment.</p>
+
+<figure class="demo" data-demo="relu">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">CDF of a rectified Gaussian</span></div>
+    <canvas aria-label="CDF of a rectified Gaussian with a jump at zero, together with the empirical CDF of simulated samples"></canvas>
+    <div class="controls">
+      <label>μ <input type="range" min="-2" max="2" step="0.05" value="0.3" data-mu /> <output data-mu-out>0.30</output></label>
+      <label>σ <input type="range" min="0.2" max="2" step="0.05" value="1" data-s /> <output data-s-out>1.00</output></label>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-vals></span>
+    </div>
+  </div>
+  <figcaption>Bright: the exact CDF (1), with its jump of height $\Phi(-\mu/\sigma)$ at $0$ (filled dot: the value
+  at the jump, by right-continuity). Grey: the empirical CDF of 2000 simulated values. Readout: $\P[X = 0]$ and
+  $\E[X]$ from (7) against their Monte Carlo estimates.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> In code</span>Expectations with an atom</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy · scipy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+from scipy import stats
+from scipy.integrate import quad
+
+mu, sigma = 0.3, 1.0
+m, Phi, phi = mu / sigma, stats.norm.cdf, stats.norm.pdf
+
+# (5): continuous part by quadrature, plus the atom at 0 (which contributes g(0) * mass)
+atom = Phi(-m)
+f_c = lambda x: stats.norm.pdf(x, mu, sigma)          # density on x &gt; 0
+E = lambda g: quad(lambda x: g(x) * f_c(x), 0, np.inf)[0] + atom * g(0.0)
+
+closed = (mu * Phi(m) + sigma * phi(m), (mu**2 + sigma**2) * Phi(m) + mu * sigma * phi(m))
+print(E(lambda x: x), E(lambda x: x**2), closed)
+
+# Monte Carlo
+rng = np.random.default_rng(0)
+x = np.maximum(0, rng.normal(mu, sigma, 1_000_000))
+print((x == 0).mean(), atom, x.mean(), (x**2).mean())
+
+# the generalised inverse handles the atom: F^-(u) = max(0, mu + sigma * Phi^{-1}(u))
+u = rng.random(1_000_000)
+print(np.maximum(0, mu + sigma * stats.norm.ppf(u)).mean())</code></pre></div>
+  </div>
+  <figcaption>The atom is added by hand: quadrature of $f_c$ alone would silently drop $\Phi(-m)\,g(0)$, which matters as soon as $g(0) \ne 0$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 07</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Show that $X = \max(0, Z)$ with $Z \sim \mathcal N(0,1)$ has $\Var[X] = \frac12 - \frac1{2\pi} \approx 0.341$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By (7) with $\mu = 0$, $\sigma = 1$: $\E[X] = \phi(0) = 1/\sqrt{2\pi}$ and $\E[X^2] = \Phi(0) = \tfrac12$. So
+      $\Var[X] = \tfrac12 - \tfrac1{2\pi}$.</p>
+    </details>
+  </li>
+  <li>
+    <p>A request times out after $c$ seconds: the recorded latency is $X = \min(T, c)$ with $T \sim \text{Exponential}(\lambda)$.
+    Write the generalised PDF of $X$ and compute $\E[X]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\P[X = c] = \P[T \ge c] = e^{-\lambda c}$, and on $[0, c)$ $X$ has the density of $T$:
+      $f_X(x) = \lambda e^{-\lambda x}\ind\{0 \le x &lt; c\} + e^{-\lambda c}\delta(x - c)$. By the tail formula (lesson 2.3, exercise 5),
+      $\E[X] = \int_0^c \P[T &gt; x]\d x = (1 - e^{-\lambda c})/\lambda$. The same value from (5):
+      $\int_0^c x\lambda e^{-\lambda x}\d x + c\,e^{-\lambda c}$.</p>
+    </details>
+  </li>
+  <li>
+    <p>$X$ has CDF $F_X(x) = 0$ for $x &lt; 0$, $\frac{1 + x}{4}$ for $0 \le x &lt; 1$, and $1$ for $x \ge 1$. Find the atoms, the
+    generalised PDF and $\E[X]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Jump at $0$: $F(0) - F(0^-) = \tfrac14$. Jump at $1$: $F(1) - F(1^-) = 1 - \tfrac24 = \tfrac12$. Between, slope $\tfrac14$.
+      So $f_X(x) = \tfrac14\delta(x) + \tfrac14\ind\{0 &lt; x &lt; 1\} + \tfrac12\delta(x - 1)$, which integrates to
+      $\tfrac14 + \tfrac14 + \tfrac12 = 1$, and $\E[X] = 0 + \int_0^1 \tfrac x4\d x + \tfrac12 = \tfrac18 + \tfrac12 = \tfrac58$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that $\delta(ax) = \delta(x)/|a|$ for $a \ne 0$, in the sense that
+    $\lim_{\varepsilon \to 0}\int g(x)\,\delta_\varepsilon(ax)\d x = g(0)/|a|$ for $g$ continuous at $0$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Substitute $y = ax$, $\d x = \d y/|a|$ (the absolute value appears because for $a &lt; 0$ the limits swap):
+      $\int g(x)\delta_\varepsilon(ax)\d x = \frac1{|a|}\int g(y/a)\,\delta_\varepsilon(y)\d y \to \frac{g(0)}{|a|}$ by Theorem 3 applied to
+      $y \mapsto g(y/a)$, which is continuous at $0$.</p>
+    </details>
+  </li>
+  <li>
+    <p>A sensor saturates: it reports $X = \max(-c, \min(c, Y))$ for $Y \sim \mathcal N(0, \sigma^2)$. Find the atoms and
+    show that $\E[X^2] = \sigma^2\big(1 - 2Q(k) - 2k\,\phi(k)\big) + 2c^2 Q(k)$, where $k = c/\sigma$.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>Atoms at $\pm c$, each of mass $\P[Y &gt; c] = Q(k)$. In between, $X = Y$. By (5) and symmetry,
+      $\E[X^2] = 2c^2Q(k) + \sigma^2\int_{-k}^{k} z^2\phi(z)\d z$. Integrating by parts as in Theorem 4,
+      $\int_{-k}^{k} z^2\phi = \big[-z\phi(z)\big]_{-k}^{k} + \int_{-k}^{k}\phi = -2k\phi(k) + 1 - 2Q(k)$. As $c \to \infty$ this tends to
+      $\sigma^2$, and the deficit measures the power lost to clipping.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 08</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 4 (delta functions, mixed random variables).</li>
+  <li>Billingsley, <em>Probability and Measure</em>, 3rd ed., § 31, for Lebesgue's decomposition and singular distributions.</li>
+  <li>He, Zhang, Ren &amp; Sun, "Delving deep into rectifiers", ICCV 2015, for the second-moment argument behind ReLU initialisation.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="gaussian.html"><span class="dir">← previous</span><span class="t">2.4 The Gaussian random variable</span></a>
+  <span class="next"><span class="dir">next →</span><span class="t">3.1 Joint CDFs, PMFs and PDFs</span></span>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+function erfc(x) {
+  const z = Math.abs(x), t = 1 / (1 + 0.5 * z);
+  const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418 + t * (-0.18628806 +
+    t * (0.27886807 + t * (-1.13520398 + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+  return x >= 0 ? r : 2 - r;
+}
+const Phi = (z) => 0.5 * erfc(-z / Math.SQRT2);
+const phi = (z) => Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
+
+Learn.demo("relu", (fig, { scope, rng, randn, colors }) => {
+  const N = 2000, X0 = -1, X1 = 4;
+  const q = (s) => fig.querySelector(s);
+  const muIn = q("[data-mu]"), sIn = q("[data-s]"), vals = q("[data-vals]");
+  let seed = 2;
+
+  function draw() {
+    const mu = +muIn.value, s = +sIn.value, m = mu / s;
+    q("[data-mu-out]").value = mu.toFixed(2);
+    q("[data-s-out]").value = s.toFixed(2);
+    const u = rng(seed);
+    const xs = Array.from({ length: N }, () => Math.max(0, mu + s * randn(u))).sort((a, b) => a - b);
+    const zeros = xs.filter((x) => x === 0).length;
+
+    const { sx, sy, ctx } = scope.axes([X0, X1], [0, 1], { xticks: 5, yticks: 4, fmt: (v) => +v.toFixed(2) });
+    // empirical CDF as a step trace
+    const ex = [X0, 0], ey = [0, 0];
+    xs.forEach((x, i) => { if (x > 0) { ex.push(x, x); ey.push(i / N, (i + 1) / N); } });
+    ex.splice(2, 0, 0); ey.splice(2, 0, zeros / N);
+    ex.push(X1); ey.push(1);
+    scope.trace(ex, ey, { color: colors.fgDim, width: 1, glow: false });
+    // exact CDF: 0 left of 0, jump of Phi(-m) at 0, then Phi((x - mu)/s)
+    const jump = Phi(-m);
+    scope.trace([X0, 0], [0, 0]);
+    scope.trace([0, 0], [0, jump], { color: colors.accentDim, width: 1, glow: false, dash: [3, 3] });
+    const gx = Array.from({ length: 201 }, (_, i) => (X1 * i) / 200);
+    scope.trace(gx, gx.map((x) => Phi((x - mu) / s)));
+    ctx.save();
+    ctx.fillStyle = colors.accent;
+    ctx.beginPath(); ctx.arc(sx(0), sy(jump), 3.2, 0, 2 * Math.PI); ctx.fill();
+    ctx.strokeStyle = colors.accent; ctx.fillStyle = colors.fgFaint;
+    ctx.beginPath(); ctx.arc(sx(0), sy(0), 3.2, 0, 2 * Math.PI); ctx.stroke();
+    ctx.restore();
+
+    const mean = xs.reduce((a, b) => a + b, 0) / N;
+    vals.textContent = `P[X=0] ${jump.toFixed(3)} / ${(zeros / N).toFixed(3)}   E[X] ${(mu * Phi(m) + s * phi(m)).toFixed(3)} / ${mean.toFixed(3)}`;
+  }
+  [muIn, sIn].forEach((el) => el.addEventListener("input", draw));
+  q("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

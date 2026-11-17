@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Discrete random variables and PMFs — Learn — Sayf</title>
+<meta name="description" content="Random variables as functions on the sample space, probability mass functions, the standard discrete families and the Poisson limit of the binomial." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 2.1" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 2.1</span>
+    <h1>Discrete random variables and PMFs</h1>
+    <p class="deck">A random variable is <em>a number computed from the outcome</em>. Its PMF is all we need to know about it on its own.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 3</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 2.1" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>define a random variable as a function on $\Omega$ and say what makes it discrete;</li>
+    <li>prove the defining properties of a PMF and compute $\P[X \in B]$ from it;</li>
+    <li>derive the Bernoulli, geometric, binomial, Pascal, discrete uniform and Poisson PMFs from experiments;</li>
+    <li>prove that the binomial law tends to the Poisson law when $n \to \infty$ with $np$ fixed;</li>
+    <li>find the PMF of $Y = g(X)$.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Definition</span>Numbers computed from outcomes</h2>
+<p>Module 1 worked with events. Most questions, though, are about <em>quantities</em>: the number of
+errors in a packet, the time until a failure, the reading on a sensor. A random variable is such a
+quantity, and formally it is nothing more than a rule that reads a number off each outcome.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">random variable</span></span>
+  <p>A <strong>random variable</strong> is a function $X : \Omega \to \R$ such that
+  $\{X \le x\} = \{\omega \in \Omega : X(\omega) \le x\}$ is an event for every $x \in \R$. Its
+  <strong>range</strong> is $S_X = \{X(\omega) : \omega \in \Omega\}$. $X$ is <strong>discrete</strong> if
+  $S_X$ is countable (finite or countably infinite).</p>
+</div>
+
+<p>The measurability condition guarantees that every question of the form "is $X$ in $B$?" for a
+reasonable set $B$ is an event and so has a probability. On a countable $\Omega$ with all subsets as
+events it holds automatically, and you may forget it. The notation $\{X \in B\}$ is shorthand for the
+event $\{\omega : X(\omega) \in B\}$, the <em>preimage</em> $X^{-1}(B)$.</p>
+
+<p>Example: toss a coin three times, $\Omega = \{H,T\}^3$, and let $X(\omega)$ be the number of heads. Then
+$S_X = \{0,1,2,3\}$ and, for instance, $\{X = 2\} = \{HHT, HTH, THH\}$. The random variable is the
+counting map $f$ from <a href="events.html">lesson 1.1</a>, now with a name.</p>
+
+<h2><span class="sec"><span class="n">§ 02</span> Distribution</span>The probability mass function</h2>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">PMF</span></span>
+  <p>The <strong>probability mass function</strong> of a discrete random variable $X$ is
+  $P_X(x) = \P[X = x]$ for $x \in \R$.</p>
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">properties of a PMF</span></span>
+  <p>For a discrete random variable $X$:</p>
+  <ol type="a">
+    <li>$P_X(x) \ge 0$ for all $x$, and $P_X(x) = 0$ for $x \notin S_X$;</li>
+    <li>$\sum_{x \in S_X} P_X(x) = 1$;</li>
+    <li>for any $B \subseteq \R$, $\displaystyle \P[X \in B] = \sum_{x \in B \cap S_X} P_X(x)$.</li>
+  </ol>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>(a) is non-negativity, plus $\{X = x\} = \varnothing$ when $x \notin S_X$. For (b) and (c), the events
+  $\{X = x\}$, $x \in S_X$, are pairwise disjoint (a function takes one value at each $\omega$) and their
+  union is $\Omega$ (it takes some value), so they form a countable partition of $\Omega$. By the
+  decomposition theorem of lesson 1.1, $\{X \in B\}$ is the disjoint union of
+  $\{X \in B\} \cap \{X = x\}$ over $x \in S_X$, and that intersection is $\{X = x\}$ if $x \in B$ and empty
+  otherwise. Countable additivity gives (c), and (c) with $B = \R$ gives (b). <span class="qed">∎</span></p>
+</details>
+
+<p>Part (c) is the important one: once we know $P_X$ we can answer every question about $X$ alone without
+going back to $\Omega$. The <strong>distribution</strong> of $X$, the map $B \mapsto \P[X \in B]$, is a
+probability measure on $\R$, and for discrete $X$ the PMF determines it. Two random variables on very
+different sample spaces can have the same PMF, and then they are indistinguishable by any question that
+involves only one of them.</p>
+
+<h2><span class="sec"><span class="n">§ 03</span> Families</span>The standard discrete laws</h2>
+<p>Each family below is derived from an experiment, which is the best way to remember both the formula and
+when it applies. In all of them, $0 &lt; p &lt; 1$ and the trials are independent Bernoulli$(p)$ trials as in
+<a href="independence.html">lesson 1.4</a>.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">Bernoulli and binomial</span></span>
+  <p>$X \sim \text{Bernoulli}(p)$ if $P_X(1) = p$, $P_X(0) = 1 - p$: the indicator of success in one trial.
+  $K \sim \text{Binomial}(n, p)$ if $P_K(k) = \binom nk p^k (1-p)^{n-k}$ for $k = 0, \dots, n$: the number of
+  successes in $n$ trials (lesson 1.4, Theorem 3).</p>
+</div>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">geometric and Pascal laws</span></span>
+  <p>Let $L_k$ be the index of the trial on which the $k$-th success occurs. Then</p>
+  $$P_{L_k}(\ell) = \binom{\ell - 1}{k - 1} p^k (1-p)^{\ell - k}, \qquad \ell = k, k+1, \dots \tag{1}$$
+  <p>(the <strong>Pascal</strong> or negative binomial law). For $k = 1$ this is the <strong>geometric</strong>
+  law $P_{L_1}(\ell) = p(1-p)^{\ell - 1}$, $\ell \ge 1$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>$\{L_k = \ell\}$ is the intersection of two events: $A$ = "exactly $k-1$ successes in trials
+  $1, \dots, \ell - 1$" and $B$ = "trial $\ell$ is a success". They depend on disjoint sets of trials, so
+  they are independent (lesson 1.4, Theorem 2). By the binomial law
+  $\P[A] = \binom{\ell-1}{k-1}p^{k-1}(1-p)^{\ell-k}$, and $\P[B] = p$. Multiply. <span class="qed">∎</span></p>
+</details>
+
+<p>Beware the second convention: some texts call "number of failures before the first success" geometric,
+which is $L_1 - 1$ with PMF $p(1-p)^j$, $j \ge 0$. Both are in common use (NumPy uses ours, SciPy's
+<code>geom</code> too, but <code>nbinom</code> counts failures). Check before using a library.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">discrete uniform and Poisson</span></span>
+  <p>$X \sim \text{Uniform}\{k, \dots, l\}$ if $P_X(x) = 1/(l - k + 1)$ for each integer $x \in [k, l]$. And
+  $X \sim \text{Poisson}(\alpha)$, $\alpha &gt; 0$, if</p>
+  $$P_X(x) = \frac{\alpha^x e^{-\alpha}}{x!}, \qquad x = 0, 1, 2, \dots \tag{2}$$
+</div>
+
+<p>This sums to one because $\sum_{x \ge 0} \alpha^x / x! = e^{\alpha}$. The Poisson law counts
+occurrences of rare, independent events in a fixed window (photons on a detector, requests to a server,
+typos on a page), and the reason is the following limit.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">Poisson limit of the binomial</span></span>
+  <p>Fix $\alpha &gt; 0$ and $x \in \{0, 1, 2, \dots\}$. If $K_n \sim \text{Binomial}(n, \alpha/n)$, then</p>
+  $$\lim_{n \to \infty} \P[K_n = x] = \frac{\alpha^x e^{-\alpha}}{x!}. \tag{3}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>For $n \ge x$ and $n &gt; \alpha$, write the binomial probability with $p = \alpha/n$ and regroup:</p>
+  $$\binom nx \Big(\frac\alpha n\Big)^x \Big(1 - \frac\alpha n\Big)^{n-x}
+    = \frac{\alpha^x}{x!} \cdot \underbrace{\frac{n(n-1)\cdots(n-x+1)}{n^x}}_{(i)}
+      \cdot \underbrace{\Big(1 - \frac\alpha n\Big)^{n}}_{(ii)} \cdot \underbrace{\Big(1 - \frac\alpha n\Big)^{-x}}_{(iii)}.$$
+  <p>(i) is a product of $x$ factors $(n - j)/n = 1 - j/n$, each tending to $1$, and $x$ is fixed, so
+  (i) $\to 1$. (iii) is a fixed power of a quantity tending to $1$, so (iii) $\to 1$. For (ii),
+  $\log(1 - \alpha/n)^n = n \log(1 - \alpha/n)$. Since $\log(1 - t) = -t + r(t)$ with
+  $|r(t)| \le t^2$ for $0 \le t \le \tfrac12$ (Taylor with remainder), for $n \ge 2\alpha$ we get
+  $n\log(1 - \alpha/n) = -\alpha + n\,r(\alpha/n)$ with $|n\,r(\alpha/n)| \le \alpha^2/n \to 0$. By
+  continuity of $\exp$, (ii) $\to e^{-\alpha}$. The product of the limits is (3). <span class="qed">∎</span></p>
+</details>
+
+<p>Pointwise convergence is the weakest useful statement. A much stronger, quantitative one (Le Cam's
+inequality) says the <em>total variation distance</em>
+$\tfrac12 \sum_x |\P[K_n = x] - P_X(x)|$ between Binomial$(n, p)$ and Poisson$(np)$ is at most $np^2$,
+which here is $\alpha^2 / n$. The demo shows both.</p>
+
+<figure class="demo" data-demo="poisson-limit">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">binomial → poisson</span></div>
+    <canvas aria-label="Binomial PMF bars with Poisson PMF points overlaid, converging as n grows"></canvas>
+    <div class="controls">
+      <label>n <input type="range" min="1" max="200" step="1" value="10" data-n /> <output data-n-out>10</output></label>
+      <label>α <input type="range" min="0.5" max="10" step="0.5" value="3" data-a /> <output data-a-out>3.0</output></label>
+      <span class="readout-val" data-tv></span>
+    </div>
+  </div>
+  <figcaption>Bars: Binomial$(n, \alpha/n)$ (needs $n \ge \alpha$). Dots: Poisson$(\alpha)$. Readout: total
+  variation distance and Le Cam's bound $\alpha^2/n$. The bound is loose by a constant but has the right
+  $1/n$ rate.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 04</span> Transformations</span>Functions of a random variable</h2>
+<p>If $X$ is a random variable and $g : \R \to \R$, then $Y = g(X)$, the composition
+$\omega \mapsto g(X(\omega))$, is again a random variable (for discrete $X$ there is nothing to check).</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">PMF of a function</span></span>
+  <p>If $X$ is discrete and $Y = g(X)$, then $S_Y = g(S_X)$ is countable and</p>
+  $$P_Y(y) = \sum_{x \in S_X :\, g(x) = y} P_X(x). \tag{4}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>$\{Y = y\} = \{X \in g^{-1}(\{y\})\}$; apply Theorem 1(c) with $B = g^{-1}(\{y\}) = \{x : g(x) = y\}$. <span class="qed">∎</span></p>
+</details>
+
+<p>When $g$ is one-to-one on $S_X$, (4) has a single term: the masses are just relabelled. When it is not,
+masses that land on the same $y$ add. Example: $X$ uniform on $\{-2, -1, 0, 1, 2\}$ and $Y = X^2$ give
+$P_Y(0) = \tfrac15$, $P_Y(1) = P_Y(4) = \tfrac25$.</p>
+
+<h2><span class="sec"><span class="n">§ 05</span> In code</span>PMFs in SciPy, and the conventions trap</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy · scipy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+from scipy import stats
+
+rng = np.random.default_rng(0)
+p, k = 0.2, 3
+
+# Pascal law (1): trial index of the k-th success, by simulation
+trials = rng.random((200_000, 200)) &lt; p
+L = np.argmax(np.cumsum(trials, axis=1) == k, axis=1) + 1
+emp = np.bincount(L, minlength=40)[:40] / len(L)
+pascal = stats.nbinom(k, p).pmf(np.arange(40) - k)   # scipy counts failures: shift by k
+print(np.abs(emp - pascal).max())                    # ~1e-3
+
+# Poisson limit: total variation distance vs Le Cam's bound
+alpha = 3.0
+for n in (10, 100, 1000):
+    x = np.arange(n + 1)
+    tv = 0.5 * (np.abs(stats.binom(n, alpha / n).pmf(x) - stats.poisson(alpha).pmf(x)).sum()
+                + stats.poisson(alpha).sf(n))        # Poisson mass beyond n
+    print(f"n={n:5d}  TV={tv:.2e}  bound={alpha**2 / n:.2e}")</code></pre></div>
+  </div>
+  <figcaption>SciPy's <code>nbinom(k, p)</code> is the law of $L_k - k$, the number of failures, so its PMF is evaluated at $\ell - k$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Show that the geometric law is <em>memoryless</em>: $\P[L_1 &gt; m + n \mid L_1 &gt; m] = \P[L_1 &gt; n]$ for
+    all integers $m, n \ge 0$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\{L_1 &gt; n\}$ is "the first $n$ trials fail", so $\P[L_1 &gt; n] = (1-p)^n$. Since
+      $\{L_1 &gt; m+n\} \subseteq \{L_1 &gt; m\}$,
+      $\P[L_1 &gt; m+n \mid L_1 &gt; m] = (1-p)^{m+n} / (1-p)^m = (1-p)^n$.</p>
+    </details>
+  </li>
+  <li>
+    <p>For $X \sim \text{Poisson}(\alpha)$, find $\P[X \text{ is even}]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\sum_{x \text{ even}} \alpha^x/x! = \tfrac12(e^\alpha + e^{-\alpha})$, since adding the series for
+      $e^{\alpha}$ and $e^{-\alpha}$ doubles the even terms and cancels the odd ones. Multiplying by
+      $e^{-\alpha}$, $\P[X \text{ even}] = \tfrac12(1 + e^{-2\alpha})$, which is always above $\tfrac12$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that the Poisson PMF (2) increases while $x &lt; \alpha$ and decreases after, so its mode is
+    $\lfloor \alpha \rfloor$ (and also $\alpha - 1$ if $\alpha$ is an integer).<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$P_X(x)/P_X(x-1) = \alpha/x$, which is $&gt; 1$ iff $x &lt; \alpha$ and $= 1$ iff $x = \alpha$. Compare
+      exercise 6 of lesson 1.4: this is its $n \to \infty$ limit.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $X \sim \text{Geometric}(p)$ (our convention) and $Y = X \bmod 2$. Find $P_Y$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By (4), $P_Y(1) = \sum_{j \ge 0} p(1-p)^{2j} = \frac{p}{1 - (1-p)^2} = \frac{1}{2 - p}$, and
+      $P_Y(0) = \frac{1-p}{2-p}$. For $p = \tfrac12$ this gives $\tfrac23$ and $\tfrac13$, matching exercise 3
+      of lesson 1.2.</p>
+    </details>
+  </li>
+  <li>
+    <p>Each of $n$ independent requests hits a cache with probability $1 - \alpha/n$. Use Theorem 3 to
+    approximate the probability of at most two misses when $n = 1000$, $\alpha = 2$, and use Le Cam's bound
+    to say how far off the approximation can be.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>The misses are Binomial$(1000, 0.002)$. The Poisson$(2)$ approximation gives
+      $e^{-2}(1 + 2 + 2) = 5e^{-2} \approx 0.6767$. For any event $B$,
+      $|\P[K \in B] - \P[X \in B]|$ is at most the total variation distance (it is the maximum over $B$), here
+      at most $np^2 = 0.004$. So the exact answer lies in $[0.672, 0.681]$; it is in fact $\approx 0.6767$.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 07</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 3 (discrete random variables, PMFs, families of discrete random variables).</li>
+  <li>L. Le Cam, "An approximation theorem for the Poisson binomial distribution", <em>Pacific J. Math.</em> 10 (1960), for the total variation bound.</li>
+  <li>Blitzstein &amp; Hwang, <em>Introduction to Probability</em>, 2nd ed., ch. 3–4, for story proofs of each family.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="counting.html"><span class="dir">← previous</span><span class="t">1.5 Counting methods</span></a>
+  <a class="next" href="expectation.html"><span class="dir">next →</span><span class="t">2.2 Expectation, variance and moments</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("poisson-limit", (fig, { scope, colors }) => {
+  const q = (s) => fig.querySelector(s);
+  const nIn = q("[data-n]"), aIn = q("[data-a]"), tvOut = q("[data-tv]");
+  const XMAX = 20;
+  const pois = (a) => { const v = [Math.exp(-a)]; for (let x = 1; x <= 400; x++) v.push((v[x - 1] * a) / x); return v; };
+  const binom = (n, p) => { const v = [Math.pow(1 - p, n)]; for (let k = 1; k <= n; k++) v.push((v[k - 1] * (n - k + 1) * p) / (k * (1 - p))); return v; };
+
+  function draw() {
+    const a = +aIn.value, n = Math.max(+nIn.value, Math.ceil(a));
+    q("[data-n-out]").value = n;
+    q("[data-a-out]").value = a.toFixed(1);
+    const p = a / n, b = p < 1 ? binom(n, p) : [...Array(n).fill(0), 1], P = pois(a);
+    let tv = 0;
+    for (let x = 0; x <= Math.max(n, 400); x++) tv += Math.abs((b[x] || 0) - (P[x] || 0));
+    tv /= 2;
+    const ymax = Math.max(...b.slice(0, XMAX + 1), ...P.slice(0, XMAX + 1)) * 1.15;
+    let tick = 0;
+    const { sx, sy, ctx } = scope.axes([-0.5, XMAX + 0.5], [0, ymax], { xticks: 0, yticks: 4, fmt: (v) => (tick++ < 5 ? v.toFixed(2) : "") });
+    for (let x = 0; x <= XMAX; x += 4) scope.label(String(x), x, -ymax * 0.07, { align: "center", color: colors.fgFaint });
+    const bw = (sx(1) - sx(0)) * 0.7;
+    ctx.save();
+    ctx.fillStyle = colors.accentGlow; ctx.strokeStyle = colors.accentDim;
+    for (let x = 0; x <= Math.min(n, XMAX); x++) { const v = b[x]; ctx.fillRect(sx(x) - bw / 2, sy(v), bw, sy(0) - sy(v)); ctx.strokeRect(sx(x) - bw / 2 + 0.5, sy(v) + 0.5, bw - 1, Math.max(0, sy(0) - sy(v) - 1)); }
+    ctx.fillStyle = colors.alt; ctx.shadowColor = colors.alt; ctx.shadowBlur = 6;
+    for (let x = 0; x <= XMAX; x++) { ctx.beginPath(); ctx.arc(sx(x), sy(P[x]), 2.6, 0, 2 * Math.PI); ctx.fill(); }
+    ctx.restore();
+    tvOut.textContent = `TV=${tv.toExponential(2)}  α²/n=${(a * a / n).toExponential(2)}`;
+  }
+  [nIn, aIn].forEach((el) => el.addEventListener("input", draw));
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

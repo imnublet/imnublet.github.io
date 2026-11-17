@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Marginals and independence — Learn — Sayf</title>
+<meta name="description" content="Marginal PMFs and densities, why marginals do not determine the joint law, independence of random variables and the factorisation criterion." />
+<script>document.documentElement.classList.add("js");</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="../../notes.css" />
+<link rel="stylesheet" href="../learn.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="nav" aria-label="Primary">
+  <a href="../../index.html#top" class="nav__mark">SAYF</a>
+  <div class="nav__links">
+    <a href="../../index.html#work">work</a>
+    <a href="../index.html">learn</a>
+    <a href="../../index.html#notes">notes</a>
+    <a href="../../index.html#about">about</a>
+    <span class="nav__status nav__status--clock"><span class="nav__dot" aria-hidden="true"></span><span data-clock>—</span></span>
+  </div>
+</nav>
+
+<header class="post-hero" data-screen-label="lesson 3.2" data-channel="neural">
+  <div class="article-wrap" data-hero-stagger>
+    <span class="eyebrow">C01 &nbsp;/&nbsp; Lesson 3.2</span>
+    <h1>Marginals and independence</h1>
+    <p class="deck">Integrate out what you do not care about. If the joint law <em>factorises</em>, nothing was lost.</p>
+    <div class="post-meta">
+      <span><b>Probability &amp; multivariate data analysis</b></span>
+      <span>25 min</span>
+      <span>Y&amp;G ch. 5</span>
+    </div>
+  </div>
+</header>
+
+<main>
+<article class="article article-wrap" data-screen-label="lesson 3.2" data-channel="neural">
+
+<div class="objectives">
+  <span class="lbl">After this lesson you can</span>
+  <ul class="clean">
+    <li>obtain marginal PMFs and densities from a joint law, and prove the formulas;</li>
+    <li>construct different joint laws with the same marginals;</li>
+    <li>define independence of random variables and test it by factorising the PMF, CDF or density;</li>
+    <li>use $\E[g(X)h(Y)] = \E[g(X)]\,\E[h(Y)]$ for independent $X, Y$.</li>
+  </ul>
+</div>
+
+<h2><span class="sec"><span class="n">§ 01</span> Marginals</span>Integrating out a variable</h2>
+<p>The joint law contains the law of each component. Recovering it is called <em>marginalising</em>, after the old
+practice of writing row and column totals in the margins of a joint table.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 1<span class="name">marginal PMF and density</span></span>
+  <p>If $X, Y$ are discrete,</p>
+  $$P_X(x) = \sum_{y \in S_Y} P_{X,Y}(x, y), \qquad P_Y(y) = \sum_{x \in S_X} P_{X,Y}(x, y). \tag{1}$$
+  <p>If $X, Y$ are jointly continuous, $X$ and $Y$ are continuous with</p>
+  $$f_X(x) = \int_{-\infty}^\infty f_{X,Y}(x, y) \d y, \qquad f_Y(y) = \int_{-\infty}^\infty f_{X,Y}(x, y) \d x. \tag{2}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p><em>Discrete.</em> The events $\{Y = y\}$, $y \in S_Y$, partition $\Omega$, so $\{X = x\}$ is the disjoint union of
+  $\{X = x, Y = y\}$ over $y$, and countable additivity gives (1).</p>
+  <p><em>Continuous.</em> By Theorem 1(c) of lesson 3.1 and (4) there, then exchanging the order of integration
+  (Tonelli, the integrand is non-negative),</p>
+  $$F_X(x) = \lim_{y \to \infty} F_{X,Y}(x, y) = \int_{-\infty}^{x} \Big(\int_{-\infty}^{\infty} f_{X,Y}(u, v) \d v\Big) \d u,$$
+  <p>where the limit passes inside by monotone convergence. This exhibits $F_X$ as the integral of the inner function, which
+  is therefore a density of $X$. The formula for $f_Y$ is symmetric. <span class="qed">∎</span></p>
+</details>
+
+<p>For the triangle density $f_{X,Y} = 2$ on $\{0 \le y \le x \le 1\}$ of lesson 3.1: for fixed $x \in [0,1]$ the density is $2$ for
+$y \in [0, x]$, so $f_X(x) = 2x$; for fixed $y$ it is $2$ for $x \in [y, 1]$, so $f_Y(y) = 2(1 - y)$. The larger of two uniforms
+leans right and the smaller leans left, as they should.</p>
+
+<div class="callout">
+  <span class="lbl">Marginals lose information</span>
+  <p>The map from joint laws to pairs of marginals is many-to-one. Let $X$ be Bernoulli$(\tfrac12)$. Taking $Y$ an independent
+  copy, or $Y = X$, or $Y = 1 - X$ gives three joint PMFs, putting mass $\tfrac14$ on each of the four cells, or $\tfrac12$ on the
+  diagonal, or $\tfrac12$ on the anti-diagonal. All three have Bernoulli$(\tfrac12)$ marginals. The part of the joint law that the
+  marginals do not determine is the <em>dependence structure</em>; in continuous models it is called the copula.</p>
+</div>
+
+<h2><span class="sec"><span class="n">§ 02</span> Definition</span>Independent random variables</h2>
+<p>Lesson 1.4 defined independence for events. Random variables are independent when every event about one is
+independent of every event about the other.</p>
+
+<div class="block">
+  <span class="lbl">Definition<span class="name">independence</span></span>
+  <p>$X$ and $Y$ are <strong>independent</strong> if for all Borel sets $A, B \subseteq \R$,</p>
+  $$\P[X \in A,\; Y \in B] = \P[X \in A]\;\P[Y \in B]. \tag{3}$$
+</div>
+
+<p>Checking (3) for every pair of sets is impractical. The following criteria reduce it to one function.</p>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 2<span class="name">factorisation criteria</span></span>
+  <p>$X$ and $Y$ are independent if and only if any one of the following holds:</p>
+  <ol type="a">
+    <li>$F_{X,Y}(x, y) = F_X(x)\,F_Y(y)$ for all $x, y$;</li>
+    <li>(discrete case) $P_{X,Y}(x, y) = P_X(x)\,P_Y(y)$ for all $x, y$;</li>
+    <li>(jointly continuous case) $f_{X,Y}(x, y) = f_X(x)\,f_Y(y)$ for all $(x, y)$ outside a set of zero area.</li>
+  </ol>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>(3) implies (a) with $A = (-\infty, x]$, $B = (-\infty, y]$, and (b) with $A = \{x\}$, $B = \{y\}$.</p>
+  <p>(b) implies (3): by (3) of lesson 3.1 applied to $A \times B$,
+  $\P[X \in A, Y \in B] = \sum_{x \in A}\sum_{y \in B} P_X(x)P_Y(y) = \big(\sum_{x \in A}P_X(x)\big)\big(\sum_{y \in B}P_Y(y)\big)$.</p>
+  <p>(c) implies (3): by Theorem 3(b) of lesson 3.1 and Tonelli,
+  $\P[X \in A, Y \in B] = \int_A\int_B f_X(x)f_Y(y)\d y\d x = \int_A f_X \cdot \int_B f_Y$.</p>
+  <p>(a) implies (c): differentiate $F_X(x)F_Y(y)$ in $x$ and $y$; at points where everything is continuous this gives
+  $f_X(x)f_Y(y) = \partial^2 F_{X,Y}/\partial x \partial y = f_{X,Y}(x,y)$.</p>
+  <p>(a) implies (3) in general: the two sides of (3), viewed as functions of $A \times B$, both extend to probability measures
+  on $\R^2$ (the law of $(X,Y)$ and the product of the marginal laws), and by (a) and the rectangle formula they agree on
+  all rectangles. Measures that agree on rectangles agree on all Borel sets (Dynkin's $\pi$–$\lambda$ theorem). This
+  step we take from measure theory. <span class="qed">∎</span></p>
+</details>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 3<span class="name">product form on a product support</span></span>
+  <p>If $f_{X,Y}(x, y) = g(x)\,h(y)$ for all $(x, y)$, with $g, h \ge 0$, then $X$ and $Y$ are independent, and
+  $f_X = g / \int g$, $f_Y = h / \int h$.</p>
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>Let $G = \int g$ and $H = \int h$. Then $1 = \iint g(x)h(y) = GH$, so both are finite and positive. By (2),
+  $f_X(x) = g(x)H = g(x)/G$ and $f_Y(y) = h(y)G = h(y)/H$, so $f_X(x)f_Y(y) = g(x)h(y)/(GH) = f_{X,Y}(x,y)$; apply Theorem 2(c). <span class="qed">∎</span></p>
+</details>
+
+<p>The hypothesis is "for <em>all</em> $(x, y)$", including where the density is zero. The triangle density looks like a product,
+$2 = 2 \cdot 1$, but only on the triangle; on all of $\R^2$ it is $2\,\ind\{0 \le y \le x \le 1\}$, which does not split. Indeed
+$f_X(x)f_Y(y) = 4x(1 - y) \ne f_{X,Y}(x,y)$, and $X, Y$ are dependent: knowing $Y = 0.9$ forces $X \ge 0.9$. <em>A support that
+is not a product set always means dependence.</em></p>
+
+<h2><span class="sec"><span class="n">§ 03</span> Consequences</span>What independence buys</h2>
+
+<div class="block block--thm">
+  <span class="lbl">Theorem 4<span class="name">functions and products of independent variables</span></span>
+  <p>Let $X, Y$ be independent. Then (a) $g(X)$ and $h(Y)$ are independent for any (Borel) functions $g, h$; and (b) if
+  $\E|g(X)|$ and $\E|h(Y)|$ are finite,</p>
+  $$\E[g(X)\,h(Y)] = \E[g(X)]\;\E[h(Y)]. \tag{4}$$
+</div>
+<details class="proof">
+  <summary>Proof</summary>
+  <p>(a) $\{g(X) \in A\} = \{X \in g^{-1}(A)\}$ and similarly for $h$, so (3) for $X, Y$ with the sets $g^{-1}(A)$, $h^{-1}(B)$ is (3) for
+  $g(X), h(Y)$.</p>
+  <p>(b) In the continuous case, by Theorem 3(c) of lesson 3.1 and the factorisation,
+  $\E|g(X)h(Y)| = \iint |g(x)||h(y)| f_X(x) f_Y(y) = \E|g(X)|\,\E|h(Y)| &lt; \infty$ by Tonelli, so Fubini allows the same
+  computation without absolute values, giving $\int g f_X \cdot \int h f_Y$. The discrete case is the same with sums. <span class="qed">∎</span></p>
+</details>
+
+<p>Everything extends to $n$ variables: $X_1, \dots, X_n$ are <strong>mutually independent</strong> if
+$\P[X_1 \in A_1, \dots, X_n \in A_n] = \prod_i \P[X_i \in A_i]$ for all sets $A_i$, equivalently if the joint PMF, CDF or density
+factorises into $n$ marginals. When in addition all $X_i$ have the same law they are <strong>independent and identically
+distributed</strong>, written $X_1, \dots, X_n \iid X$: the standard model of a sample in statistics and of a training set in
+machine learning.</p>
+
+<figure class="demo" data-demo="same-marginals">
+  <div class="screen">
+    <div class="bar"><span>Demo</span><span class="tag">same marginals · different joints</span></div>
+    <canvas aria-label="Scatter plot of a pair of standard normal variables under three different dependence structures, with marginal histograms"></canvas>
+    <div class="controls">
+      <button type="button" data-law>joint: independent</button>
+      <button type="button" data-resample>resample</button>
+      <span class="readout-val" data-p></span>
+    </div>
+  </div>
+  <figcaption>In all three cases $X$ and $Y$ are $\mathcal N(0,1)$: the marginal histograms along the bottom and left edges do not
+  change. <em>Independent</em>: $Y$ an independent copy. <em>Random sign</em>: $Y = SX$ with $S = \pm1$ a fair coin independent of
+  $X$. <em>Identical</em>: $Y = X$. Readout: $\P[X &gt; 1, Y &gt; 1]$ by simulation and exactly ($Q(1)^2$, $Q(1)/2$ and $Q(1)$).</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 04</span> In code</span>Testing a factorisation</h2>
+
+<figure class="readout">
+  <div class="screen">
+    <div class="bar"><span>Python</span><span class="tag">numpy</span></div>
+    <div class="body"><pre><code class="language-python">import numpy as np
+from itertools import product
+
+# joint PMF table of (max, min) of two dice; marginals are row/column sums (1)
+P = np.zeros((6, 6))
+for a, b in product(range(6), repeat=2):
+    P[max(a, b), min(a, b)] += 1 / 36
+PX, PY = P.sum(axis=1), P.sum(axis=0)
+print(np.round(PX * 36), np.round(PY * 36))       # [1 3 5 7 9 11], [11 9 7 5 3 1]
+print(np.allclose(P, np.outer(PX, PY)))           # False: dependent
+
+# two independent dice: the table is the outer product of its margins
+Q = np.full((6, 6), 1 / 36)
+print(np.allclose(Q, np.outer(Q.sum(1), Q.sum(0))))  # True
+
+# random sign: same N(0,1) marginals, very different joint
+rng = np.random.default_rng(0)
+x = rng.standard_normal(1_000_000)
+y = rng.choice([-1, 1], size=x.size) * x
+print(((x &gt; 1) &amp; (y &gt; 1)).mean(), (x &gt; 1).mean() * (y &gt; 1).mean())  # 0.079 vs 0.025</code></pre></div>
+  </div>
+  <figcaption>For a finite table, independence is exactly "rank one": $P = P_X P_Y^{\mathsf T}$.</figcaption>
+</figure>
+
+<h2><span class="sec"><span class="n">§ 05</span> Practice</span>Exercises</h2>
+<ol class="exercises">
+  <li>
+    <p>Let $X \sim \text{Exp}(\lambda)$ and $Y \sim \text{Exp}(\mu)$ be independent. Show $\P[X &lt; Y] = \lambda/(\lambda + \mu)$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>By Theorem 2(c), $f_{X,Y} = \lambda e^{-\lambda x}\mu e^{-\mu y}$ on $x, y \ge 0$. Integrate over $\{x &lt; y\}$ with $x$ outermost:
+      $\int_0^\infty \lambda e^{-\lambda x}\big(\int_x^\infty \mu e^{-\mu y}\d y\big)\d x = \int_0^\infty \lambda e^{-(\lambda + \mu)x}\d x = \frac{\lambda}{\lambda + \mu}$.
+      This is the "race" between two exponential clocks used in queueing and in the Gillespie algorithm.</p>
+    </details>
+  </li>
+  <li>
+    <p>With $X, Y$ as in exercise 1, show $\min(X, Y) \sim \text{Exp}(\lambda + \mu)$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$\P[\min(X,Y) &gt; t] = \P[X &gt; t, Y &gt; t] = e^{-\lambda t}e^{-\mu t}$ by (3) with $A = B = (t, \infty)$.</p>
+    </details>
+  </li>
+  <li>
+    <p>The joint density is $f_{X,Y}(x, y) = 6e^{-2x - 3y}$ for $x, y \ge 0$ and $0$ otherwise. Are $X, Y$ independent? Find
+    $\E[XY]$.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>On all of $\R^2$ the density is $\big(2e^{-2x}\ind\{x \ge 0\}\big)\big(3e^{-3y}\ind\{y \ge 0\}\big)$, a product over the product
+      support $[0,\infty)^2$. By Theorem 3, $X \sim \text{Exp}(2)$ and $Y \sim \text{Exp}(3)$ are independent, and by (4)
+      $\E[XY] = \tfrac12 \cdot \tfrac13 = \tfrac16$.</p>
+    </details>
+  </li>
+  <li>
+    <p>Let $X, Y$ be independent, each $\pm 1$ with probability $\tfrac12$, and $Z = XY$. Show $X, Y, Z$ are pairwise independent
+    but not mutually independent.<span class="diff">core</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>$Z$ is also $\pm1$ with probability $\tfrac12$. For each of the four values of $(x, z)$, $\{X = x, Z = z\} = \{X = x, Y = xz\}$
+      has probability $\tfrac14 = P_X(x)P_Z(z)$; likewise for $(Y, Z)$. But $\P[X = 1, Y = 1, Z = -1] = 0 \ne \tfrac18$. This is the
+      coin example of lesson 1.4 in $\pm1$ notation, and the reason XOR-like features defeat models that only look at pairs.</p>
+    </details>
+  </li>
+  <li>
+    <p>Show that if $X$ and $Y$ are independent and $Y = X$ almost surely, then $X$ is almost surely constant.<span class="diff">stretch</span></p>
+    <details class="solution">
+      <summary>Solution</summary>
+      <p>For every $x$, $F_X(x) = \P[X \le x, Y \le x] = F_X(x)F_Y(x) = F_X(x)^2$, so $F_X(x) \in \{0, 1\}$. A CDF taking only the values $0$
+      and $1$ jumps from $0$ to $1$ at a single point $c = \inf\{x : F_X(x) = 1\}$, and then $\P[X = c] = 1$.</p>
+    </details>
+  </li>
+</ol>
+
+<h2><span class="sec"><span class="n">§ 06</span> Further reading</span>References</h2>
+<ul class="refs">
+  <li>Yates &amp; Goodman, <em>Probability and Stochastic Processes</em>, 3rd ed., ch. 5 (marginal PMFs and PDFs, independent random variables).</li>
+  <li>Durrett, <em>Probability: Theory and Examples</em>, 5th ed., § 2.1, for the $\pi$–$\lambda$ argument behind Theorem 2.</li>
+</ul>
+
+<nav class="pager" aria-label="Lessons">
+  <a class="prev" href="joint-distributions.html"><span class="dir">← previous</span><span class="t">3.1 Joint CDFs, PMFs and PDFs</span></a>
+  <a class="next" href="covariance.html"><span class="dir">next →</span><span class="t">3.3 Covariance and correlation</span></a>
+</nav>
+
+<hr class="end" />
+<a class="backlink" href="index.html">← course overview</a>
+</article>
+</main>
+
+<footer class="footer" data-screen-label="footer" data-channel="descent">
+  <div class="wrap">
+    <div class="footer__row">
+      <span>© 2026 Sayf — free to read, free to share.</span>
+      <div class="footer__links">
+        <a href="https://github.com/imnublet" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/sayfkadd" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="statusbar" aria-hidden="true">
+  <div class="statusbar__group">
+    <span class="statusbar__rec"><span class="statusbar__recdot"></span>REC</span>
+    <span class="statusbar__seg">SEC <b data-bar-section>LESSON</b></span>
+    <span class="statusbar__seg statusbar__ch">CH <b data-bar-channel>NEURAL</b></span>
+  </div>
+  <canvas class="statusbar__scope" id="bar-signal"></canvas>
+  <div class="statusbar__group statusbar__group--right">
+    <span class="statusbar__seg">GAIN 1.0×</span>
+    <span class="statusbar__seg statusbar__pos"><b data-bar-pos>00</b> / 100</span>
+  </div>
+</div>
+
+<script src="../../signal.js"></script>
+<script src="../../reveal.js"></script>
+<script src="../learn.js"></script>
+
+<script>
+Learn.demo("same-marginals", (fig, { scope, rng, randn, colors }) => {
+  const N = 1500, BINS = 30, R = 3.2;
+  const lawBtn = fig.querySelector("[data-law]"), out = fig.querySelector("[data-p]");
+  const Q1 = 0.15865525;
+  const LAWS = [
+    { name: "independent", y: (x, u) => randn(u), exact: Q1 * Q1 },
+    { name: "random sign", y: (x, u) => (u() < 0.5 ? -x : x), exact: Q1 / 2 },
+    { name: "identical", y: (x) => x, exact: Q1 },
+  ];
+  let li = 0, seed = 9;
+
+  function draw() {
+    const law = LAWS[li], u = rng(seed);
+    const { w, h } = scope.axes([-R, R], [-R, R], { xticks: 0, yticks: 0, fmt: () => "" });
+    const a = (w - 54) / (h - 40);
+    const { sx, sy, ctx } = scope.axes([-R * a, R * a], [-R, R], { xticks: 0, yticks: 2, fmt: (v) => v.toFixed(1) });
+    const hx = new Array(BINS).fill(0), hy = new Array(BINS).fill(0), bw = (2 * R) / BINS;
+    let hit = 0;
+    for (let i = 0; i < N; i++) {
+      const x = randn(u), y = law.y(x, u);
+      hit += x > 1 && y > 1;
+      const bx = Math.floor((x + R) / bw), by = Math.floor((y + R) / bw);
+      if (bx >= 0 && bx < BINS) hx[bx]++;
+      if (by >= 0 && by < BINS) hy[by]++;
+      ctx.fillStyle = x > 1 && y > 1 ? colors.accent : colors.fgDim;
+      ctx.fillRect(sx(x) - 1, sy(y) - 1, 2, 2);
+    }
+    // marginal histograms hugging the bottom and left edges
+    const hmax = Math.max(...hx, ...hy), depth = 0.9;
+    ctx.save();
+    ctx.fillStyle = colors.accentGlow;
+    hx.forEach((c, i) => { const x0 = sx(-R + i * bw), x1 = sx(-R + (i + 1) * bw), y0 = sy(-R), y1 = sy(-R + (depth * c) / hmax); ctx.fillRect(x0, y1, x1 - x0 - 1, y0 - y1); });
+    hy.forEach((c, i) => { const y0 = sy(-R + i * bw), y1 = sy(-R + (i + 1) * bw), x0 = sx(-R * a), x1 = sx(-R * a + (depth * c) / hmax); ctx.fillRect(x0, y1, x1 - x0, y0 - y1 - 1); });
+    ctx.restore();
+    scope.trace([1, 1, R * a], [R, 1, 1], { color: colors.fgFaint, width: 1, glow: false, dash: [3, 3] });
+    out.textContent = `P[X>1, Y>1]  simulated ${(hit / N).toFixed(3)}  exact ${law.exact.toFixed(3)}`;
+  }
+  lawBtn.addEventListener("click", () => { li = (li + 1) % LAWS.length; lawBtn.textContent = `joint: ${LAWS[li].name}`; draw(); });
+  fig.querySelector("[data-resample]").addEventListener("click", () => { seed++; draw(); });
+  draw();
+  return draw;
+});
+</script>
+</body>
+</html>

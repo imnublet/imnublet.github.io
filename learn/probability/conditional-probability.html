@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
 <link rel="stylesheet" href="../../styles.css" />
 <link rel="stylesheet" href="../../notes.css" />
-<link rel="stylesheet" href="../learn.css" />
+<link rel="stylesheet" href="../learn.css?v=2026-11-25" />
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
@@ -95,8 +95,6 @@ literally $\P[A \mid B] = |A \cap B| / |B|$: uniform on the smaller space $B$.</
 "$\mid B$" appended everywhere: $\P[A^c \mid B] = 1 - \P[A \mid B]$, conditional inclusion–exclusion,
 the conditional union bound, and so on. A useful corollary (exercise 5): conditioning on $B$ and then
 on $C$ is the same as conditioning on $B \cap C$.</p>
-
-
 
 <div class="worked" id="example-1-3-1">
   <div class="head"><span class="lbl">Worked example 1.3.1</span><span class="name">conditioning on the sum of two dice</span></div>
@@ -250,8 +248,6 @@ $$\log O(B \mid A_1 \cdots A_n) = \log O(B) + \sum_{k=1}^n \log \Lambda(A_k). \t
   $\P[D \mid +] = \P[D]$ (an uninformative test). Push specificity towards $0.999$ and watch the rare-disease
   end move most: the false-positive rate $1 - \text{spec}$ dominates when $\P[D]$ is small.</figcaption>
 </figure>
-
-
 
 <div class="worked" id="example-1-3-2">
   <div class="head"><span class="lbl">Worked example 1.3.2</span><span class="name">where do mislabelled examples come from?</span></div>

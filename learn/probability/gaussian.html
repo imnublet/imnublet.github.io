@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
 <link rel="stylesheet" href="../../styles.css" />
 <link rel="stylesheet" href="../../notes.css" />
-<link rel="stylesheet" href="../learn.css" />
+<link rel="stylesheet" href="../learn.css?v=2026-11-25" />
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
@@ -119,8 +119,6 @@ $\P[a &lt; X \le b] = \Phi\big(\tfrac{b - \mu}{\sigma}\big) - \Phi\big(\tfrac{a 
 $\phi(-z) = \phi(z)$, $\Phi(-z) = 1 - \Phi(z)$, so tables and code only need $z \ge 0$. The probability of
 landing within $1, 2, 3$ standard deviations of the mean is $2\Phi(k) - 1 = 0.6827,\ 0.9545,\ 0.9973$.</p>
 
-
-
 <div class="worked" id="example-2-4-1">
   <div class="head"><span class="lbl">Worked example 2.4.1</span><span class="name">resistor tolerances</span></div>
   <div class="part"><span class="tag">Problem</span>
@@ -202,8 +200,6 @@ Gaussian tail decays faster than any exponential $e^{-cz}$, which is why "$5\sig
   tightly as $z$ grows.</figcaption>
 </figure>
 
-
-
 <div class="worked" id="example-2-4-2">
   <div class="head"><span class="lbl">Worked example 2.4.2</span><span class="name">a four-sigma false alarm rate</span></div>
   <div class="part"><span class="tag">Problem</span>
@@ -261,8 +257,6 @@ $$\E[Z^{2k+1}] = 0, \qquad \E[Z^{2k}] = (2k-1)(2k-3)\cdots 3 \cdot 1 = \frac{(2k
 identity also characterises the Gaussian (if (6) holds for all bounded smooth $g$, then $Z$ is standard
 normal). That characterisation is the starting point of Stein's method for proving central limit theorems,
 and, in machine learning, of kernel Stein discrepancies and Stein variational gradient descent.</p>
-
-
 
 <div class="worked" id="example-2-4-3">
   <div class="head"><span class="lbl">Worked example 2.4.3</span><span class="name">moments by Stein's identity</span></div>

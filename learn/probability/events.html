@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
 <link rel="stylesheet" href="../../styles.css" />
 <link rel="stylesheet" href="../../notes.css" />
-<link rel="stylesheet" href="../learn.css" />
+<link rel="stylesheet" href="../learn.css?v=2026-11-25" />
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
@@ -136,9 +136,6 @@ outcomes in <em>every</em> $A_i$.</p>
 $A \cap \big(\bigcup_i B_i\big) = \bigcup_i (A \cap B_i)$ and
 $A \cup \big(\bigcap_i B_i\big) = \bigcap_i (A \cup B_i)$, which we use constantly.</p>
 
-
-
-
 <div class="worked" id="example-1-1-1">
   <div class="head"><span class="lbl">Worked example 1.1.1</span><span class="name">translating words into set operations</span></div>
   <div class="part"><span class="tag">Problem</span>
@@ -154,7 +151,8 @@ outcomes. Then translate each phrase into a membership condition on $\omega$ and
   <ol class="steps">
     <li>
       <p><b>Sample space.</b> An outcome is the triple of disk states, $\omega = (\omega_1, \omega_2, \omega_3)$ with $\omega_i \in \{0, 1\}$:
-$$\Omega = \{0,1\}^3 = \{000, 001, 010, 011, 100, 101, 110, 111\}, \qquad |\Omega| = 8.$$</p>
+$$\Omega = \{0,1\}^3 = \{000, 001, 010, 011, 100, 101, 110, 111\},$$</p>
+      <p>so $|\Omega| = 8$.</p>
       <p>Each run produces exactly one triple and every triple can occur, so the outcomes are mutually exclusive and collectively exhaustive.</p>
     </li>
     <li>
@@ -222,9 +220,6 @@ $\P[A] = \sum_i \P[A \cap B_i]$, and with conditioning it becomes the law of tot
   cells are in $A$ only, dim filled cells are in $B$ only. Counts are $|A|$, $|B|$, $|A\cap B|$ and
   $|A \cup B|$; check that $|A \cup B| = |A| + |B| - |A \cap B|$ for every setting.</figcaption>
 </figure>
-
-
-
 
 <div class="worked" id="example-1-1-2">
   <div class="head"><span class="lbl">Worked example 1.1.2</span><span class="name">"exactly one" and "at least two" as unions of atoms</span></div>

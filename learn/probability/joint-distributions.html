@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
 <link rel="stylesheet" href="../../styles.css" />
 <link rel="stylesheet" href="../../notes.css" />
-<link rel="stylesheet" href="../learn.css" />
+<link rel="stylesheet" href="../learn.css?v=2026-11-25" />
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
@@ -99,8 +99,6 @@ and have the right limits, yet assign negative "probability" to a rectangle (exe
 inequality, sometimes called being <em>2-increasing</em>, is part of what it means to be a joint CDF. Conversely,
 every function with (a), (b) and (2) is the joint CDF of some pair, and the joint CDF determines
 $\P[(X, Y) \in B]$ for every Borel set $B \subseteq \R^2$, because rectangles generate the Borel sets.</p>
-
-
 
 <div class="worked" id="example-3-1-1">
   <div class="head"><span class="lbl">Worked example 3.1.1</span><span class="name">a rectangle probability from a joint CDF</span></div>
@@ -220,8 +218,6 @@ area zero), and densities may exceed one.</p>
   <figcaption>1500 samples of $(X, Y) = (\max(U_1, U_2), \min(U_1, U_2))$. Bright points fall in $\{X + Y \le t\}$. Readout:
   the Monte Carlo fraction and the exact value from the example.</figcaption>
 </figure>
-
-
 
 <div class="worked" id="example-3-1-2">
   <div class="head"><span class="lbl">Worked example 3.1.2</span><span class="name">normalising a density on a triangle and integrating over a region</span></div>

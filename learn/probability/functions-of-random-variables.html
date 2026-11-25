@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
 <link rel="stylesheet" href="../../styles.css" />
 <link rel="stylesheet" href="../../notes.css" />
-<link rel="stylesheet" href="../learn.css" />
+<link rel="stylesheet" href="../learn.css?v=2026-11-25" />
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js" crossorigin="anonymous"></script>
@@ -99,8 +99,6 @@ $$f_Y(y) = \sum_{i} \frac{f_X\big(x_i(y)\big)}{\big|g'\big(x_i(y)\big)\big|}. \t
   The CDF method confirms it without (3): $F_Y(y) = \P[-\sqrt y \le Z \le \sqrt y] = 2\Phi(\sqrt y) - 1$, whose derivative is the same.</p>
 </div>
 
-
-
 <div class="worked" id="example-3-4-1">
   <div class="head"><span class="lbl">Worked example 3.4.1</span><span class="name">squaring a variable whose range is not symmetric</span></div>
   <div class="part"><span class="tag">Problem</span>
@@ -180,8 +178,6 @@ and the Fourier transform in the signal-processing course).</p>
   <figcaption>Bars: 5000 sums $U_1 + \dots + U_n$ of independent Uniform$(0,1)$ variables. Bright: the exact density, the $n$-fold
   convolution $f_U * \dots * f_U$ (the Irwin–Hall density). Blue dashed: $\mathcal N(n/2, n/12)$, which has the same mean and variance.</figcaption>
 </figure>
-
-
 
 <div class="worked" id="example-3-4-2">
   <div class="head"><span class="lbl">Worked example 3.4.2</span><span class="name">the sum of two uniforms, with careful limits</span></div>
@@ -274,8 +270,6 @@ independent normals into polar coordinates.</p>
 <p>This is the sampler inside every demo on these pages: <code>Learn.randn</code> in <code>learn.js</code> computes
 $\sqrt{-2\ln(1 - u)}\cos(2\pi u')$, the first coordinate of (7). It also gives the cleanest proof of the Gaussian integral
 of lesson 2.4: the polar computation there is Theorem 5 in disguise.</p>
-
-
 
 <div class="worked" id="example-3-4-3">
   <div class="head"><span class="lbl">Worked example 3.4.3</span><span class="name">the product of two uniforms by a Jacobian</span></div>

@@ -100,6 +100,39 @@ inequality, sometimes called being <em>2-increasing</em>, is part of what it mea
 every function with (a), (b) and (2) is the joint CDF of some pair, and the joint CDF determines
 $\P[(X, Y) \in B]$ for every Borel set $B \subseteq \R^2$, because rectangles generate the Borel sets.</p>
 
+
+
+<div class="worked" id="example-3-1-1">
+  <div class="head"><span class="lbl">Worked example 3.1.1</span><span class="name">a rectangle probability from a joint CDF</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$X$ and $Y$ have joint CDF $F(x, y) = (1 - e^{-x})(1 - e^{-2y})$ for $x, y \ge 0$, and $F = 0$ otherwise. Find $\P[1 &lt; X \le 2,\; 0 &lt; Y \le 1]$ and $\P[X &gt; 1, Y &gt; 1]$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Rectangle events go straight into the rectangle formula (2). An "upper-right quadrant" is a rectangle with infinite sides: let $x_2, y_2 \to \infty$ and use the
+limits in Theorem 1.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Corner values.</b> $F(2, 1) = (1 - e^{-2})(1 - e^{-2})$, $F(1, 1) = (1 - e^{-1})(1 - e^{-2})$, and $F(2, 0) = F(1, 0) = 0$ because $1 - e^{0} = 0$.</p>
+    </li>
+    <li>
+      <p><b>Rectangle formula.</b> By (2),
+$$\P[1 &lt; X \le 2,\; 0 &lt; Y \le 1] = F(2,1) - F(1,1) - F(2,0) + F(1,0) = (1 - e^{-2})\big[(1 - e^{-2}) - (1 - e^{-1})\big] = (1 - e^{-2})(e^{-1} - e^{-2}).$$
+Numerically $0.8647 \times 0.2325 \approx 0.201$.</p>
+    </li>
+    <li>
+      <p><b>Quadrant.</b> Letting $x_2, y_2 \to \infty$ in (2), with $F(x, \infty) = F_X(x) = 1 - e^{-x}$ and $F(\infty, y) = F_Y(y) = 1 - e^{-2y}$:
+$$\P[X &gt; 1, Y &gt; 1] = 1 - F_X(1) - F_Y(1) + F(1, 1) = 1 - (1 - e^{-1}) - (1 - e^{-2}) + (1 - e^{-1})(1 - e^{-2}) = e^{-1}e^{-2} = e^{-3}.$$</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\P[1 &lt; X \le 2, 0 &lt; Y \le 1] = (1 - e^{-2})(e^{-1} - e^{-2}) \approx 0.201$ and $\P[X &gt; 1, Y &gt; 1] = e^{-3} \approx 0.050$. Both answers factor into a part in $x$
+times a part in $y$, a hint of independence that lesson 3.2 makes precise.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Discrete</span>Joint PMFs</h2>
 
 <div class="block">
@@ -187,6 +220,42 @@ area zero), and densities may exceed one.</p>
   <figcaption>1500 samples of $(X, Y) = (\max(U_1, U_2), \min(U_1, U_2))$. Bright points fall in $\{X + Y \le t\}$. Readout:
   the Monte Carlo fraction and the exact value from the example.</figcaption>
 </figure>
+
+
+
+<div class="worked" id="example-3-1-2">
+  <div class="head"><span class="lbl">Worked example 3.1.2</span><span class="name">normalising a density on a triangle and integrating over a region</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$f_{X,Y}(x, y) = c\,xy$ on $T = \{0 \le y \le x \le 1\}$ and $0$ elsewhere. Find $c$ and $\P[X + Y \le 1]$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Draw the support first; the integration limits come from the picture, not from the formula. For each region, fix the outer variable,
+and read the range of the inner variable from the boundary lines.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Normalise.</b> On $T$, for fixed $x \in [0, 1]$, $y$ runs over $[0, x]$:
+$$\int_0^1\!\!\int_0^x xy \d y \d x = \int_0^1 x \cdot \frac{x^2}{2}\d x = \frac18, \qquad\text{so } c = 8.$$</p>
+    </li>
+    <li>
+      <p><b>Describe the region.</b> $\{X + Y \le 1\} \cap T$ is bounded by $y = 0$, $y = x$ and $x + y = 1$; the last two meet at $(\frac12, \frac12)$. With $y$ outer: $y \in [0, \frac12]$ and, for each such
+$y$, $x$ runs from $y$ to $1 - y$.</p>
+    </li>
+    <li>
+      <p><b>Integrate.</b></p>
+      $$\P[X + Y \le 1] = \int_0^{1/2} 8y \int_y^{1-y} x \d x \d y = \int_0^{1/2} 8y\,\frac{(1-y)^2 - y^2}{2}\d y = \int_0^{1/2} 4y(1 - 2y)\d y.$$
+    </li>
+    <li>
+      <p><b>Finish.</b> $\int_0^{1/2}(4y - 8y^2)\d y = \big[2y^2 - \tfrac83 y^3\big]_0^{1/2} = \frac12 - \frac13 = \frac16.$</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$c = 8$ and $\P[X + Y \le 1] = \frac16$. Choosing $y$ as the outer variable kept this to one integral; with $x$ outer the region splits at $x = \frac12$
+into two pieces. Picking the order that avoids splits is the main skill in these exercises.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 05</span> In code</span>Rectangle probabilities from a CDF</h2>
 

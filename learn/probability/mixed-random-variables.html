@@ -109,6 +109,43 @@ $F_d(x) = \sum_{i : x_i \le x} p_i$ and the <em>continuous part</em> $F_c = F_X 
   course $F_c$ will always be $\int_{-\infty}^x f_c$ for some $f_c \ge 0$.</p>
 </div>
 
+
+
+<div class="worked" id="example-2-5-1">
+  <div class="head"><span class="lbl">Worked example 2.5.1</span><span class="name">an insurance claim with an atom at zero</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>In a year, a policy has no claim with probability $0.7$. Otherwise the claim amount is exponential with mean $2000$. Let $X$ be the claim
+amount (with $X = 0$ if no claim). Find $F_X$, its jump–continuous decomposition, $\P[X &gt; 1000]$ and the median of $X$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Condition on whether there is a claim and use the law of total probability for each $\{X \le x\}$. The atom shows up as a jump in $F_X$; the rest
+is continuous.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>CDF by cases.</b> For $x &lt; 0$, $F_X(x) = 0$. For $x \ge 0$, with $C$ = "a claim is made",
+$$F_X(x) = \P[X \le x \mid C^c]\,\P[C^c] + \P[X \le x \mid C]\,\P[C] = 0.7 + 0.3\big(1 - e^{-x/2000}\big).$$</p>
+    </li>
+    <li>
+      <p><b>Decomposition.</b> $F_X$ jumps by $0.7$ at $0$ and is continuous elsewhere, so $F_d(x) = 0.7\,u(x)$ and $F_c(x) = 0.3\big(1 - e^{-x/2000}\big)\,u(x)$, with $F_X = F_d + F_c$.
+The atom is $\P[X = 0] = F_X(0) - F_X(0^-) = 0.7$.</p>
+    </li>
+    <li>
+      <p><b>Tail.</b> $\P[X &gt; 1000] = 1 - F_X(1000) = 0.3\,e^{-0.5} \approx 0.182$.</p>
+    </li>
+    <li>
+      <p><b>Median.</b> A median $m$ needs $\P[X \le m] \ge \frac12$ and $\P[X \ge m] \ge \frac12$. $F_X(0) = 0.7 \ge \frac12$ and $\P[X \ge 0] = 1$, so $m = 0$; and any $m &gt; 0$ fails the second
+condition because $\P[X \ge m] \le 0.3$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$F_X(x) = \big(1 - 0.3e^{-x/2000}\big)u(x)$, an atom of $0.7$ at zero plus a continuous part of total mass $0.3$; $\P[X &gt; 1000] \approx 0.18$; median $0$.
+A model that ignores the atom (e.g. fits one exponential to all policies) gets the median, and every small-claim probability, badly wrong.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Tool</span>The Dirac delta</h2>
 <p>We would like a "density" for an atom: something that is zero away from $x_0$, yet integrates to one. No
 function does that, but a limit of ordinary functions does what we need inside integrals.</p>
@@ -159,6 +196,43 @@ $\int g \d F_X$ written in engineering notation, and it reduces to the two cases
 $X$ has $f_c = 0$ and (5) is lesson 2.2's sum; a continuous one has no atoms and (5) is lesson 2.3's integral. A
 PMF is a comb of deltas. Probabilities follow from (5) with $g = \ind_B$, with the convention that an atom on the
 boundary of $B$ counts if it lies in $B$: $\P[X \le x] = \int_{-\infty}^{x^+} f_X$, consistent with right-continuity.</p>
+
+
+
+<div class="worked" id="example-2-5-2">
+  <div class="head"><span class="lbl">Worked example 2.5.2</span><span class="name">expected payout with and without a deductible</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>For the claim $X$ of worked example 2.5.1, write the generalised PDF and compute $\E[X]$, $\Var[X]$ and the expected payout $\E[\max(X - 500, 0)]$
+under a $500$ deductible.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Write $f_X$ as in (4), then use (5): each expectation is an integral against the continuous part plus a sum over atoms. Here the atom sits at
+$0$, so its contribution vanishes whenever $g(0) = 0$.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Generalised PDF.</b> With $\lambda = 1/2000$,
+$$f_X(x) = 0.7\,\delta(x) + 0.3\,\lambda e^{-\lambda x}\,\ind\{x &gt; 0\}.$$</p>
+    </li>
+    <li>
+      <p><b>Mean and second moment.</b> By (5) with $g(x) = x$ and $g(x) = x^2$, the atom contributes $0.7 \cdot g(0) = 0$, and the exponential moments $1/\lambda$, $2/\lambda^2$ give
+$$\E[X] = 0.3 \cdot 2000 = 600, \qquad \E[X^2] = 0.3 \cdot 2 \cdot 2000^2 = 2.4 \times 10^6.$$</p>
+    </li>
+    <li>
+      <p><b>Variance.</b> $\Var[X] = 2.4 \times 10^6 - 600^2 = 2.04 \times 10^6$, so $\sigma_X \approx 1428$.</p>
+    </li>
+    <li>
+      <p><b>Deductible.</b> $g(x) = \max(x - 500, 0)$ is continuous with $g(0) = 0$, so only the continuous part contributes. Substituting $y = x - 500$,
+$$\E[g(X)] = 0.3\int_{500}^\infty (x - 500)\,\lambda e^{-\lambda x}\d x = 0.3\,e^{-500\lambda}\int_0^\infty y\,\lambda e^{-\lambda y}\d y = 600\,e^{-0.25} \approx 467.$$</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\E[X] = 600$, $\sigma_X \approx 1428$, and the deductible cuts the expected payout from $600$ to $\approx 467$. The standard deviation is more than twice the mean:
+the atom at zero and the exponential tail together make the claim very dispersed.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 05</span> Application</span>The rectified Gaussian</h2>
 

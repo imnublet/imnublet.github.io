@@ -92,6 +92,40 @@ probability. Two points are worth stating explicitly.</p>
   $(A^c, B)$ gives $A^c$ and $B^c$. <span class="qed">∎</span></p>
 </details>
 
+
+
+<div class="worked" id="example-1-4-1">
+  <div class="head"><span class="lbl">Worked example 1.4.1</span><span class="name">independence is a property of the measure, not the events</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>Draw one card from a well-shuffled standard deck. Let $A$ = "ace" and $H$ = "heart". (a) Are $A$ and $H$ independent? (b) Now remove the
+two of clubs before shuffling. Are they still independent?</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Independence is an equation, $\P[AH] = \P[A]\P[H]$, so check it with numbers; there is no shortcut by intuition about "unrelated"
+features. Compute each side on the equally likely sample space of cards.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Full deck.</b> $|\Omega| = 52$; $\P[A] = \frac4{52} = \frac1{13}$, $\P[H] = \frac{13}{52} = \frac14$, and $AH$ is the single card "ace of hearts", so
+$\P[AH] = \frac1{52} = \frac1{13}\cdot\frac14$. Independent.</p>
+    </li>
+    <li>
+      <p><b>Reduced deck.</b> Now $|\Omega| = 51$ with the same aces and hearts: $\P[A] = \frac4{51}$, $\P[H] = \frac{13}{51}$, $\P[AH] = \frac1{51}$.</p>
+    </li>
+    <li>
+      <p><b>Compare.</b> $\P[A]\P[H] = \frac{52}{2601} = \frac{52}{51^2}$, whereas $\P[AH] = \frac{51}{51^2}$. These differ, so $A$ and $H$ are <em>not</em>
+independent. In conditional form, $\P[A \mid H] = \frac{1/51}{13/51} = \frac1{13} \approx 0.0769$, slightly below
+$\P[A] = \frac4{51} \approx 0.0784$: learning "heart" makes "ace" a little less likely, because removing the two of clubs raises the share of aces among non-hearts to $3/38$ but leaves it at $1/13$ among hearts.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>Independent in the full deck, dependent after removing a single unrelated card. The events did not change; the measure did. Independence
+is a statement about $\P$, and must be checked against the model, not inferred from the physical description.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 02</span> Many events</span>Pairwise is not enough</h2>
 <p>For more than two events we must ask for the product rule on <em>every</em> sub-collection.</p>
 
@@ -196,6 +230,39 @@ $\Omega = \{0,1\}^n$ and an outcome with $k$ ones has probability $p^k (1-p)^{n-
   flip drawn independently, i.e. sampled from the product model. The mode is
   $\lfloor (n+1)p \rfloor$ (exercise 6).</figcaption>
 </figure>
+
+
+
+<div class="worked" id="example-1-4-2">
+  <div class="head"><span class="lbl">Worked example 1.4.2</span><span class="name">Bernoulli trials for a test suite</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>A model is evaluated on $10$ test prompts. Each prompt is passed with probability $0.9$, independently of the others. Find (a) the probability
+that at least $9$ are passed and (b) the probability that the first failure happens on prompt $4$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Independent trials with a common success probability are a Bernoulli sequence (Theorem 2). "Number of successes" is binomial (Theorem 3);
+"first failure at a given trial" is a specific sequence prefix, whose probability is a product.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Model.</b> Let $K$ be the number of passes. By Theorem 3, $\P[K = k] = \binom{10}{k}(0.9)^k(0.1)^{10 - k}$, $k = 0, \dots, 10$.</p>
+    </li>
+    <li>
+      <p><b>At least nine.</b> The events $\{K = 9\}$ and $\{K = 10\}$ are disjoint, so
+$$\P[K \ge 9] = \binom{10}{9}(0.9)^9(0.1) + (0.9)^{10} = 0.3874 + 0.3487 = 0.7361.$$</p>
+    </li>
+    <li>
+      <p><b>First failure on prompt 4.</b> This is the event "pass, pass, pass, fail" on the first four prompts, with prompts $5$–$10$ unrestricted. By
+independence (Theorem 2) its probability is $(0.9)^3(0.1) = 0.0729$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>(a) $\P[K \ge 9] \approx 0.736$: even with a $90\%$ per-prompt pass rate, about one run in four fails two or more prompts. (b) $0.0729$. The
+general pattern, $\P[\text{first failure at } \ell] = (0.9)^{\ell-1}(0.1)$, is the geometric law of lesson 2.1.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 05</span> Application</span>Reliability of series and parallel systems</h2>
 <p>A system is built from $n$ components that fail independently, component $i$ working with probability

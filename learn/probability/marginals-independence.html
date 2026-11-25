@@ -142,6 +142,72 @@ $2 = 2 \cdot 1$, but only on the triangle; on all of $\R^2$ it is $2\,\ind\{0 \l
 $f_X(x)f_Y(y) = 4x(1 - y) \ne f_{X,Y}(x,y)$, and $X, Y$ are dependent: knowing $Y = 0.9$ forces $X \ge 0.9$. <em>A support that
 is not a product set always means dependence.</em></p>
 
+
+
+
+
+<div class="worked" id="example-3-2-1">
+  <div class="head"><span class="lbl">Worked example 3.2.1</span><span class="name">marginals from a table, and a factorisation check</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$X \in \{0, 1\}$ and $Y \in \{0, 1, 2\}$ have joint PMF</p>
+    <table class="pmf"><tr><th></th><th>$y = 0$</th><th>$y = 1$</th><th>$y = 2$</th></tr><tr><th>$x = 0$</th><td>$0.10$</td><td>$0.20$</td><td>$0.10$</td></tr><tr><th>$x = 1$</th><td>$0.15$</td><td>$0.30$</td><td>$0.15$</td></tr></table>
+    <p>Find the marginal PMFs and decide whether $X$ and $Y$ are independent.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Marginals are row and column sums (1). Independence in the discrete case is Theorem 2(b): every cell must equal the product of its row and
+column marginals. One failing cell disproves it; all six must be checked to prove it.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Row sums.</b> $P_X(0) = 0.10 + 0.20 + 0.10 = 0.4$, $P_X(1) = 0.15 + 0.30 + 0.15 = 0.6$.</p>
+    </li>
+    <li>
+      <p><b>Column sums.</b> $P_Y(0) = 0.25$, $P_Y(1) = 0.50$, $P_Y(2) = 0.25$.</p>
+    </li>
+    <li>
+      <p><b>Check every cell.</b> Row $x = 0$: $0.4 \times (0.25, 0.5, 0.25) = (0.10, 0.20, 0.10)$ ✓. Row $x = 1$: $0.6 \times (0.25, 0.5, 0.25) = (0.15, 0.30, 0.15)$ ✓.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$P_X = (0.4, 0.6)$, $P_Y = (0.25, 0.5, 0.25)$, and $X, Y$ are independent. A quick visual test: a table is a product of marginals exactly when all its rows
+are proportional to one another (here row 2 = $1.5 \times$ row 1).</p>
+  </div>
+</div>
+
+<div class="worked" id="example-3-2-2">
+  <div class="head"><span class="lbl">Worked example 3.2.2</span><span class="name">the density factors, yet the variables are dependent</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$f_{X,Y}(x, y) = 8xy$ on $T = \{0 \le y \le x \le 1\}$ and $0$ elsewhere (worked example 3.1.2). Find $f_X$ and $f_Y$, and decide whether $X$ and $Y$ are independent.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Integrate out each variable with (2), keeping the support in the limits. For independence, the formula $8xy$ looks like a product $g(x)h(y)$, but
+Theorem 3 requires the product form <em>for all</em> $(x, y)$, indicator of the support included.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Marginal of $X$.</b> For $0 \le x \le 1$, $y$ runs over $[0, x]$: $f_X(x) = \int_0^x 8xy \d y = 4x^3$.</p>
+    </li>
+    <li>
+      <p><b>Marginal of $Y$.</b> For $0 \le y \le 1$, $x$ runs over $[y, 1]$: $f_Y(y) = \int_y^1 8xy \d x = 4y(1 - y^2)$. Check: $\int_0^1 4y - 4y^3 \d y = 2 - 1 = 1$ ✓.</p>
+    </li>
+    <li>
+      <p><b>Test the factorisation.</b> Take $(x, y) = (0.2, 0.5)$, outside $T$: $f_{X,Y} = 0$ but $f_X(0.2)\,f_Y(0.5) = 0.032 \times 1.5 = 0.048 &gt; 0$. The inequality holds on the whole open
+triangle $\{0 &lt; x &lt; y &lt; 1\}$, which has area $\frac12$, so Theorem 2(c) fails.</p>
+    </li>
+    <li>
+      <p><b>Why Theorem 3 does not apply.</b> $f_{X,Y}(x, y) = 8xy\,\ind\{y \le x\}$ on the unit square, and $\ind\{y \le x\}$ does not split into a function of $x$ times a function of $y$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$f_X(x) = 4x^3$, $f_Y(y) = 4y(1 - y^2)$ on $[0, 1]$, and $X, Y$ are dependent. Knowing $X = x$ confines $Y$ to $[0, x]$. The support of an independent pair must be a
+product set (a rectangle, possibly infinite); a triangular support rules independence out before any algebra.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Consequences</span>What independence buys</h2>
 
 <div class="block block--thm">
@@ -179,6 +245,39 @@ machine learning.</p>
   change. <em>Independent</em>: $Y$ an independent copy. <em>Random sign</em>: $Y = SX$ with $S = \pm1$ a fair coin independent of
   $X$. <em>Identical</em>: $Y = X$. Readout: $\P[X &gt; 1, Y &gt; 1]$ by simulation and exactly ($Q(1)^2$, $Q(1)/2$ and $Q(1)$).</figcaption>
 </figure>
+
+
+
+<div class="worked" id="example-3-2-3">
+  <div class="head"><span class="lbl">Worked example 3.2.3</span><span class="name">which arrives first, an exponential or a uniform?</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$X \sim \text{Exp}(1)$ and $Y \sim \text{Uniform}(0, 1)$ are independent. Find $\P[X &lt; Y]$ and $\E[XY^2]$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Independence gives the joint density as a product, so $\P[X &lt; Y]$ is a double integral over a region. Integrate first over the variable whose
+limits depend on the other. For $\E[XY^2]$, Theorem 4 avoids any double integral.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Joint density.</b> By Theorem 2(c), $f_{X,Y}(x, y) = e^{-x}$ for $x \ge 0$, $0 &lt; y &lt; 1$, and $0$ otherwise.</p>
+    </li>
+    <li>
+      <p><b>Set up.</b> $\{X &lt; Y\}$: for each $y \in (0, 1)$, $x \in [0, y)$. So $\P[X &lt; Y] = \int_0^1 \int_0^y e^{-x} \d x \d y = \int_0^1 (1 - e^{-y})\d y$.</p>
+    </li>
+    <li>
+      <p><b>Integrate.</b> $\int_0^1 (1 - e^{-y})\d y = 1 - (1 - e^{-1}) = e^{-1} \approx 0.368$. Equivalently, $\P[X &lt; Y] = \E[F_X(Y)]$: condition on $Y$ and average.</p>
+    </li>
+    <li>
+      <p><b>Product moment.</b> By (4), $\E[XY^2] = \E[X]\,\E[Y^2] = 1 \cdot \frac13 = \frac13$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\P[X &lt; Y] = e^{-1}$ and $\E[XY^2] = \frac13$. Note the order of integration: putting $y$ outside made the inner limits $[0, y]$ simple; the other order
+would need the split $x &lt; 1$ and $x \ge 1$.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 04</span> In code</span>Testing a factorisation</h2>
 

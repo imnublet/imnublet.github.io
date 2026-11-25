@@ -113,6 +113,43 @@ zero-mean variables the two notions coincide.</p>
 <p>Rule (c) with (d) gives $\Var[K] = np(1-p)$ for a binomial in one line, writing $K$ as a sum of $n$ independent
 Bernoulli indicators, and it is the whole proof of the $\sigma^2/n$ law for the sample mean in lesson 5.1.</p>
 
+
+
+<div class="worked" id="example-3-3-1">
+  <div class="head"><span class="lbl">Worked example 3.3.1</span><span class="name">how many labels survive a random shuffle?</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>In a permutation test, the $n \ge 2$ labels of a dataset are shuffled uniformly at random. Let $N$ be the number of examples that get their own label back.
+Find $\E[N]$ and $\Var[N]$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>$N$ has a complicated PMF, but it is a sum of indicators, $N = \sum_i I_i$ with $I_i = \ind\{\text{example } i \text{ keeps its label}\}$. Linearity gives
+the mean without any independence. For the variance use Theorem 2(c), which needs $\Var[I_i]$ and the pairwise covariances $\Cov[I_i, I_j]$.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>One indicator.</b> A uniform permutation sends label $i$ to each of the $n$ positions with equal probability, so $\E[I_i] = \P[I_i = 1] = \frac1n$, and since $I_i^2 = I_i$,
+$\Var[I_i] = \frac1n - \frac1{n^2}$.</p>
+    </li>
+    <li>
+      <p><b>Mean.</b> By Theorem 1, $\E[N] = \sum_{i=1}^n \E[I_i] = n \cdot \frac1n = 1$, for every $n$.</p>
+    </li>
+    <li>
+      <p><b>A pair.</b> For $i \ne j$, $I_iI_j = 1$ iff both $i$ and $j$ are fixed; the other $n - 2$ labels can be in any order, so $\E[I_iI_j] = \frac{(n-2)!}{n!} = \frac{1}{n(n-1)}$ and
+$$\Cov[I_i, I_j] = \frac{1}{n(n-1)} - \frac{1}{n^2} = \frac{1}{n^2(n-1)} &gt; 0.$$</p>
+    </li>
+    <li>
+      <p><b>Variance.</b> Theorem 2(c) with $\binom n2$ pairs:
+$$\Var[N] = n\Big(\frac1n - \frac1{n^2}\Big) + 2\binom n2 \frac{1}{n^2(n-1)} = \Big(1 - \frac1n\Big) + \frac1n = 1.$$</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\E[N] = \Var[N] = 1$ for every $n \ge 2$, the mean and variance of a Poisson$(1)$ law, which is indeed the limit law of $N$. The indicators are dependent
+(positively correlated), yet linearity handled the mean in one line, and the covariance term was exactly what made the variance come out to $1$.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Bound</span>Cauchy–Schwarz and $|\rho| \le 1$</h2>
 
 <div class="block block--thm">
@@ -198,6 +235,44 @@ gives the conditional mean.</p>
   and $\Cov[X,Y] = \rho$. Bright line: $\hat Y = \rho X$ from (2). Dashed: $y = x$. Readout: the sample correlation and the
   sample MSE of the line against $1 - \rho^2$. Note the line is flatter than the cloud's long axis: regression to the mean.</figcaption>
 </figure>
+
+
+
+<div class="worked" id="example-3-3-2">
+  <div class="head"><span class="lbl">Worked example 3.3.2</span><span class="name">fitting the best line to a four-point distribution</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$(X, Y)$ is uniform on the four points $(0, 0), (1, 1), (2, 1), (3, 3)$. Find the best linear predictor $\hat Y = a^*X + b^*$, its mean squared error, and $\rho_{X,Y}$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Theorem 4 needs only five numbers: $\mu_X, \mu_Y, \Var[X], \Var[Y], \Cov[X, Y]$. Compute raw moments by averaging over the four points, convert with
+$\Var[X] = \E[X^2] - \mu_X^2$ and (1), then plug into (2). Check the MSE directly from the residuals.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>First moments.</b> $\mu_X = \frac{0 + 1 + 2 + 3}{4} = 1.5$, $\mu_Y = \frac{0 + 1 + 1 + 3}{4} = 1.25$.</p>
+    </li>
+    <li>
+      <p><b>Second moments.</b> $\E[X^2] = \frac{14}{4} = 3.5$, $\E[Y^2] = \frac{11}{4} = 2.75$, $\E[XY] = \frac{0 + 1 + 2 + 9}{4} = 3$. Hence
+$$\Var[X] = 1.25, \qquad \Var[Y] = 1.1875, \qquad \Cov[X, Y] = 3 - 1.5 \cdot 1.25 = 1.125.$$</p>
+    </li>
+    <li>
+      <p><b>Coefficients.</b> $a^* = 1.125/1.25 = 0.9$ and $b^* = 1.25 - 0.9 \cdot 1.5 = -0.1$.</p>
+    </li>
+    <li>
+      <p><b>Error and correlation.</b> MSE $= \Var[Y] - \Cov[X,Y]^2/\Var[X] = 1.1875 - 1.0125 = 0.175$, and $\rho^2 = 1.0125/1.1875 \approx 0.853$, so $\rho \approx 0.923$.</p>
+    </li>
+    <li>
+      <p><b>Check.</b> Predictions $-0.1, 0.8, 1.7, 2.6$ give residuals $0.1, 0.2, -0.7, 0.4$: mean $0$ ✓, mean square $\frac{0.01 + 0.04 + 0.49 + 0.16}{4} = 0.175$ ✓, and
+$\E[X \cdot \text{residual}] = \frac{0 + 0.2 - 1.4 + 1.2}{4} = 0$ ✓, the orthogonality in Theorem 4.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\hat Y = 0.9X - 0.1$, MSE $= 0.175$, $\rho \approx 0.92$. Ordinary least squares on a sample is exactly this computation with the empirical distribution of the data in place
+of $\P$.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 06</span> In code</span>Covariances from samples</h2>
 

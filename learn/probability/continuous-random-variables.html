@@ -142,6 +142,43 @@ lesson carries over with sums replaced by integrals: linearity, $\Var[X] = \E[X^
 identity, and Markov and Chebyshev. The tail-sum formula becomes
 $\E[X] = \int_0^\infty \P[X &gt; x] \d x$ for $X \ge 0$ (exercise 5).</p>
 
+
+
+<div class="worked" id="example-2-3-1">
+  <div class="head"><span class="lbl">Worked example 2.3.1</span><span class="name">from a density to a CDF, a probability and moments</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$X$ has density $f_X(x) = c\,(1 - x^2)$ for $-1 \le x \le 1$ and $0$ elsewhere. Find $c$, the CDF $F_X$, $\P[|X| &gt; \frac12]$, $\E[X]$ and $\Var[X]$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>The standard sequence: normalise (Theorem 2(a)), integrate the density from the left to get the CDF (2), read probabilities as CDF
+differences (Theorem 1(a)), and compute moments with (3). Use symmetry wherever possible.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Normalise.</b> $\int_{-1}^1 (1 - x^2)\d x = 2 - \frac23 = \frac43$, so $c = \frac34$.</p>
+    </li>
+    <li>
+      <p><b>CDF.</b> For $-1 \le x \le 1$,
+$$F_X(x) = \int_{-1}^{x}\tfrac34(1 - u^2)\d u = \tfrac34\Big[u - \tfrac{u^3}3\Big]_{-1}^{x} = \tfrac12 + \tfrac34 x - \tfrac14 x^3,$$
+with $F_X = 0$ for $x &lt; -1$ and $F_X = 1$ for $x &gt; 1$. Check: $F_X(-1) = 0$, $F_X(1) = 1$.</p>
+    </li>
+    <li>
+      <p><b>Probability.</b> $\P[|X| &gt; \tfrac12] = F_X(-\tfrac12) + 1 - F_X(\tfrac12)$. Since $F_X(\frac12) = \frac12 + \frac38 - \frac1{32} = \frac{27}{32}$ and
+$F_X(-\frac12) = 1 - \frac{27}{32} = \frac5{32}$ by symmetry, $\P[|X| &gt; \frac12] = \frac{5}{32} + \frac{5}{32} = \frac{5}{16}$.</p>
+    </li>
+    <li>
+      <p><b>Moments.</b> $f_X$ is even, so $x f_X(x)$ is odd and $\E[X] = 0$. Then
+$$\Var[X] = \E[X^2] = \tfrac34\int_{-1}^1 (x^2 - x^4)\d x = \tfrac34\Big(\tfrac23 - \tfrac25\Big) = \tfrac34 \cdot \tfrac4{15} = \tfrac15.$$</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$c = \frac34$, $F_X(x) = \frac12 + \frac34x - \frac14x^3$ on $[-1, 1]$, $\P[|X| &gt; \frac12] = \frac5{16}$, $\E[X] = 0$, $\Var[X] = \frac15$. (A Uniform$(-1, 1)$ variable has
+variance $\frac13$: this density puts less mass near the ends, so it is less spread.)</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Families</span>Uniform and exponential</h2>
 
 <div class="block block--thm">
@@ -172,6 +209,40 @@ probability $\lambda\delta$ happens every $\delta$ seconds, the waiting time $\d
 $\P[\delta L &gt; t] = (1 - \lambda\delta)^{\lfloor t/\delta \rfloor} \to e^{-\lambda t}$ as $\delta \to 0$, by
 the same limit as in the Poisson theorem of lesson 2.1. It is also the only continuous law with property (4)
 (exercise 4).</p>
+
+
+
+<div class="worked" id="example-2-3-2">
+  <div class="head"><span class="lbl">Worked example 2.3.2</span><span class="name">a component that has already survived</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>A component's lifetime $T$ (hours) is exponential with mean $1000$. (a) Find $\P[T &gt; 1500]$. (b) The component has run for $1000$ hours without
+failing. Find the probability it lasts at least another $500$. (c) Find the time $t$ by which $90\%$ of components have failed.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Translate "mean 1000" into the rate, use the survival function $\P[T &gt; t] = e^{-\lambda t}$ for (a), the memoryless property (4) for (b), and invert
+the CDF for (c).</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Parameter.</b> $\E[T] = 1/\lambda = 1000$, so $\lambda = 10^{-3}$ per hour, and $\P[T &gt; t] = e^{-t/1000}$.</p>
+    </li>
+    <li>
+      <p><b>(a).</b> $\P[T &gt; 1500] = e^{-1.5} \approx 0.223$.</p>
+    </li>
+    <li>
+      <p><b>(b).</b> By (4) with $s = 1000$, $t = 500$: $\P[T &gt; 1500 \mid T &gt; 1000] = \P[T &gt; 500] = e^{-0.5} \approx 0.607$. Directly: $\frac{e^{-1.5}}{e^{-1}} = e^{-0.5}$.</p>
+    </li>
+    <li>
+      <p><b>(c).</b> Solve $F_T(t) = 1 - e^{-t/1000} = 0.9$: $t = 1000\ln 10 \approx 2303$ hours.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>(a) $0.223$, (b) $0.607$, (c) $\approx 2303$ h. In (b) the $1000$ hours already survived are irrelevant: an exponential component does not age.
+This is a modelling claim worth questioning for anything that wears out.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 04</span> Simulation</span>Inverse-transform sampling</h2>
 <p>Every random-number library starts from (approximately) uniform numbers on $(0,1)$. The CDF is the
@@ -225,6 +296,42 @@ and copulas move between distributions.</p>
   density. The readout compares the sample mean with $\E[X]$; for the Cauchy law $\E|X| = \infty$ and the sample
   mean refuses to settle when you resample.</figcaption>
 </figure>
+
+
+
+<div class="worked" id="example-2-3-3">
+  <div class="head"><span class="lbl">Worked example 2.3.3</span><span class="name">samplers for a Pareto and a three-point law</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>Use inverse-transform sampling to write a sampler for (a) the Pareto law $F(x) = 1 - (x_m/x)^\alpha$ for $x \ge x_m$ (and $0$ below), with $x_m, \alpha &gt; 0$, and
+(b) the discrete law $P(0) = 0.2$, $P(1) = 0.5$, $P(2) = 0.3$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Compute $F^{-}(u) = \inf\{x : F(x) \ge u\}$. For a continuous, strictly increasing $F$ this is the ordinary inverse: solve $F(x) = u$. For a step
+function, read off where the CDF first reaches $u$. Then Theorem 4 says $F^{-}(U)$ has CDF $F$.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>(a) Invert.</b> For $u \in (0, 1)$, $1 - (x_m/x)^\alpha = u \iff x = x_m (1 - u)^{-1/\alpha}$. $F$ is continuous and strictly increasing on $[x_m, \infty)$, so
+$F^{-}(u) = x_m(1 - u)^{-1/\alpha}$.</p>
+    </li>
+    <li>
+      <p><b>(a) Simplify.</b> $1 - U \sim \text{Uniform}(0, 1)$ too, so $X = x_m U^{-1/\alpha}$ has the same law.</p>
+    </li>
+    <li>
+      <p><b>(b) The CDF.</b> $F(x) = 0$ for $x &lt; 0$, $0.2$ on $[0, 1)$, $0.7$ on $[1, 2)$, $1$ for $x \ge 2$.</p>
+    </li>
+    <li>
+      <p><b>(b) Generalised inverse.</b> The smallest $x$ with $F(x) \ge u$ is $0$ if $u \le 0.2$, $1$ if $0.2 &lt; u \le 0.7$, and $2$ if $u &gt; 0.7$. So
+$\P[X = 1] = \P[0.2 &lt; U \le 0.7] = 0.5$, and similarly for the other values. ✓</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>(a) $X = x_m U^{-1/\alpha}$; (b) $X = \ind\{U &gt; 0.2\} + \ind\{U &gt; 0.7\}$. The discrete case is just "cut $(0,1)$ into intervals of lengths $P(x)$ and see where $U$
+lands", which is how every categorical sampler works.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 05</span> In code</span>A sampler from a quantile function</h2>
 

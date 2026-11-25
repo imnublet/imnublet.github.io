@@ -22,6 +22,11 @@ learn/
 Maths: `$…$`, `$$…$$`, `\(…\)`, `\[…\]`; `\tag{n}` numbers equations. Shared macros
 (`\E \Var \Cov \P \R \N \ind \iid \T \d`) live in `learn.js`.
 
+Worked examples: each lesson has two or three `<div class="worked">` blocks placed at the end of the
+section they illustrate, numbered `<lesson>.<k>` (e.g. 1.2.1) with `id="example-1-2-1"`. Each has a
+`.head`, then `.part` blocks tagged Problem, Approach, Solution (an `ol.steps` whose items open with a
+bold step name) and Result (`.part.result`). Examples are original, not taken from the textbook.
+
 Demos: add `<figure class="demo" data-demo="name">` with a `<canvas>`, then register
 `Learn.demo("name", (fig, { scope, rng, randn, colors }) => { …; return redraw; })`
 in a `<script>` after `learn.js`. `scope.axes`, `scope.trace`, `scope.band` and

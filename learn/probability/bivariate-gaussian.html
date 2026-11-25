@@ -116,6 +116,40 @@ $$q(x, y) = z_1^2 + \frac{(z_2 - \rho z_1)^2}{1 - \rho^2}. \tag{2}$$
   $\E[(X - \mu_1)(Y - \mu_2)] = \E\big[(X - \mu_1)\,\E[Y - \mu_2 \mid X]\big] = \E\big[(X - \mu_1)\cdot\rho\tfrac{\sigma_2}{\sigma_1}(X - \mu_1)\big] = \rho\tfrac{\sigma_2}{\sigma_1}\sigma_1^2$. <span class="qed">∎</span></p>
 </details>
 
+
+
+<div class="worked" id="example-3-6-1">
+  <div class="head"><span class="lbl">Worked example 3.6.1</span><span class="name">predicting a final exam from a midterm</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>Midterm and final scores $(X, Y)$ are bivariate Gaussian with $\mu_1 = 60$, $\sigma_1 = 10$, $\mu_2 = 65$, $\sigma_2 = 12$, $\rho = 0.6$. A student scored $75$ on the midterm.
+Find the distribution of their final score, and the probability it exceeds $80$. Compare with a student about whom nothing is known.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Theorem 1 gives the conditional law of $Y$ given $X = x$ in closed form: a Gaussian with a mean on the regression line and a reduced variance. Plug in, then
+standardise as in lesson 2.4.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Conditional mean.</b> $\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1) = 65 + 0.6 \cdot \frac{12}{10}\cdot 15 = 65 + 10.8 = 75.8$.</p>
+    </li>
+    <li>
+      <p><b>Conditional variance.</b> $\sigma_2^2(1 - \rho^2) = 144 \times 0.64 = 92.16$, standard deviation $9.6$. So $Y \mid X = 75 \sim \mathcal N(75.8,\ 9.6^2)$.</p>
+    </li>
+    <li>
+      <p><b>Probability.</b> $\P[Y &gt; 80 \mid X = 75] = Q\big(\frac{80 - 75.8}{9.6}\big) = Q(0.4375) \approx 0.331$.</p>
+    </li>
+    <li>
+      <p><b>Without the midterm.</b> $Y \sim \mathcal N(65, 12^2)$, so $\P[Y &gt; 80] = Q(1.25) \approx 0.106$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$Y \mid X = 75 \sim \mathcal N(75.8, 9.6^2)$, and the chance of beating $80$ rises from $0.11$ to $0.33$. The midterm is $1.5$ standard deviations above its mean, but the
+prediction is only $0.6 \times 1.5 = 0.9$ standard deviations above the final's mean: <em>regression to the mean</em>, with the factor $\rho$.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Construction</span>From two independent normals</h2>
 
 <div class="block block--thm">
@@ -202,6 +236,38 @@ too small.</p>
   the major axis of the ellipses. They differ unless $\rho = 0$ or $|\rho| \to 1$: regressing $Y$ on $X$ is not the same as fitting the cloud's
   long axis. Readout: fraction of samples inside each ellipse against (6), $0.393$ and $0.865$.</figcaption>
 </figure>
+
+
+
+<div class="worked" id="example-3-6-2">
+  <div class="head"><span class="lbl">Worked example 3.6.2</span><span class="name">does the student improve? and a 90% ellipse</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>With the scores of worked example 3.6.1, find (a) $\P[Y &gt; X]$, the probability of a better final than midterm, and (b) the constant $c$ for which the
+ellipse $\{q(x, y) \le c\}$ contains $90\%$ of students.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>(a) is a question about one linear combination, $D = Y - X$, so use Theorem 5 to get its law and then standardise. (b) is an inversion of (6).</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Law of the difference.</b> With $a = -1$, $b = 1$ in (5): mean $65 - 60 = 5$, variance
+$$\sigma_1^2 + \sigma_2^2 - 2\rho\sigma_1\sigma_2 = 100 + 144 - 2 \cdot 0.6 \cdot 10 \cdot 12 = 100,$$
+so $D \sim \mathcal N(5, 10^2)$.</p>
+    </li>
+    <li>
+      <p><b>(a) Probability.</b> $\P[Y &gt; X] = \P[D &gt; 0] = \P\big[\tfrac{D - 5}{10} &gt; -0.5\big] = \Phi(0.5) \approx 0.691$.</p>
+    </li>
+    <li>
+      <p><b>(b) Invert (6).</b> $1 - e^{-c/2} = 0.9 \iff e^{-c/2} = 0.1 \iff c = 2\ln 10 \approx 4.61$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>(a) $\approx 0.69$. Note how the positive correlation <em>shrinks</em> the variance of the difference (to $100$, from $244$ if independent): correlated scores move together. (b) $c = 2\ln 10$;
+in the standardised coordinates the $90\%$ region is the ellipse $z_1^2 - 1.2z_1z_2 + z_2^2 \le 0.64 \times 4.61 \approx 2.95$.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 05</span> In code</span>Sampling, conditioning, and the ellipse law</h2>
 

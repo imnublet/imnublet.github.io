@@ -173,6 +173,45 @@ want, for example when controlling the probability that <em>any</em> of many tes
   frequencies too), and the exact value from the lens area.</figcaption>
 </figure>
 
+
+
+
+<div class="worked" id="example-1-2-1">
+  <div class="head"><span class="lbl">Worked example 1.2.1</span><span class="name">from three numbers to every Boolean combination</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>For events $A, B$ we know $\P[A] = 0.6$, $\P[B] = 0.5$ and $\P[A \cup B] = 0.8$. Find (a) $\P[A \cap B]$, (b) $\P[A \cap B^c]$,
+(c) the probability that exactly one of $A, B$ occurs, and (d) the probability that neither occurs. (e) If instead only $\P[A]$ and
+$\P[B]$ were known, what could be said about $\P[A \cap B]$?</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Two events cut $\Omega$ into four disjoint pieces: $AB$, $AB^c$, $A^cB$, $A^cB^c$. Find the probability of each piece from the
+data with Theorem 1, then add pieces: every event built from $A$ and $B$ is a disjoint union of pieces.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Intersection.</b> By Theorem 1(e), $\P[A \cap B] = \P[A] + \P[B] - \P[A \cup B] = 0.6 + 0.5 - 0.8 = 0.3$.</p>
+    </li>
+    <li>
+      <p><b>The other pieces.</b> By Theorem 1(d) with $A \cap B \subseteq A$: $\P[AB^c] = \P[A] - \P[AB] = 0.3$. Likewise $\P[A^cB] = 0.5 - 0.3 = 0.2$.
+The fourth piece is the complement of the union: $\P[A^cB^c] = 1 - \P[A \cup B] = 0.2$ by Theorem 1(c) and De Morgan.
+Check: $0.3 + 0.3 + 0.2 + 0.2 = 1$.</p>
+    </li>
+    <li>
+      <p><b>Combine.</b> "Exactly one" is the disjoint union $AB^c \cup A^cB$, so it has probability $0.3 + 0.2 = 0.5$; "neither" is $A^cB^c$, probability $0.2$.</p>
+    </li>
+    <li>
+      <p><b>Bounds without the union.</b> Monotonicity gives $\P[AB] \le \min(\P[A], \P[B]) = 0.5$. From Theorem 1(e) and $\P[A \cup B] \le 1$,
+$\P[AB] = \P[A] + \P[B] - \P[A \cup B] \ge 0.6 + 0.5 - 1 = 0.1$. Both ends are attained: $B \subseteq A$ gives $0.5$, and $A \cup B = \Omega$ gives $0.1$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>(a) $0.3$, (b) $0.3$, (c) $0.5$, (d) $0.2$, and (e) $0.1 \le \P[A \cap B] \le 0.5$ with no further information. Marginal probabilities
+never determine a joint one; they only bound it. These are the <em>Fréchet bounds</em>.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Limits</span>Continuity of probability</h2>
 <p>Countable additivity is what lets probabilities pass to the limit. A sequence of events is
 <em>increasing</em> if $A_1 \subseteq A_2 \subseteq \cdots$, with limit $\bigcup_n A_n$, and
@@ -228,6 +267,43 @@ $$\P[A] = \frac{|A|}{|\Omega|}, \tag{4}$$
 <p>which turns probability into counting (lesson 1.5). Equal likelihood is an assumption about the
 experiment, not a consequence of the axioms, and it depends on the sample space: three fair tosses
 make the 8 sequences equally likely, but not the 4 head-counts.</p>
+
+
+
+
+<div class="worked" id="example-1-2-2">
+  <div class="head"><span class="lbl">Worked example 1.2.2</span><span class="name">a loaded die</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>A die is loaded so that face $k$ comes up with probability proportional to $k$. Find the model, the probability of an even face, and
+the probability that the face is even or at least $4$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>On a finite $\Omega$, Theorem 5 says it is enough to choose the point masses: fix the constant by normalisation, then sum point
+masses over each event. Use inclusion–exclusion for the union and confirm by direct listing.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Normalise.</b> $p(k) = ck$ for $k = 1, \dots, 6$ and $\sum_k p(k) = c \cdot 21 = 1$, so $c = \frac1{21}$. All $p(k) \ge 0$, so by Theorem 5
+$\P[A] = \sum_{k \in A} k/21$ is a probability measure on $2^\Omega$.</p>
+    </li>
+    <li>
+      <p><b>Even face.</b> $E = \{2, 4, 6\}$: $\P[E] = (2 + 4 + 6)/21 = 12/21 = \frac47$. (Compare $\frac12$ for a fair die.)</p>
+    </li>
+    <li>
+      <p><b>Union by inclusion–exclusion.</b> With $G = \{4, 5, 6\}$, $\P[G] = 15/21$ and $E \cap G = \{4, 6\}$ has $\P[E \cap G] = 10/21$, so
+$$\P[E \cup G] = \frac{12}{21} + \frac{15}{21} - \frac{10}{21} = \frac{17}{21}.$$</p>
+    </li>
+    <li>
+      <p><b>Check by listing.</b> $E \cup G = \{2, 4, 5, 6\}$ and $(2 + 4 + 5 + 6)/21 = 17/21$. ✓ Equivalently, the complement $\{1, 3\}$ has probability $4/21$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$p(k) = k/21$, $\P[\text{even}] = \frac47 \approx 0.571$ and $\P[\text{even or} \ge 4] = \frac{17}{21} \approx 0.810$. The equally likely formula (4)
+does not apply here; the general point-mass sum does.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 05</span> In code</span>Checking inclusion–exclusion exactly</h2>
 <p>With exact rational arithmetic, (2) can be checked on any finite model, including one with

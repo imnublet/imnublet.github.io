@@ -152,6 +152,44 @@ drawn, regardless of order.</p>
   statistics is exactly that reason).</p>
 </div>
 
+
+
+<div class="worked" id="example-1-5-1">
+  <div class="head"><span class="lbl">Worked example 1.5.1</span><span class="name">two people next to each other</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>Eight people, among them Alice and Bob, sit down in a random order on a row of $8$ chairs, all orders being equally likely. What is the
+probability that Alice and Bob sit next to each other?</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>The sample space is the set of seatings, i.e. ordered arrangements of $8$ people, so count with Theorem 2. For the event, the standard trick
+is to glue Alice and Bob into one block, count arrangements of blocks, then multiply by the arrangements inside the block. Confirm with a
+second, conditional, count.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Sample space.</b> A seating is a permutation of the $8$ people: $|\Omega| = 8! = 40\,320$ equally likely outcomes.</p>
+    </li>
+    <li>
+      <p><b>Count the event.</b> Treat "Alice and Bob" as one block. There are $7$ units to arrange, in $7!$ ways, and the block can be ordered as AB or BA. By the
+multiplication rule the event has $2 \cdot 7!$ outcomes.</p>
+    </li>
+    <li>
+      <p><b>Divide.</b></p>
+      $$\P[\text{adjacent}] = \frac{2 \cdot 7!}{8!} = \frac{2}{8} = \frac14.$$
+    </li>
+    <li>
+      <p><b>Second method.</b> Count the adjacent pairs of chairs instead: there are $7$ of them, $\{1,2\}, \dots, \{7, 8\}$. The pair of chairs Alice and Bob occupy is a uniformly
+random unordered pair out of $\binom82 = 28$ by symmetry, so the probability is $7/28 = 1/4$. ✓</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\P[\text{adjacent}] = \frac14$. When a problem says "random order", the sample space is the $n!$ permutations; the block trick handles "together", and
+counting a coarser symmetric object (here, the pair of chairs) is often a quicker check.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Groups</span>Multinomial coefficients</h2>
 
 <div class="block block--thm">
@@ -224,6 +262,39 @@ $$\P[J = j] = \frac{\binom Kj \binom{N-K}{m-j}}{\binom Nm}, \qquad \max(0, m - N
 <p>This is the law behind quality-control sampling, Fisher's exact test and card-hand probabilities.
 When $N$ is large compared with $m$, removing a few items barely changes the urn, and (8) is close to the
 binomial law with $p = K/N$ (exercise 5).</p>
+
+
+
+<div class="worked" id="example-1-5-2">
+  <div class="head"><span class="lbl">Worked example 1.5.2</span><span class="name">matching three numbers in a lottery</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>A lottery draws $6$ numbers from $\{1, \dots, 49\}$ without replacement. You hold a ticket with $6$ distinct numbers. What is the probability
+that exactly $3$ of your numbers are drawn?</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Order does not matter for the result, so the sample space is the set of unordered $6$-subsets, all equally likely. Split the $49$ numbers into
+"yours" ($6$) and "not yours" ($43$) and count draws by how many they take from each group: this is the hypergeometric law.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Sample space.</b> $|\Omega| = \binom{49}{6} = 13\,983\,816$ by Theorem 3.</p>
+    </li>
+    <li>
+      <p><b>Count the event.</b> A draw with exactly $3$ of your numbers chooses $3$ of your $6$ and $3$ of the other $43$. By the multiplication rule there are
+$$\binom{6}{3}\binom{43}{3} = 20 \cdot 12\,341 = 246\,820$$
+such draws.</p>
+    </li>
+    <li>
+      <p><b>Divide.</b> $\P[\text{exactly } 3] = 246\,820 / 13\,983\,816 \approx 0.01765$, about $1$ in $57$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\P = \binom63\binom{43}3 / \binom{49}6 \approx 0.0177$. Whenever a population splits into two types and we sample without replacement, the answer has
+this "choose from each group, divide by choose from all" shape.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 06</span> In code</span>Exact counts and a simulation</h2>
 

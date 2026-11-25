@@ -146,6 +146,38 @@ $\E[L] = \sum_{k \ge 0} (1-p)^k = 1/p$ immediately. On average you wait $1/p$ tr
   $\gamma \approx 0.577$ is Euler's constant: the mean of $X$ truncated at $n$.</figcaption>
 </figure>
 
+
+
+<div class="worked" id="example-2-2-1">
+  <div class="head"><span class="lbl">Worked example 2.2.1</span><span class="name">the mean of the larger of two dice, two ways</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>Roll two fair dice and let $X$ be the larger value. Compute $\E[X]$ (a) from the PMF and (b) with the tail-sum formula.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>For a maximum, the CDF is easier than the PMF: $\{X \le k\}$ means both dice are $\le k$. From the CDF either difference to get the PMF, or use
+$\E[X] = \sum_{k \ge 1}\P[X \ge k]$ (Theorem 2) directly.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>CDF.</b> $\P[X \le k] = \P[\text{both} \le k] = (k/6)^2$ for $k = 0, \dots, 6$.</p>
+    </li>
+    <li>
+      <p><b>(a) PMF and mean.</b> $P_X(k) = \frac{k^2 - (k-1)^2}{36} = \frac{2k - 1}{36}$, so
+$$\E[X] = \sum_{k=1}^6 k\,\frac{2k - 1}{36} = \frac{2\sum k^2 - \sum k}{36} = \frac{2 \cdot 91 - 21}{36} = \frac{161}{36}.$$</p>
+    </li>
+    <li>
+      <p><b>(b) Tail sum.</b> $\P[X \ge k] = 1 - \P[X \le k - 1] = 1 - \frac{(k-1)^2}{36}$, so
+$$\E[X] = \sum_{k=1}^{6}\Big(1 - \frac{(k-1)^2}{36}\Big) = 6 - \frac{0 + 1 + 4 + 9 + 16 + 25}{36} = 6 - \frac{55}{36} = \frac{161}{36}.$$</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\E[X] = 161/36 \approx 4.47$, against $3.5$ for a single die. For maxima, minima and waiting times, the tail-sum route usually saves the
+differencing step.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Spread</span>Variance and moments</h2>
 
 <div class="block">
@@ -237,6 +269,40 @@ $np(1-p) = \alpha(1 - \alpha/n) \to \alpha$.</p>
 <em>any</em> law with finite variance. Exercise 4 shows the bound cannot be improved without more
 assumptions. For a specific law it is usually loose: for a Gaussian, the probability of $3\sigma$ or more
 is $0.0027$, against Chebyshev's $0.111$.</p>
+
+
+
+<div class="worked" id="example-2-2-2">
+  <div class="head"><span class="lbl">Worked example 2.2.2</span><span class="name">how loose are Markov and Chebyshev?</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>Toss a fair coin $100$ times and let $X$ be the number of heads. Bound $\P[X \ge 60]$ with Markov's inequality and $\P[|X - 50| \ge 10]$ with
+Chebyshev's, and compare with the exact values.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Both bounds need only moments, which Theorem 4 gives for the binomial. The exact value needs the full PMF, here a finite sum that we
+evaluate numerically.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Moments.</b> $X \sim \text{Binomial}(100, \frac12)$, so $\mu = 50$ and $\sigma^2 = 100 \cdot \frac12 \cdot \frac12 = 25$.</p>
+    </li>
+    <li>
+      <p><b>Markov.</b> $X \ge 0$, so $\P[X \ge 60] \le \E[X]/60 = 50/60 \approx 0.833$.</p>
+    </li>
+    <li>
+      <p><b>Chebyshev.</b> $\P[|X - 50| \ge 10] \le \sigma^2/10^2 = 25/100 = 0.25$. By symmetry of this binomial about $50$, it also gives $\P[X \ge 60] \le 0.125$.</p>
+    </li>
+    <li>
+      <p><b>Exact.</b> $\P[X \ge 60] = \sum_{k=60}^{100}\binom{100}{k}2^{-100} \approx 0.0284$ and $\P[|X - 50| \ge 10] = 2 \times 0.0284 \approx 0.0569$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>Markov is off by a factor $\approx 30$ and Chebyshev by $\approx 4$. Their value is generality (they hold for <em>every</em> law with those moments,
+and for some laws they are attained), not tightness. Using more information, such as the variance, or later the whole MGF, buys sharper bounds.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 05</span> In code</span>Moments by the unconscious statistician</h2>
 

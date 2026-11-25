@@ -112,6 +112,42 @@ probability measure on $\R$, and for discrete $X$ the PMF determines it. Two ran
 different sample spaces can have the same PMF, and then they are indistinguishable by any question that
 involves only one of them.</p>
 
+
+
+<div class="worked" id="example-2-1-1">
+  <div class="head"><span class="lbl">Worked example 2.1.1</span><span class="name">the PMF of a gap between two dice</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>Roll two fair dice and let $X$ be the absolute difference of the two faces. Find the PMF of $X$ and $\P[X \ge 3]$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>A random variable is a function on $\Omega$, so its PMF is found by grouping outcomes by the value of $X$ and counting.
+Then use Theorem 1(c) for the event.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Range.</b> $\Omega = \{1, \dots, 6\}^2$ with $36$ equally likely outcomes and $X(\omega_1, \omega_2) = |\omega_1 - \omega_2|$, so $S_X = \{0, 1, \dots, 5\}$.</p>
+    </li>
+    <li>
+      <p><b>Count each level set.</b> For $x = 0$ the outcomes are the $6$ doubles. For $x \ge 1$, the ordered pairs with $\omega_1 - \omega_2 = x$ are
+$(x + 1, 1), \dots, (6, 6 - x)$, which is $6 - x$ pairs, and the same number have $\omega_2 - \omega_1 = x$. So
+$$P_X(0) = \frac{6}{36}, \qquad P_X(x) = \frac{2(6 - x)}{36}, \quad x = 1, \dots, 5,$$
+i.e. $\frac{6}{36}, \frac{10}{36}, \frac{8}{36}, \frac{6}{36}, \frac{4}{36}, \frac{2}{36}$.</p>
+    </li>
+    <li>
+      <p><b>Check normalisation.</b> $6 + 10 + 8 + 6 + 4 + 2 = 36$. ✓ (Theorem 1(b).)</p>
+    </li>
+    <li>
+      <p><b>The event.</b> By Theorem 1(c), $\P[X \ge 3] = P_X(3) + P_X(4) + P_X(5) = \frac{6 + 4 + 2}{36} = \frac13$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$P_X(0) = \frac16$, $P_X(x) = \frac{6 - x}{18}$ for $x = 1, \dots, 5$, and $\P[X \ge 3] = \frac13$. Every discrete PMF from an equally likely experiment is found
+this way: partition $\Omega$ by the value of $X$, count each block, check the counts add to $|\Omega|$.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Families</span>The standard discrete laws</h2>
 <p>Each family below is derived from an experiment, which is the best way to remember both the formula and
 when it applies. In all of them, $0 &lt; p &lt; 1$ and the trials are independent Bernoulli$(p)$ trials as in
@@ -192,6 +228,43 @@ which here is $\alpha^2 / n$. The demo shows both.</p>
   variation distance and Le Cam's bound $\alpha^2/n$. The bound is loose by a constant but has the right
   $1/n$ rate.</figcaption>
 </figure>
+
+
+
+<div class="worked" id="example-2-1-2">
+  <div class="head"><span class="lbl">Worked example 2.1.2</span><span class="name">choosing the right family</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>Identify the law and compute the probability. (a) A server receives on average $3$ requests per second, from many independent users each of
+whom rarely sends one. Find $\P[\text{more than } 5 \text{ requests in a second}]$. (b) A penetration test succeeds on each independent attempt with
+probability $0.3$. Find the probability that the second success comes on attempt $5$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Match the description to a mechanism, not to keywords. "Many independent rare events, known mean" is the Poisson limit of the binomial
+(Theorem 3). "Index of the $k$-th success in Bernoulli trials" is the Pascal law (Theorem 2).</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>(a) Model.</b> Each of $n$ users sends a request in a given second with small probability $\alpha/n$; by Theorem 3 the count $X$ is approximately
+Poisson$(\alpha)$ with $\alpha = \E[\text{count}] = 3$.</p>
+    </li>
+    <li>
+      <p><b>(a) Complement.</b> "More than 5" has infinitely many terms, so use the complement:
+$$\P[X &gt; 5] = 1 - \sum_{x=0}^{5} \frac{3^x e^{-3}}{x!} = 1 - e^{-3}\Big(1 + 3 + \frac92 + \frac{27}{6} + \frac{81}{24} + \frac{243}{120}\Big) = 1 - 18.4\,e^{-3} \approx 0.0839.$$</p>
+    </li>
+    <li>
+      <p><b>(b) Model.</b> $L_2$ = index of the second success, with $p = 0.3$. By (1) with $k = 2$, $\P[L_2 = \ell] = (\ell - 1)\,p^2 (1-p)^{\ell - 2}$.</p>
+    </li>
+    <li>
+      <p><b>(b) Evaluate.</b> $\P[L_2 = 5] = 4 \cdot (0.3)^2 (0.7)^3 = 4 \cdot 0.09 \cdot 0.343 = 0.12348$. The factor $4 = \binom41$ counts where the first success sits among the first four attempts.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>(a) $\approx 0.084$; (b) $\approx 0.123$. Most textbook exercises on discrete variables are this two-step routine: decide which mechanism generated the
+count, then evaluate the PMF, using the complement when the event has infinitely many terms.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 04</span> Transformations</span>Functions of a random variable</h2>
 <p>If $X$ is a random variable and $g : \R \to \R$, then $Y = g(X)$, the composition

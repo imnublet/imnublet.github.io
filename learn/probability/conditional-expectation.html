@@ -164,6 +164,77 @@ triangle, $\E[X] = \E[(1 + Y)/2] = (1 + \tfrac13)/2 = \tfrac23$, as computed dir
 <p>Total variance = unexplained (within-group) + explained (between-group) variance: the decomposition behind ANOVA, behind the
 $R^2$ of a regression, and behind the split of predictive uncertainty into aleatoric and epistemic parts in Bayesian deep learning.</p>
 
+
+
+
+
+<div class="worked" id="example-3-5-1">
+  <div class="head"><span class="lbl">Worked example 3.5.1</span><span class="name">a conditional mean, and the tower property as a check</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$f_{X,Y}(x, y) = x + y$ on $[0, 1]^2$. Find $f_{X|Y}$, $\E[X \mid Y = y]$ and the random variable $\E[X \mid Y]$. Verify the tower property.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Marginal of the conditioning variable first, then divide (2), then integrate against $x$. The tower property is a free consistency check: averaging the
+conditional mean over $f_Y$ must give $\E[X]$ computed directly.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Marginal.</b> $f_Y(y) = \int_0^1 (x + y)\d x = \frac12 + y$ for $0 \le y \le 1$.</p>
+    </li>
+    <li>
+      <p><b>Conditional density.</b> $f_{X|Y}(x \mid y) = \dfrac{x + y}{y + \frac12}$ for $0 \le x \le 1$: for each $y$, a linear density in $x$.</p>
+    </li>
+    <li>
+      <p><b>Conditional mean.</b></p>
+      $$\E[X \mid Y = y] = \frac{\int_0^1 x(x + y)\d x}{y + \frac12} = \frac{\frac13 + \frac y2}{y + \frac12} = \frac{2 + 3y}{3(1 + 2y)},$$
+so $\E[X \mid Y] = \dfrac{2 + 3Y}{3(1 + 2Y)}$, which decreases from $\frac23$ at $Y = 0$ to $\frac59$ at $Y = 1$.
+    </li>
+    <li>
+      <p><b>Tower check.</b> $\E\big[\E[X \mid Y]\big] = \int_0^1 \frac{\frac13 + \frac y2}{y + \frac12}\big(y + \tfrac12\big)\d y = \int_0^1 \big(\tfrac13 + \tfrac y2\big)\d y = \tfrac13 + \tfrac14 = \tfrac7{12}$. By symmetry
+$f_X(x) = x + \frac12$, and directly $\E[X] = \int_0^1 x(x + \tfrac12)\d x = \tfrac7{12}$ ✓.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\E[X \mid Y = y] = \frac{2 + 3y}{3(1 + 2y)}$. It is not linear in $y$, so the best predictor of lesson 3.3 (a straight line) is strictly worse here, by Theorem 4. Note how $f_Y$ cancelled in the tower
+check: that cancellation is the proof of Theorem 2 in miniature.</p>
+  </div>
+</div>
+
+<div class="worked" id="example-3-5-2">
+  <div class="head"><span class="lbl">Worked example 3.5.2</span><span class="name">a hierarchical model and the law of total variance</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>The click-through rate $P$ of an ad is unknown and modelled as $\text{Uniform}(0, 1)$. Given $P = p$, the ad is shown $n$ times and the number of clicks is
+$K \sim \text{Binomial}(n, p)$. Find $\E[K]$ and $\Var[K]$, and compare with a Binomial$(n, \frac12)$ count.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Two-stage models are what the tower property and the law of total variance are for: compute the conditional mean and variance given the first stage, which
+are known binomial formulas, then average over the first stage.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Given the first stage.</b> $\E[K \mid P] = nP$ and $\Var[K \mid P] = nP(1 - P)$ (Theorem 4 of lesson 2.2).</p>
+    </li>
+    <li>
+      <p><b>Mean.</b> By Theorem 2, $\E[K] = \E[nP] = \frac n2$.</p>
+    </li>
+    <li>
+      <p><b>Total variance.</b> By (5), with $\E[P] = \frac12$, $\E[P^2] = \frac13$, $\Var[P] = \frac1{12}$:
+$$\Var[K] = \underbrace{\E[nP(1 - P)]}_{n(\frac12 - \frac13) = \frac n6} + \underbrace{\Var[nP]}_{\frac{n^2}{12}} = \frac{n(n + 2)}{12}.$$</p>
+    </li>
+    <li>
+      <p><b>Compare.</b> A Binomial$(n, \frac12)$ count has the same mean but variance $\frac n4$. For $n = 10$: $\Var[K] = 10$ against $2.5$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$\E[K] = \frac n2$ and $\Var[K] = \frac{n(n+2)}{12}$, which grows like $n^2$ rather than $n$: uncertainty about $P$ does not average out with more impressions. (In fact $K$ is uniform on
+$\{0, \dots, n\}$, whose variance is the same $\frac{(n+1)^2 - 1}{12}$.) This "overdispersion" is why a plain binomial model underestimates the spread of real click counts.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 04</span> Prediction</span>The conditional mean is the best predictor</h2>
 
 <div class="block block--thm">

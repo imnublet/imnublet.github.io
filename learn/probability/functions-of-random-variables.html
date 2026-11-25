@@ -99,6 +99,41 @@ $$f_Y(y) = \sum_{i} \frac{f_X\big(x_i(y)\big)}{\big|g'\big(x_i(y)\big)\big|}. \t
   The CDF method confirms it without (3): $F_Y(y) = \P[-\sqrt y \le Z \le \sqrt y] = 2\Phi(\sqrt y) - 1$, whose derivative is the same.</p>
 </div>
 
+
+
+<div class="worked" id="example-3-4-1">
+  <div class="head"><span class="lbl">Worked example 3.4.1</span><span class="name">squaring a variable whose range is not symmetric</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$X \sim \text{Uniform}(-1, 2)$ and $Y = X^2$. Find $f_Y$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>$g(x) = x^2$ is not monotone on $(-1, 2)$, so Theorem 1 does not apply directly. Use the CDF method: write $\{Y \le y\}$ as an event about $X$, compute its
+probability, then differentiate. The event changes shape at $y = 1$, where the negative branch $-\sqrt y$ leaves the support.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Range.</b> $Y \in [0, 4)$, so $F_Y(y) = 0$ for $y &lt; 0$ and $1$ for $y \ge 4$.</p>
+    </li>
+    <li>
+      <p><b>Case $0 \le y &lt; 1$.</b> $\{Y \le y\} = \{-\sqrt y \le X \le \sqrt y\}$, an interval of length $2\sqrt y$ inside $(-1, 2)$, so $F_Y(y) = \frac{2\sqrt y}{3}$.</p>
+    </li>
+    <li>
+      <p><b>Case $1 \le y &lt; 4$.</b> Now $-\sqrt y \le -1$, so the event is $\{-1 &lt; X \le \sqrt y\}$, of length $\sqrt y + 1$: $F_Y(y) = \frac{\sqrt y + 1}{3}$. Both formulas give $\frac23$ at $y = 1$ ✓, and the second gives $1$ at $y = 4$ ✓.</p>
+    </li>
+    <li>
+      <p><b>Differentiate.</b></p>
+      $$f_Y(y) = \begin{cases} \dfrac{1}{3\sqrt y}, & 0 &lt; y &lt; 1, \\[1ex] \dfrac{1}{6\sqrt y}, & 1 &lt; y &lt; 4, \\[1ex] 0, & \text{otherwise.}\end{cases}$$
+Check: $\int_0^1 \frac{\d y}{3\sqrt y} = \frac23$ and $\int_1^4 \frac{\d y}{6\sqrt y} = \frac{2(2 - 1)}{6} = \frac13$, total $1$ ✓.
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>The density halves at $y = 1$: below $1$ each $y$ has two preimages $\pm\sqrt y$ in the support, above it only one. That is (3) in action, but the CDF method found it without
+having to track the preimages separately.</p>
+  </div>
+</div>
+
 <h2><span class="sec"><span class="n">§ 03</span> Sums</span>Convolution</h2>
 
 <div class="block block--thm">
@@ -145,6 +180,39 @@ and the Fourier transform in the signal-processing course).</p>
   <figcaption>Bars: 5000 sums $U_1 + \dots + U_n$ of independent Uniform$(0,1)$ variables. Bright: the exact density, the $n$-fold
   convolution $f_U * \dots * f_U$ (the Irwin–Hall density). Blue dashed: $\mathcal N(n/2, n/12)$, which has the same mean and variance.</figcaption>
 </figure>
+
+
+
+<div class="worked" id="example-3-4-2">
+  <div class="head"><span class="lbl">Worked example 3.4.2</span><span class="name">the sum of two uniforms, with careful limits</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$X, Y \iid \text{Uniform}(0, 1)$ and $W = X + Y$. Find $f_W$ and $\P[W \le 1.5]$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Use the convolution (4). The integrand is a product of two indicators, so the whole difficulty is to find, for each $w$, the set of $x$ where both are $1$.
+Write both constraints on $x$, intersect, and split into cases where the intersection changes form.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Integrand.</b> $f_X(x) f_Y(w - x) = \ind\{0 &lt; x &lt; 1\}\,\ind\{0 &lt; w - x &lt; 1\} = \ind\{0 &lt; x &lt; 1\}\,\ind\{w - 1 &lt; x &lt; w\}$.</p>
+    </li>
+    <li>
+      <p><b>Intersect.</b> Both hold iff $\max(0, w - 1) &lt; x &lt; \min(1, w)$, so $f_W(w) = \big(\min(1, w) - \max(0, w - 1)\big)^+$.</p>
+    </li>
+    <li>
+      <p><b>Cases.</b> For $0 \le w \le 1$: $\min = w$, $\max = 0$, so $f_W(w) = w$. For $1 &lt; w \le 2$: $\min = 1$, $\max = w - 1$, so $f_W(w) = 2 - w$. Outside $[0, 2]$, $f_W = 0$.</p>
+    </li>
+    <li>
+      <p><b>Probability.</b> Use the complement, a small triangle: $\P[W &gt; 1.5] = \int_{1.5}^2 (2 - w)\d w = \frac{(0.5)^2}{2} = 0.125$, so $\P[W \le 1.5] = 0.875$.</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$f_W$ is the triangle $1 - |w - 1|$ on $[0, 2]$, and $\P[W \le 1.5] = \frac78$. Summing two flat densities gives a tent; summing more makes the shape smoother and more bell-like,
+the central limit theorem at work.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 04</span> Extremes</span>Maxima and minima</h2>
 
@@ -206,6 +274,44 @@ independent normals into polar coordinates.</p>
 <p>This is the sampler inside every demo on these pages: <code>Learn.randn</code> in <code>learn.js</code> computes
 $\sqrt{-2\ln(1 - u)}\cos(2\pi u')$, the first coordinate of (7). It also gives the cleanest proof of the Gaussian integral
 of lesson 2.4: the polar computation there is Theorem 5 in disguise.</p>
+
+
+
+<div class="worked" id="example-3-4-3">
+  <div class="head"><span class="lbl">Worked example 3.4.3</span><span class="name">the product of two uniforms by a Jacobian</span></div>
+  <div class="part"><span class="tag">Problem</span>
+    <p>$X, Y \iid \text{Uniform}(0, 1)$. Find the density of $V = XY$.</p>
+  </div>
+  <div class="part"><span class="tag">Approach</span>
+    <p>Theorem 4 maps pairs to pairs, so complete $V$ with an auxiliary variable, $W = X$, that makes the map invertible and the inverse easy. Compute the joint
+density of $(V, W)$ by (6), then integrate $W$ out. The support $E$ must be worked out carefully, because it sets the limits of that integral.</p>
+  </div>
+  <div class="part"><span class="tag">Solution</span>
+  <ol class="steps">
+    <li>
+      <p><b>Map and inverse.</b> $T(x, y) = (xy, x)$ on $D = (0, 1)^2$. Given $(v, w)$: $x = w$, $y = v/w$, so $H(v, w) = (w, v/w)$. The image is $E = \{0 &lt; v &lt; w &lt; 1\}$, since
+$0 &lt; y &lt; 1 \iff 0 &lt; v &lt; w$.</p>
+    </li>
+    <li>
+      <p><b>Jacobian.</b></p>
+      $$J_H = \begin{pmatrix} \partial x/\partial v & \partial x/\partial w \\ \partial y/\partial v & \partial y/\partial w \end{pmatrix} = \begin{pmatrix} 0 & 1 \\ 1/w & -v/w^2 \end{pmatrix}, \qquad |\det J_H| = \frac1w.$$
+    </li>
+    <li>
+      <p><b>Joint density.</b> By (6), $f_{V,W}(v, w) = f_{X,Y}(w, v/w) \cdot \frac1w = \frac1w$ on $E$.</p>
+    </li>
+    <li>
+      <p><b>Marginalise.</b> For $0 &lt; v &lt; 1$, $w$ ranges over $(v, 1)$: $f_V(v) = \int_v^1 \frac{\d w}{w} = -\ln v$.</p>
+    </li>
+    <li>
+      <p><b>Check.</b> $\int_0^1 -\ln v \d v = 1$ ✓, and $\E[V] = \int_0^1 -v\ln v \d v = \frac14 = \E[X]\E[Y]$ ✓ (Theorem 4 of lesson 3.2).</p>
+    </li>
+  </ol>
+  </div>
+  <div class="part result"><span class="tag">Result</span>
+    <p>$f_V(v) = -\ln v$ on $(0, 1)$: unbounded at $0$, because a product of two numbers in $(0,1)$ is pulled towards $0$. The steps are the same for any pair transformation:
+complete the map, invert, take $|\det J_H|$, find the image set, integrate out the auxiliary variable.</p>
+  </div>
+</div>
 
 <h2><span class="sec"><span class="n">§ 06</span> In code</span>Checking derived distributions</h2>
 

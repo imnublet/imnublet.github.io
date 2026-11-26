@@ -194,8 +194,8 @@ inner product $\langle U, V \rangle = \E[UV]$, and Cauchy–Schwarz is exactly t
 </div>
 
 <p>The random-sign pair of lesson 3.2, $Y = SX$ with $X \sim \mathcal N(0, 1)$, is another: $\E[XY] = \E[S]\E[X^2] = 0$, but
-$|Y| = |X|$. For jointly Gaussian variables, and essentially only for them, uncorrelated does imply independent (lesson
-3.6). Mutual information, distance correlation and the HSIC are dependence measures that vanish exactly under
+$|Y| = |X|$. For jointly Gaussian variables uncorrelated does imply independent (lesson 3.6), and the same holds for two-valued
+variables (exercise 5), but these are special cases. Mutual information, distance correlation and the HSIC are dependence measures that vanish exactly under
 independence; covariance is not one of them.</p>
 
 <h2><span class="sec"><span class="n">§ 05</span> Prediction</span>The best linear predictor</h2>
@@ -337,7 +337,7 @@ print(np.mean((y - a * x - b) ** 2), np.var(y) * (1 - rho**2))</code></pre></div
       <summary>Solution</summary>
       <p>$\Cov[X, Y] = \sigma_X^2$ and $\Var[Y] = \sigma_X^2 + \sigma_N^2$, so $\rho^2 = \frac{\sigma_X^2}{\sigma_X^2 + \sigma_N^2} = \frac{\text{SNR}}{1 + \text{SNR}}$.
       By (2) with the roles of $X, Y$ swapped, $\hat X = \frac{\sigma_X^2}{\sigma_X^2 + \sigma_N^2} Y$: shrink the observation towards the
-      prior mean by the SNR factor. This is the scalar Wiener filter.</p>
+      prior mean $0$ by the factor $\text{SNR}/(1 + \text{SNR})$. This is the scalar Wiener filter.</p>
     </details>
   </li>
   <li>

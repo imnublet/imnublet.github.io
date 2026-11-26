@@ -240,7 +240,7 @@ the CDF for (c).</p>
   </div>
   <div class="part result"><span class="tag">Result</span>
     <p>(a) $0.223$, (b) $0.607$, (c) $\approx 2303$ h. In (b) the $1000$ hours already survived are irrelevant: an exponential component does not age.
-This is a modelling claim worth questioning for anything that wears out.</p>
+For anything that wears out, check that assumption against data before relying on it.</p>
   </div>
 </div>
 
@@ -275,8 +275,8 @@ inverse.</p>
 </details>
 
 <p>For the exponential, $F^{-}(u) = -\ln(1-u)/\lambda$, and since $1 - U$ is also uniform, $-\ln U / \lambda$
-works too. For a discrete law, $F^{-}(U)$ is "walk up the staircase until it first reaches $U$", which is how
-the geometric sampler in the lesson 2.2 demo works. Sampling a law reduces to computing its quantile
+works too. For a discrete law, $F^{-}(U)$ is "walk up the staircase until it first reaches $U$", and for the geometric law it has the
+closed form $\lceil \ln(1 - U)/\ln(1 - p) \rceil$ used by the sampler in the lesson 2.2 demo. Sampling a law reduces to computing its quantile
 function, which is how <code>scipy.stats</code>' <code>ppf</code> is used in practice, and how normalising flows
 and copulas move between distributions.</p>
 

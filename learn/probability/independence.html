@@ -69,7 +69,7 @@ when $\P[B] = 0$, and that is the one we adopt.</p>
 </div>
 
 <p>When $\P[B] &gt; 0$, (1) is equivalent to $\P[A \mid B] = \P[A]$, by the definition of conditional
-probability. Two points are worth stating explicitly.</p>
+probability. Two consequences of the definition are easy to miss.</p>
 <ul>
   <li><strong>Independence is a property of $\P$, not of the sets.</strong> The same two events can be
   independent under one measure and dependent under another. It need not reflect physical separation
@@ -274,7 +274,8 @@ $p_i$. Let $W_i$ be the event "component $i$ works".</p>
     the complements (Theorem 1, extended),
     $\P[\text{works}] = 1 - \P\big[\bigcap_i W_i^c\big] = 1 - \prod_{i} (1 - p_i)$.</li>
 </ul>
-<p>Series systems are weaker than their weakest link; parallel systems are stronger than their strongest.
+<p>A series system is therefore never more reliable than its weakest component, and a parallel system never less
+reliable than its strongest.
 Ten components in series, each with $p = 0.99$, work with probability $0.99^{10} \approx 0.904$.
 Duplicate each component in parallel and every stage works with probability $1 - 0.01^2 = 0.9999$, so the
 system works with probability $0.9999^{10} \approx 0.9990$: redundancy cut the failure probability from

@@ -70,7 +70,7 @@ $$\frac{N_{AB}}{N_B} = \frac{N_{AB}/N}{N_B/N} \approx \frac{\P[A \cap B]}{\P[B]}
   $$\P[A \mid B] = \frac{\P[A \cap B]}{\P[B]}. \tag{1}$$
 </div>
 
-<p>Geometrically: discard every outcome outside $B$, keep the relative weights of the outcomes inside
+<p>In words: discard every outcome outside $B$, keep the relative weights of the outcomes inside
 $B$, and rescale them so they sum to one. On a finite space of equally likely outcomes this is
 literally $\P[A \mid B] = |A \cap B| / |B|$: uniform on the smaller space $B$.</p>
 
@@ -204,6 +204,7 @@ $O(B) = \P[B]/\P[B^c]$.</p>
 
 <div class="block block--thm">
   <span class="lbl">Theorem 5<span class="name">Bayes' rule in odds form</span></span>
+  <p>If $0 &lt; \P[B] &lt; 1$ and $\P[A \mid B^c] &gt; 0$, then</p>
   $$\underbrace{\frac{\P[B \mid A]}{\P[B^c \mid A]}}_{\text{posterior odds}}
     = \underbrace{\frac{\P[A \mid B]}{\P[A \mid B^c]}}_{\text{likelihood ratio } \Lambda(A)}
     \cdot \underbrace{\frac{\P[B]}{\P[B^c]}}_{\text{prior odds}}. \tag{5}$$

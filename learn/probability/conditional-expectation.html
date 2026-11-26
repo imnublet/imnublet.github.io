@@ -174,7 +174,7 @@ $R^2$ of a regression, and behind the split of predictive uncertainty into aleat
     <p>$f_{X,Y}(x, y) = x + y$ on $[0, 1]^2$. Find $f_{X|Y}$, $\E[X \mid Y = y]$ and the random variable $\E[X \mid Y]$. Verify the tower property.</p>
   </div>
   <div class="part"><span class="tag">Approach</span>
-    <p>Marginal of the conditioning variable first, then divide (2), then integrate against $x$. The tower property is a free consistency check: averaging the
+    <p>Marginal of the conditioning variable first, then divide (2), then integrate against $x$. The tower property then gives a consistency check: averaging the
 conditional mean over $f_Y$ must give $\E[X]$ computed directly.</p>
   </div>
   <div class="part"><span class="tag">Solution</span>
@@ -197,7 +197,7 @@ $f_X(x) = x + \frac12$, and directly $\E[X] = \int_0^1 x(x + \tfrac12)\d x = \tf
   </ol>
   </div>
   <div class="part result"><span class="tag">Result</span>
-    <p>$\E[X \mid Y = y] = \frac{2 + 3y}{3(1 + 2y)}$. It is not linear in $y$, so the best predictor of lesson 3.3 (a straight line) is strictly worse here, by Theorem 4. Note how $f_Y$ cancelled in the tower
+    <p>$\E[X \mid Y = y] = \frac{2 + 3y}{3(1 + 2y)}$. It is not linear in $y$, so the best linear predictor of lesson 3.3 is strictly worse here, by Theorem 4. Note how $f_Y$ cancelled in the tower
 check: that cancellation is the proof of Theorem 2 in miniature.</p>
   </div>
 </div>

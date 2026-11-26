@@ -234,7 +234,9 @@ $\binom{23}{2} = 253$, not the number of people.</p>
   <p><span class="qed">∎</span></p>
 </details>
 
-<p>The bound is also an excellent approximation when $k \ll n$, because $\log(1 - x) = -x + O(x^2)$. It
+<p>The bound is also a good approximation. Since $\log(1 - x) = -x - x^2/2 - \cdots$, the logarithm of (6) falls
+below the exponent in (7) by about $\sum_{i &lt; k} i^2/2n^2 \approx k^3/6n^2$, which is small when $k \ll n^{2/3}$
+(for $n = 365$, $k = 23$ the gap is $0.015$, and the two sides of (7) are $0.493$ and $0.500$). It
 tells us a collision becomes likely once $k \approx \sqrt{2n \ln 2} \approx 1.18\sqrt n$. The same
 $\sqrt n$ scaling governs hash collisions (birthday attacks need about $2^{b/2}$ tries against a $b$-bit
 hash) and duplicate draws in bootstrap resampling.</p>
@@ -319,7 +321,7 @@ days = rng.integers(0, 365, size=(100_000, 23))
 shared = np.array([len(np.unique(r)) &lt; 23 for r in days])
 print(shared.mean())                                       # ≈ 0.507
 
-# hypergeometric: probability of a full house in a 5-card hand
+# multiplication rule: probability of a full house (exercise 1)
 full_house = 13 * comb(4, 3) * 12 * comb(4, 2)
 print(full_house, full_house / comb(52, 5))                # 3744 0.00144</code></pre></div>
   </div>
@@ -347,7 +349,8 @@ print(full_house, full_house / comb(52, 5))                # 3744 0.00144</code>
       <summary>Solution</summary>
       <p>Count $k$-subsets of a set of $m$ red and $n$ blue items. Directly: $\binom{m+n}k$. Split by the number
       $j$ of red items: for each $j$ there are $\binom mj\binom n{k-j}$ subsets, and the classes are disjoint.
-      With $m = K$, $n = N - K$, $k = m$, the numerators of (8) therefore sum to $\binom Nm$.</p>
+      Applied to $K$ marked and $N - K$ unmarked items and subsets of size $m$, the identity says that the numerators
+      of (8) sum over $j$ to $\binom Nm$.</p>
     </details>
   </li>
   <li>

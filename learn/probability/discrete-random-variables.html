@@ -246,7 +246,7 @@ probability $0.3$. Find the probability that the second success comes on attempt
   <ol class="steps">
     <li>
       <p><b>(a) Model.</b> Each of $n$ users sends a request in a given second with small probability $\alpha/n$; by Theorem 3 the count $X$ is approximately
-Poisson$(\alpha)$ with $\alpha = \E[\text{count}] = 3$.</p>
+Poisson$(\alpha)$. The Poisson$(\alpha)$ law has mean $\alpha$ (lesson 2.2), so the stated average gives $\alpha = 3$.</p>
     </li>
     <li>
       <p><b>(a) Complement.</b> "More than 5" has infinitely many terms, so use the complement:
@@ -261,7 +261,7 @@ $$\P[X &gt; 5] = 1 - \sum_{x=0}^{5} \frac{3^x e^{-3}}{x!} = 1 - e^{-3}\Big(1 + 3
   </ol>
   </div>
   <div class="part result"><span class="tag">Result</span>
-    <p>(a) $\approx 0.084$; (b) $\approx 0.123$. Most textbook exercises on discrete variables are this two-step routine: decide which mechanism generated the
+    <p>(a) $\approx 0.084$; (b) $\approx 0.123$. Most discrete problems go this way: decide which mechanism generated the
 count, then evaluate the PMF, using the complement when the event has infinitely many terms.</p>
   </div>
 </div>

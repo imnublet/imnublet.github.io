@@ -267,7 +267,7 @@ Reducing to atoms is the general method: any event built from $A, B, C$ by set o
 <p>On a finite or countable $\Omega$ every subset can be an event. On $\Omega = [0,1]$ that is too
 much to ask: there is no function on <em>all</em> subsets of $[0,1]$ that is countably additive,
 invariant under translation (mod 1) and gives an interval its length. (The Vitali construction, which
-uses the axiom of choice, produces such a non-measurable set.) The fix is to fix in advance a
+uses the axiom of choice, produces such a non-measurable set.) The way out is to fix in advance a
 collection of subsets that will be called events, closed under the operations we need.</p>
 
 <div class="block">
@@ -319,7 +319,7 @@ assert all(not (p & q) for i, p in enumerate(parts) for q in parts[i + 1:])
 assert frozenset().union(*(A & p for p in parts)) == A
 print(len(A), len(B), len(A & B), len(A | B))      # 4 4 3 5</code></pre></div>
   </div>
-  <figcaption>Every identity in this lesson is a one-line <code>assert</code> on a finite $\Omega$.</figcaption>
+  <figcaption>On a finite $\Omega$, each set identity in this lesson becomes a one-line <code>assert</code>.</figcaption>
 </figure>
 
 <h2><span class="sec"><span class="n">§ 06</span> Practice</span>Exercises</h2>
@@ -332,8 +332,8 @@ print(len(A), len(B), len(A & B), len(A | B))      # 4 4 3 5</code></pre></div>
       <p>$A \cap (B \setminus A) = A \cap B \cap A^c = \varnothing$. And
       $A \cup (B \cap A^c) = (A \cup B) \cap (A \cup A^c) = (A \cup B) \cap \Omega = A \cup B$ by
       distributivity. For the second, $(A \cap B) \cap (B \cap A^c) = B \cap (A \cap A^c) = \varnothing$
-      and $(B \cap A) \cup (B \cap A^c) = B \cap (A \cup A^c) = B$. These two decompositions are the whole
-      proof of inclusion–exclusion in the next lesson.</p>
+      and $(B \cap A) \cup (B \cap A^c) = B \cap (A \cup A^c) = B$. These two decompositions are all the
+      next lesson needs to prove inclusion–exclusion for two events.</p>
     </details>
   </li>
   <li>

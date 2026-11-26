@@ -67,7 +67,7 @@
   $\phi(z) = \frac{1}{\sqrt{2\pi}}e^{-z^2/2}$ and CDF $\Phi(z) = \int_{-\infty}^z \phi(t) \d t$.</p>
 </div>
 
-<p>The Gaussian earns its place for two reasons that later lessons make precise. Sums of many small
+<p>The Gaussian matters for two reasons that later lessons make precise. Sums of many small
 independent effects are approximately Gaussian whatever the effects' own laws (the central limit theorem,
 lesson 4.6), so measurement noise usually is. And Gaussians are closed under every linear operation we will
 apply to them (lesson 4.4), so models built from them stay tractable. Among all laws with a given variance,
@@ -184,7 +184,7 @@ implement accurately. $Q$ has no closed form, but it is pinned down very tightly
 <p>The two bounds in (4) differ by the factor $z^2/(1+z^2)$, which tends to $1$, so
 $Q(z) \sim \phi(z)/z$ as $z \to \infty$: the relative error of the upper bound is below $1\%$ for $z &gt; 10$ and
 below $10\%$ for $z &gt; 3$. Bound (5) is looser by the factor $\sim z\sqrt{\pi/2}$ but needs no division by $z$, and it
-is the shape the Chernoff bound will give for sums in lesson 4.5. The headline is the $e^{-z^2/2}$: the
+is the shape the Chernoff bound will give for sums in lesson 4.5. The dominant factor is $e^{-z^2/2}$: the
 Gaussian tail decays faster than any exponential $e^{-cz}$, which is why "$5\sigma$" events are about one in
 3.5 million, and why Gaussian noise models are badly wrong for heavy-tailed data.</p>
 
@@ -238,7 +238,7 @@ approximation to $Q(z)$, and it is the one to remember.</p>
 </div>
 
 <h2><span class="sec"><span class="n">§ 03</span> Moments</span>Stein's identity</h2>
-<p>The relation $\phi'(z) = -z\phi(z)$ used three times above is worth turning into a tool.</p>
+<p>The relation $\phi'(z) = -z\phi(z)$ has now been used three times. Stated for a general function, it becomes Stein's identity.</p>
 
 <div class="block block--thm">
   <span class="lbl">Theorem 4<span class="name">Stein's identity</span></span>
@@ -258,8 +258,8 @@ approximation to $Q(z)$, and it is the one to remember.</p>
 infinity) we get the recursion $\E[Z^n] = (n-1)\,\E[Z^{n-2}]$. Starting from $\E[Z^0] = 1$ and $\E[Z] = 0$,</p>
 $$\E[Z^{2k+1}] = 0, \qquad \E[Z^{2k}] = (2k-1)(2k-3)\cdots 3 \cdot 1 = \frac{(2k)!}{2^k\, k!}. \tag{7}$$
 <p>In particular $\E[Z^4] = 3$: the Gaussian has kurtosis $3$, the reference value for "excess kurtosis". Stein's
-identity also characterises the Gaussian (if (6) holds for all bounded smooth $g$, then $Z$ is standard
-normal). That characterisation is the starting point of Stein's method for proving central limit theorems,
+identity also characterises the Gaussian (if (6) holds for every bounded $g$ with a bounded continuous derivative,
+then $Z$ is standard normal). That characterisation is the starting point of Stein's method for proving central limit theorems,
 and, in machine learning, of kernel Stein discrepancies and Stein variational gradient descent.</p>
 
 
@@ -292,7 +292,7 @@ $$\E[X^3] = \mu(\mu^2 + \sigma^2) + 2\mu\sigma^2 = \mu^3 + 3\mu\sigma^2.$$</p>
 $$\E[Z\,\Phi(Z)] = \frac{\sqrt\pi}{2\pi} = \frac{1}{2\sqrt\pi} \approx 0.282.$$</p>
     </li>
     <li>
-      <p><b>(b) Correlation.</b> $\Phi(Z) \sim \text{Uniform}(0, 1)$ (probability integral transform, lesson 2.3 exercise 3), so it has variance $\frac1{12}$, and $\E[Z] = 0$ gives $\Cov[Z, \Phi(Z)] = \frac1{2\sqrt\pi}$. Hence
+      <p><b>(b) Correlation.</b> $\Phi(Z) \sim \text{Uniform}(0, 1)$ (probability integral transform, lesson 2.3 exercise 3), so it has variance $\frac1{12}$, and $\E[Z] = 0$ gives $\Cov[Z, \Phi(Z)] = \E[Z\Phi(Z)] = \frac1{2\sqrt\pi}$ (covariance and correlation are defined in lesson 3.3). Hence
 $\rho = \frac{1/(2\sqrt\pi)}{1 \cdot \sqrt{1/12}} = \sqrt{3/\pi} \approx 0.977$.</p>
     </li>
   </ol>

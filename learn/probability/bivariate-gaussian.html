@@ -202,7 +202,7 @@ two diagonals).</p>
   and Theorem 2 of lesson 3.3 with $\Cov[X, Y] = \rho\sigma_1\sigma_2$. <span class="qed">∎</span></p>
 </details>
 
-<p>Rotation invariance of the standard bivariate normal is the deep fact here: it is the only distribution with independent
+<p>The proof rests on rotation invariance of the standard bivariate normal. It is the only distribution with independent
 coordinates that looks the same in every orthonormal frame (Maxwell's characterisation). It is why projections of Gaussian
 data onto any direction are Gaussian, the basis of PCA's probabilistic interpretation and of random projections.</p>
 
@@ -233,7 +233,7 @@ too small.</p>
     </div>
   </div>
   <figcaption>1500 samples from (4) with $\mu = 0$, $\sigma_1 = 1$. Ellipses: $q = 1$ and $q = 4$. Bright line: $\E[Y \mid X = x] = \rho\frac{\sigma_2}{\sigma_1}x$. Grey dashed:
-  the major axis of the ellipses. They differ unless $\rho = 0$ or $|\rho| \to 1$: regressing $Y$ on $X$ is not the same as fitting the cloud's
+  the major axis of the ellipses. For $0 &lt; |\rho| &lt; 1$ the regression line is always the less steep of the two, and they meet only as $|\rho| \to 1$: regressing $Y$ on $X$ is not the same as fitting the cloud's
   long axis. Readout: fraction of samples inside each ellipse against (6), $0.393$ and $0.865$.</figcaption>
 </figure>
 

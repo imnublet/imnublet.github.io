@@ -129,7 +129,7 @@ Check: $\int_0^1 \frac{\d y}{3\sqrt y} = \frac23$ and $\int_1^4 \frac{\d y}{6\sq
   </ol>
   </div>
   <div class="part result"><span class="tag">Result</span>
-    <p>The density halves at $y = 1$: below $1$ each $y$ has two preimages $\pm\sqrt y$ in the support, above it only one. That is (3) in action, but the CDF method found it without
+    <p>The density halves at $y = 1$: below $1$ each $y$ has two preimages $\pm\sqrt y$ in the support, above it only one. This is what (3) predicts, but the CDF method found it without
 having to track the preimages separately.</p>
   </div>
 </div>
@@ -248,7 +248,7 @@ reliability formulas in lesson 1.4.</p>
   $(V, W)$. <span class="qed">∎</span></p>
 </details>
 
-<p>Formula (6) is (2) with $|h'|$ replaced by the factor by which $H$ scales areas. The most famous application turns two
+<p>Formula (6) is (2) with $|h'|$ replaced by the factor by which $H$ scales areas. The standard application turns two
 independent normals into polar coordinates.</p>
 
 <div class="block block--thm">
@@ -272,8 +272,8 @@ independent normals into polar coordinates.</p>
 </details>
 
 <p>This is the sampler inside every demo on these pages: <code>Learn.randn</code> in <code>learn.js</code> computes
-$\sqrt{-2\ln(1 - u)}\cos(2\pi u')$, the first coordinate of (7). It also gives the cleanest proof of the Gaussian integral
-of lesson 2.4: the polar computation there is Theorem 5 in disguise.</p>
+$\sqrt{-2\ln(1 - u)}\cos(2\pi u')$, the first coordinate of (7). The polar substitution in the proof of the Gaussian integral
+(lesson 2.4) is the same change of variables, carried out before the normalising constant was known.</p>
 
 
 
@@ -342,7 +342,7 @@ print(stats.kstest(w, stats.gamma(2, scale=1 / lam).cdf).pvalue)
 dx = 1e-3
 f = np.ones(int(1 / dx))                                  # Uniform(0,1) density on a grid
 tri = np.convolve(f, f) * dx                              # samples of (f * f) on [0, 2)
-print(tri[[250, 1000, 1500]].round(3))                    # 0.25, 1.0, 0.5</code></pre></div>
+print(tri[[250, 1000, 1500]].round(3))                    # 0.251 0.999 0.499: f*f at 0.25, 1, 1.5, one grid step off</code></pre></div>
   </div>
   <figcaption>A Kolmogorov–Smirnov p-value is uniform under the null (lesson 2.3, exercise 3), so any value that is not tiny is consistent with the derived law.</figcaption>
 </figure>
